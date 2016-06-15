@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:TrainScheduling"
         xmlns:prop="clr-namespace:TrainScheduling.Properties"
         mc:Ignorable="d"
+        ResizeMode="NoResize"
         Title="LoginWindow" Height="513" Width="558">
     <Grid>
         <Image x:Name="BackgroundImage" Source="Resources/beijing.png" Stretch="Fill"></Image>
