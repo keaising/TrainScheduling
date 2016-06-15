@@ -9,5 +9,10 @@
         Title="LoginWindow" Height="513" Width="558">
     <Grid>
         <Image x:Name="BackgroundImage" Source="Resources/beijing.png" Stretch="Fill"></Image>
+        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="23" Margin="282,359,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <PasswordBox x:Name="passwordBox" HorizontalAlignment="Left" Margin="282,396,0,0" VerticalAlignment="Top" Width="120" Height="23"/>
+        <Button x:Name="RegButton" Content="Regist" HorizontalAlignment="Left" Margin="439,359,0,0" VerticalAlignment="Top" Width="75" Height="23"/>
+        <Button x:Name="ForgetButton" Content="Forget" HorizontalAlignment="Left" Margin="439,396,0,0" VerticalAlignment="Top" Width="75" Height="23"/>
+        <Button x:Name="LoginButton" Content="Login" HorizontalAlignment="Left" Margin="282,438,0,0" VerticalAlignment="Top" Width="232"/>
     </Grid>
 </Window>
