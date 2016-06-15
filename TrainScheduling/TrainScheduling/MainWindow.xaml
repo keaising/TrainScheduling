@@ -6,8 +6,37 @@
         xmlns:local="clr-namespace:TrainScheduling"
         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
-    </Grid>
+        Title="MainWindow" Height="500" Width="800">
+    <!--预留：Window Resources Window.Resources-->
+    <!--预留：左右顶栏内容 Controls:MetroWindow.RightWindowCommands-->
+    
+    <!--窗体主要内容-->
+    <Controls:MetroContentControl>
+        <Grid>
+            <!--分成三行：菜单、Tab、状态栏-->
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Menu Grid.Row="0"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Stretch">
+            </Menu>
+
+            <!--主要内容区，每一个Tab是一个功能，Tab内容用UserControl实现-->
+            <Controls:MetroAnimatedSingleRowTabControl x:Name="MainTabControl" Grid.Row="1">
+                <TabItem Header="运行图"></TabItem>
+                <TabItem Header="列车运行图"></TabItem>
+                <TabItem Header="算法演示"></TabItem>
+                <TabItem Header="算法展示"></TabItem>
+                <TabItem Header="其他内容"></TabItem>
+            </Controls:MetroAnimatedSingleRowTabControl>
+
+            <StatusBar Grid.Row="2">
+                <!--预留：需要什么填什么，不需要的话直接删掉-->
+            </StatusBar>
+        </Grid>
+    </Controls:MetroContentControl>
 </Controls:MetroWindow>
