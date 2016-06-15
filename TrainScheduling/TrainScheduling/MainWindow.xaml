@@ -4,9 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TrainScheduling"
+        xmlns:userControls="clr-namespace:TrainScheduling.UserControls"
         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
         mc:Ignorable="d"
-        Title="某小团队的Demo" Height="500" Width="800">
+        Title="某小团队的Demo" Height="500" Width="800"
+        BorderThickness="0" 
+        GlowBrush="Black"
+        ResizeMode="CanResizeWithGrip"
+        WindowTransitionsEnabled="False"
+        WindowStartupLocation="CenterScreen">
     <!--预留：Window Resources Window.Resources-->
     <!--预留：左右顶栏内容 Controls:MetroWindow.RightWindowCommands-->
     
@@ -27,11 +33,21 @@
 
             <!--主要内容区，每一个Tab是一个功能，Tab内容用UserControl实现-->
             <Controls:MetroAnimatedSingleRowTabControl x:Name="MainTabControl" Grid.Row="1">
-                <TabItem Header="运行图"></TabItem>
-                <TabItem Header="列车运行图"></TabItem>
-                <TabItem Header="算法演示"></TabItem>
-                <TabItem Header="算法展示"></TabItem>
-                <TabItem Header="其他内容"></TabItem>
+                <TabItem Header="运行图">
+                    <userControls:SchedulingControl />
+                </TabItem>
+                <TabItem Header="列车运行图">
+                    <userControls:SchedulingControl />
+                </TabItem>
+                <TabItem Header="算法演示">
+                    <userControls:SchedulingControl />
+                </TabItem>
+                <TabItem Header="算法展示">
+                    <userControls:SchedulingControl />
+                </TabItem>
+                <TabItem Header="其他内容">
+                    <userControls:SchedulingControl />
+                </TabItem>
             </Controls:MetroAnimatedSingleRowTabControl>
 
             <StatusBar Grid.Row="2">

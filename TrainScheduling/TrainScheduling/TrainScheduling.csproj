@@ -85,6 +85,9 @@
     <Compile Include="SchedulingWindow.xaml.cs">
       <DependentUpon>SchedulingWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\SchedulingControl.xaml.cs">
+      <DependentUpon>SchedulingControl.xaml</DependentUpon>
+    </Compile>
     <Page Include="LoginWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -105,6 +108,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="SchedulingWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\SchedulingControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -137,9 +144,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="UserControl\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Resource Include="Data\Input_loco_data_10.txt" />
     <Resource Include="Data\Input_loco_data_12.txt" />
