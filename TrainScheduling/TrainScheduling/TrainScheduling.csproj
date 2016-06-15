@@ -35,6 +35,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ILOG.Concert, Version=12.5.1.0, Culture=neutral, PublicKeyToken=7906592bc7cc7340, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Reference\ILOG.Concert.dll</HintPath>
+    </Reference>
+    <Reference Include="ILOG.CP, Version=12.5.1.0, Culture=neutral, PublicKeyToken=7906592bc7cc7340, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Reference\ILOG.CP.dll</HintPath>
+    </Reference>
+    <Reference Include="ILOG.CPLEX, Version=12.5.1.0, Culture=neutral, PublicKeyToken=7906592bc7cc7340, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Reference\ILOG.CPLEX.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -106,7 +118,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Model\README.md" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -178,6 +189,11 @@
     <Resource Include="Data\Input_train_data_40.txt" />
     <Resource Include="Data\Input_train_data_6.txt" />
     <Resource Include="Data\Input_train_data_8.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Reference\ILOG.Concert.dll" />
+    <Content Include="Reference\ILOG.CP.dll" />
+    <Content Include="Reference\ILOG.CPLEX.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
