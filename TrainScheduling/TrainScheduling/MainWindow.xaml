@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:TrainScheduling"
         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="800">
+        Title="某小团队的Demo" Height="500" Width="800">
     <!--预留：Window Resources Window.Resources-->
     <!--预留：左右顶栏内容 Controls:MetroWindow.RightWindowCommands-->
     
