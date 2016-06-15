@@ -49,6 +49,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -115,7 +116,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
@@ -127,9 +128,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Picture\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Resource Include="Data\Input_loco_data_10.txt" />
     <Resource Include="Data\Input_loco_data_12.txt" />
@@ -191,6 +190,9 @@
     <Resource Include="Data\Input_train_data_8.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\beijing.png" />
+    <Resource Include="Resources\tss.ico" />
+    <Resource Include="Resources\tss.png" />
     <Content Include="Reference\ILOG.Concert.dll" />
     <Content Include="Reference\ILOG.CP.dll" />
     <Content Include="Reference\ILOG.CPLEX.dll" />
