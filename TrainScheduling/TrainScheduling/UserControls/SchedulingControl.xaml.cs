@@ -27,21 +27,28 @@ namespace TrainScheduling.UserControls
             InitializeComponent();
             ReadSectionTrainFiles();
         }
+
         /// <summary>
         /// 读取Section和Train的文件名
         /// </summary>
+        /// <param name="fileType"></param>
         public void ReadSectionTrainFiles()
         {
+            //数据文件路径
             string path = @"..\..\Data";
             var files = Directory.GetFiles(path, "*.txt");
-            ObservableCollection<string> SectionItems = new ObservableCollection<string>();
+            //获取路径下所有文件信息
             DirectoryInfo folder = new DirectoryInfo(path);
-
-            foreach (FileInfo file in folder.GetFiles("*.txt"))
-            {
-                SectionItems.Add(file.Name);
-            }
-            SectionComboBox.ItemsSource = SectionItems;
+            //将文件名弄出来
+            var sectionList = from file in folder.GetFiles("*.txt")
+                               where file.Name.ToLower().Contains("section")
+                               select file.Name;
+            var trainList = from file in folder.GetFiles("*.txt")
+                            where file.Name.ToLower().Contains("train")
+                            select file.Name;
+            //添加到combobox的source中
+            SectionComboBox.ItemsSource = sectionList;
+            TrainComboBox.ItemsSource = trainList;
         }
 
     }

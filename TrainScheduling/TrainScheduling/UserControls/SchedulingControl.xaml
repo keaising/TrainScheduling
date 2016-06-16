@@ -33,10 +33,6 @@
             <ComboBox x:Name="SectionComboBox" Grid.Row="0" Grid.Column="1"  HorizontalAlignment="Center" VerticalAlignment="Center">
             </ComboBox>
             <ComboBox x:Name="TrainComboBox" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <ComboBoxItem>test1</ComboBoxItem>
-                <ComboBoxItem>test2</ComboBoxItem>
-                <ComboBoxItem>test3</ComboBoxItem>
-                <ComboBoxItem>test4</ComboBoxItem>
             </ComboBox>
         </Grid>
 
