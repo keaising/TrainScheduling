@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +25,24 @@ namespace TrainScheduling.UserControls
         public SchedulingControl()
         {
             InitializeComponent();
+            ReadSectionTrainFiles();
         }
+        /// <summary>
+        /// 读取Section和Train的文件名
+        /// </summary>
+        public void ReadSectionTrainFiles()
+        {
+            string path = @"..\..\Data";
+            var files = Directory.GetFiles(path, "*.txt");
+            ObservableCollection<string> SectionItems = new ObservableCollection<string>();
+            DirectoryInfo folder = new DirectoryInfo(path);
+
+            foreach (FileInfo file in folder.GetFiles("*.txt"))
+            {
+                SectionItems.Add(file.Name);
+            }
+            SectionComboBox.ItemsSource = SectionItems;
+        }
+
     }
 }
