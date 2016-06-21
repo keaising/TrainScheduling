@@ -22,6 +22,15 @@ namespace TrainScheduling
         public SchedulingWindow()
         {
             InitializeComponent();
+            test(ref a);
+            BiggestDelayTimeTextbox.Text = a.ToString();
+        }
+
+        int a = 0;
+
+        void test(ref int b)
+        {
+            b = 2;
         }
     }
 }

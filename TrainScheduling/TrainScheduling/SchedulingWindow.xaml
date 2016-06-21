@@ -5,8 +5,63 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TrainScheduling"
         mc:Ignorable="d"
-        Title="SchedulingWindow" Height="300" Width="300">
-    <Grid>
+        Title="SchedulingWindow" Height="500" Width="768">
+    <Grid Margin="20px">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="5px"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <Border BorderThickness="0 2 0 2" BorderBrush="Gray" Grid.ColumnSpan="2"/>
+        <Border BorderThickness="2 2 0 2" BorderBrush="Gray" Grid.Row="1" Grid.Column="2"/>
+        <Border BorderThickness="0 2 0 2" BorderBrush="Gray" Grid.Row="2" Grid.ColumnSpan="2"/>
         
+        <WrapPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="2">
+            <Button x:Name="FileButton" Content="文件" Width="50px" />
+            <Button x:Name="EditButton" Content="编辑" Width="50px" />
+            <Button x:Name="ViewButton" Content="查看" Width="50px" />
+            <Button x:Name="ParameterSettingButton" Content="列车路网参数设置" Width="50px" />
+            <Button x:Name="AlgsEditButton" Content="编制算法" Width="50px" />
+            <Button x:Name="PrintButton" Content="打印" Width="50px" />
+            <Button x:Name="HelpButton" Content="帮助" Width="50px" />
+            <Button x:Name="ShowChosenLineButton" Content="选择路线展示" Width="50px" />
+        </WrapPanel>
+        <Grid Grid.Row="2" Grid.Column="0" Margin="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="最大延迟时间"/>
+            <TextBlock Grid.Row="0" Grid.Column="2" Text="对应列车"/>
+            <TextBlock Grid.Row="0" Grid.Column="4" Text="总能耗"/>
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="总延迟时间" />
+            <TextBlock Grid.Row="1" Grid.Column="2" Text="线路清空时间"/>
+            <TextBlock Grid.Row="1" Grid.Column="4" Text="其他" />
+            <TextBox Grid.Row="0" Grid.Column="1" x:Name="BiggestDelayTimeTextbox"/>
+            <TextBox Grid.Row="0" Grid.Column="3" x:Name="ExactTrainTextbox"/>
+            <TextBox Grid.Row="0" Grid.Column="5" x:Name="TotalFuelTextbox"/>
+            <TextBox Grid.Row="1" Grid.Column="1" x:Name="TotalDelayTimeTextbox"/>
+            <TextBox Grid.Row="1" Grid.Column="3" x:Name="LineCleanTimeTextbox"/>
+            <TextBox Grid.Row="1" Grid.Column="5" x:Name="OtherTextbox"/>
+        </Grid>
+        <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" Margin="2">
+            <CheckBox>列车1</CheckBox>
+            <CheckBox>列车2</CheckBox>
+            <CheckBox>列车3</CheckBox>
+            <CheckBox>列车4</CheckBox>
+        </StackPanel>
     </Grid>
 </Window>
