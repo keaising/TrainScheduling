@@ -13,13 +13,24 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
 
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Grid.Column="0">
+        <WrapPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Left" >
+            <Button x:Name="FileButton" Content="文件" Width="50px" />
+            <Button x:Name="EditButton" Content="编辑" Width="50px" />
+            <Button x:Name="ViewButton" Content="查看" Width="50px" />
+            <Button x:Name="ParameterSettingButton" Content="列车路网参数设置" Width="50px" />
+            <Button x:Name="AlgsEditButton" Content="编制算法" Width="50px" />
+            <Button x:Name="PrintButton" Content="打印" Width="50px" />
+            <Button x:Name="HelpButton" Content="帮助" Width="50px" />
+            <Button x:Name="ShowChosenLineButton" Content="选择路线展示" Width="50px" />
+        </WrapPanel>
+        <Grid Grid.Row="1" Grid.Column="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="2*"/>
@@ -35,6 +46,7 @@
             <ComboBox x:Name="TrainComboBox" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
             </ComboBox>
         </Grid>
+        
 
     </Grid>
 </UserControl>
