@@ -206,6 +206,8 @@
     <Resource Include="Data\Input_train_data_8.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\timetable.png" />
+    <Resource Include="Resources\title.png" />
     <Resource Include="Resources\beijing.png" />
     <Resource Include="Resources\tss.ico" />
     <Resource Include="Resources\tss.png" />
