@@ -17,7 +17,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-        <Border BorderThickness="0 2 0 2" BorderBrush="Gray" Grid.ColumnSpan="2"/>
+        <Border BorderThickness="0 1.5 0 1.5" BorderBrush="Gray" Grid.ColumnSpan="2"/>
         <Border BorderThickness="2 2 0 2" BorderBrush="Gray" Grid.Row="1" Grid.Column="2"/>
         <Border BorderThickness="0 2 0 2" BorderBrush="Gray" Grid.Row="2" Grid.ColumnSpan="2"/>
         
@@ -30,7 +30,13 @@
             <Button x:Name="PrintButton" Content="打印" Width="50px" />
             <Button x:Name="HelpButton" Content="帮助" Width="50px" />
             <Button x:Name="ShowChosenLineButton" Content="选择路线展示" Width="50px" />
+            <Image x:Name="Sch_win_image_title" Source="Resources/title.png" Width="100px" Stretch="Fill"></Image>            
         </WrapPanel>
+
+        <WrapPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="1" Margin="10">
+            <Image x:Name="Sch_win_image_timetable" Source="Resources/timetable.png"  Stretch="Fill"></Image>
+        </WrapPanel>
+
         <Grid Grid.Row="2" Grid.Column="0" Margin="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -44,18 +50,18 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Grid.Column="0" Text="最大延迟时间"/>
-            <TextBlock Grid.Row="0" Grid.Column="2" Text="对应列车"/>
-            <TextBlock Grid.Row="0" Grid.Column="4" Text="总能耗"/>
-            <TextBlock Grid.Row="1" Grid.Column="0" Text="总延迟时间" />
-            <TextBlock Grid.Row="1" Grid.Column="2" Text="线路清空时间"/>
-            <TextBlock Grid.Row="1" Grid.Column="4" Text="其他" />
-            <TextBox Grid.Row="0" Grid.Column="1" x:Name="BiggestDelayTimeTextbox"/>
-            <TextBox Grid.Row="0" Grid.Column="3" x:Name="ExactTrainTextbox"/>
-            <TextBox Grid.Row="0" Grid.Column="5" x:Name="TotalFuelTextbox"/>
-            <TextBox Grid.Row="1" Grid.Column="1" x:Name="TotalDelayTimeTextbox"/>
-            <TextBox Grid.Row="1" Grid.Column="3" x:Name="LineCleanTimeTextbox"/>
-            <TextBox Grid.Row="1" Grid.Column="5" x:Name="OtherTextbox"/>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="最大延迟时间" FontWeight="Bold" FontFamily= "Times New Roman"/>
+            <TextBlock Grid.Row="0" Grid.Column="2" Text="对应列车" FontWeight="Bold" />
+            <TextBlock Grid.Row="0" Grid.Column="4" Text="总能耗" FontWeight="Bold" />
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="总延迟时间" FontWeight="Bold"/>
+            <TextBlock Grid.Row="1" Grid.Column="2" Text="线路清空时间" FontWeight="Bold"/>
+            <TextBlock Grid.Row="1" Grid.Column="4" Text="其他" FontWeight="Bold"/>
+            <TextBox Grid.Row="0" Grid.Column="1" x:Name="BiggestDelayTimeTextbox" FontWeight="Bold"/>
+            <TextBox Grid.Row="0" Grid.Column="3" x:Name="ExactTrainTextbox" FontWeight="Bold"/>
+            <TextBox Grid.Row="0" Grid.Column="5" x:Name="TotalFuelTextbox" FontWeight="Bold"/>
+            <TextBox Grid.Row="1" Grid.Column="1" x:Name="TotalDelayTimeTextbox" FontWeight="Bold"/>
+            <TextBox Grid.Row="1" Grid.Column="3" x:Name="LineCleanTimeTextbox" FontWeight="Bold"/>
+            <TextBox Grid.Row="1" Grid.Column="5" x:Name="OtherTextbox" FontWeight="Bold"/>
         </Grid>
         <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" Margin="2">
             <CheckBox>列车1</CheckBox>
