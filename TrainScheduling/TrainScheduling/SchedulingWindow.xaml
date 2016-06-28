@@ -17,6 +17,15 @@
             <Setter Property="MinWidth" Value="60px" />
             <Setter Property="Height" Value="25px" />
         </Style>
+        <Style TargetType="{x:Type TextBlock}">
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="2px" />
+        </Style>
+        <Style TargetType="{x:Type TextBox}">
+            <Setter Property="MaxWidth" Value="170px"/>
+            <Setter Property="Margin" Value="2px"/>
+        </Style>
     </Window.Resources>
     <Grid Margin="20px">
         <Grid.ColumnDefinitions>
