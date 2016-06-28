@@ -6,6 +6,13 @@
         xmlns:local="clr-namespace:TrainScheduling"
         mc:Ignorable="d"
         Title="SchedulingWindow" Height="500" Width="768">
+    <Window.Resources>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Margin" Value="2px" />
+            <Setter Property="MinWidth" Value="60px" />
+            <Setter Property="Height" Value="25px" />
+        </Style>
+    </Window.Resources>
     <Grid Margin="20px">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="4*"/>
@@ -17,19 +24,18 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-        <Border BorderThickness="0 1.5 0 1.5" BorderBrush="Gray" Grid.ColumnSpan="2"/>
-        <Border BorderThickness="2 2 0 2" BorderBrush="Gray" Grid.Row="1" Grid.Column="2"/>
-        <Border BorderThickness="0 2 0 2" BorderBrush="Gray" Grid.Row="2" Grid.ColumnSpan="2"/>
-        
-        <WrapPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="2">
-            <Button x:Name="FileButton" Content="文件" Width="50px" />
-            <Button x:Name="EditButton" Content="编辑" Width="50px" />
-            <Button x:Name="ViewButton" Content="查看" Width="50px" />
-            <Button x:Name="ParameterSettingButton" Content="列车路网参数设置" Width="50px" />
-            <Button x:Name="AlgsEditButton" Content="编制算法" Width="50px" />
-            <Button x:Name="PrintButton" Content="打印" Width="50px" />
-            <Button x:Name="HelpButton" Content="帮助" Width="50px" />
-            <Button x:Name="ShowChosenLineButton" Content="选择路线展示" Width="50px" />
+        <Border BorderThickness="0 2 0 2" BorderBrush="Gray" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"/>
+        <Border BorderThickness="2 0 0 0" BorderBrush="Gray" Grid.Row="1"  Grid.Column="2"/>
+
+        <WrapPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="2" Orientation="Horizontal">
+            <Button x:Name="FileButton" Content="文件" />
+            <Button x:Name="EditButton" Content="编辑"/>
+            <Button x:Name="ViewButton" Content="查看" />
+            <Button x:Name="ParameterSettingButton" Content="列车路网参数设置"  />
+            <Button x:Name="AlgsEditButton" Content="编制算法" />
+            <Button x:Name="PrintButton" Content="打印" />
+            <Button x:Name="HelpButton" Content="帮助" />
+            <Button x:Name="ShowChosenLineButton" Content="选择路线展示" />
             <Image x:Name="Sch_win_image_title" Source="Resources/title.png" Width="100px" Stretch="Fill"></Image>            
         </WrapPanel>
 
