@@ -11,13 +11,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using MahApps.Metro.Controls;
 
 namespace TrainScheduling
 {
     /// <summary>
     /// Interaction logic for SchedulingWindow.xaml
     /// </summary>
-    public partial class SchedulingWindow : Window
+    public partial class SchedulingWindow : MetroWindow
     {
         public SchedulingWindow()
         {

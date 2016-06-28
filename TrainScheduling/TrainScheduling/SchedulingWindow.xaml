@@ -1,11 +1,16 @@
-﻿<Window x:Class="TrainScheduling.SchedulingWindow"
+﻿<Controls:MetroWindow x:Class="TrainScheduling.SchedulingWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TrainScheduling"
+	    xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
         mc:Ignorable="d"
-        Title="SchedulingWindow" Height="500" Width="768">
+        Title="SchedulingWindow" Height="500" Width="768"
+        BorderThickness="0" 
+        GlowBrush="Black"
+        ResizeMode="CanResizeWithGrip"
+        WindowTransitionsEnabled="False">
     <Window.Resources>
         <Style TargetType="{x:Type Button}">
             <Setter Property="Margin" Value="2px" />
@@ -36,7 +41,7 @@
             <Button x:Name="PrintButton" Content="打印" />
             <Button x:Name="HelpButton" Content="帮助" />
             <Button x:Name="ShowChosenLineButton" Content="选择路线展示" />
-            <Image x:Name="Sch_win_image_title" Source="Resources/title.png" Width="100px" Stretch="Fill"></Image>            
+            <Image x:Name="Sch_win_image_title" Source="Resources/title.png" Width="100px" Stretch="Fill"></Image>
         </WrapPanel>
 
         <WrapPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="1" Margin="10">
@@ -76,4 +81,4 @@
             <CheckBox>列车4</CheckBox>
         </StackPanel>
     </Grid>
-</Window>
+</Controls:MetroWindow>
