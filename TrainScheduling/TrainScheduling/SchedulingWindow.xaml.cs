@@ -40,31 +40,50 @@ namespace TrainScheduling
             GridSchWinTimeSpace.Children.Clear();
             var H = CanvasTimetableTimeSpace.Height; var W = CanvasTimetableTimeSpace.Width;
             //origin position; left corner
-            int x_origin = 20; int y_origin = 0;
+            int x_origin = 0; double y_origin = 0;
             // CanvasTimetableTimeSpace.
             var myRectangle = new Rectangle();
             myRectangle.StrokeThickness = 1.5;
             myRectangle.Stroke = Brushes.Green;
             myRectangle.Width = W; myRectangle.Height = H;
+            myRectangle.HorizontalAlignment = HorizontalAlignment.Left;
+            myRectangle.VerticalAlignment = VerticalAlignment.Top;
             GridSchWinTimeSpace.Children.Add(myRectangle);
-
+            
             //get 分格信息 合理划分 W, 1440 分钟
-            int fenge = 30;
+            int fenge = 120;
             int totalFenge = 1440; int _num_time_line = (int)totalFenge / fenge; double timeInterval = W / _num_time_line;
+            double stationInterval = H / _num_time_line;
             for (int i = 0; i < _num_time_line; i++)
             {
                 var x1 = x_origin + i * timeInterval; var x2 = x_origin + i * timeInterval;
-                var y1 = y_origin; var y2 = H;
+                var y1 = y_origin; var y2 = y_origin + H;
                 var myLine = new Line();
                 myLine.Stroke = System.Windows.Media.Brushes.Green;
                 myLine.X1 = x1;
                 myLine.X2 = x2;
                 myLine.Y1 = y1;
                 myLine.Y2 = y2;
+
+                myLine.Y2 = H;
                 myLine.HorizontalAlignment = HorizontalAlignment.Left;
-                myLine.VerticalAlignment = VerticalAlignment.Center;
+                myLine.VerticalAlignment = VerticalAlignment.Top;
                 myLine.StrokeThickness = 0.5;
                 GridSchWinTimeSpace.Children.Add(myLine);
+
+                var a1 = x_origin; var a2 = x_origin + W;
+                var b1 = y_origin + i * stationInterval; var b2 = y_origin + i * stationInterval;
+                var mylinestation = new Line();
+                mylinestation.Stroke = System.Windows.Media.Brushes.Green;
+                mylinestation.X1 = a1;
+                mylinestation.X2 = a2;
+                mylinestation.Y2 = b1;
+                mylinestation.Y1 = b2;
+
+                mylinestation.HorizontalAlignment = HorizontalAlignment.Left;
+                mylinestation.VerticalAlignment = VerticalAlignment.Top;
+                mylinestation.StrokeThickness = 0.5;
+                GridSchWinTimeSpace.Children.Add(mylinestation);
             }
 
             List<TextBlock> LineName = new List<TextBlock>();
@@ -89,10 +108,12 @@ namespace TrainScheduling
         {
             TextBlock textBlock = new TextBlock();
             textBlock.Text = text;
-            Canvas.SetLeft(textBlock, x1);
-            Canvas.SetTop(textBlock, y1);
-            
+            //Canvas.SetLeft(textBlock, x1);
+            //Canvas.SetTop(textBlock, y1);
+
             return textBlock;
         }
+
+
     }
 }

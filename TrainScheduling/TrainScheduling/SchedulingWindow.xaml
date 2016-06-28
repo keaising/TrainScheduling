@@ -60,7 +60,7 @@
             <Image x:Name="Sch_win_image_title" Source="Resources/title.png" Width="100px" Stretch="Fill"></Image>
         </WrapPanel>
 
-        <Grid x:Name="GridSchWinTimeSpace" Grid.Row="1" Grid.Column="0" Margin="10 20 10 20" >
+        <Grid x:Name="GridSchWinTimeSpace" Grid.Row="1" Grid.Column="0" Margin="30 30 10 20" >
             <Canvas x:Name="CanvasTimetableTimeSpace" Width="520" Height = "280" HorizontalAlignment="Center" VerticalAlignment="Center" 
                         Margin="0" Initialized="CanvasTimetableTimeSpace_Initialized" RenderTransformOrigin="0.5,0.5" >
                               <!-- Draws a diagonal line from (10,10) to (50,50). -->
@@ -97,7 +97,7 @@
             <CheckBox>列车1</CheckBox>
             <CheckBox>列车2</CheckBox>
             <CheckBox>列车3</CheckBox>
-            <CheckBox>列车4</CheckBox>
+            <CheckBox>列车4</CheckBox>           
         </StackPanel>
     </Grid>
 </Controls:MetroWindow>
