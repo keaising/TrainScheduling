@@ -60,9 +60,12 @@
             <Image x:Name="Sch_win_image_title" Source="Resources/title.png" Width="100px" Stretch="Fill"></Image>
         </WrapPanel>
 
-        <WrapPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="1" Margin="10">
-            <Image x:Name="Sch_win_image_timetable" Source="Resources/timetable.png"  Stretch="Fill"></Image>
-        </WrapPanel>
+        <Grid x:Name="GridSchWinTimeSpace" Grid.Row="1" Grid.Column="0" Margin="10 20 10 20" >
+            <Canvas x:Name="CanvasTimetableTimeSpace" Width="520" Height = "280" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                        Margin="0" Initialized="CanvasTimetableTimeSpace_Initialized" RenderTransformOrigin="0.5,0.5" >
+                              <!-- Draws a diagonal line from (10,10) to (50,50). -->
+            </Canvas>
+        </Grid>
 
         <Grid Grid.Row="2" Grid.Column="0" Margin="0 10 0 0">
             <Grid.ColumnDefinitions>
