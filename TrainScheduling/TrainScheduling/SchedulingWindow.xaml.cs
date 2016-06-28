@@ -24,15 +24,6 @@ namespace TrainScheduling
         public SchedulingWindow()
         {
             InitializeComponent();
-            test(ref a);
-            BiggestDelayTimeTextbox.Text = a.ToString();
-        }
-
-        int a = 0;
-
-        void test(ref int b)
-        {
-            b = 2;
         }
 
         private void CanvasTimetableTimeSpace_Initialized(object sender, EventArgs e)
@@ -68,7 +59,10 @@ namespace TrainScheduling
             }
 
             List<TextBlock> LineName = new List<TextBlock>();
-            List<string> strName = new List<string>(); strName.Add("京"); strName.Add("沪"); strName.Add("线");
+            List<string> strName = new List<string>();
+            strName.Add("京");
+            strName.Add("沪");
+            strName.Add("线");
             //for (int k = 0; k < 3; k++)
             //{
             //    TextBlock textBlock = text(200, k * 100, strName[k]);
@@ -91,7 +85,6 @@ namespace TrainScheduling
             textBlock.Text = text;
             Canvas.SetLeft(textBlock, x1);
             Canvas.SetTop(textBlock, y1);
-            
             return textBlock;
         }
     }
