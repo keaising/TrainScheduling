@@ -7,8 +7,8 @@
 	    xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
         mc:Ignorable="d"
         Title="SchedulingWindow" Height="500" Width="768"
-        BorderThickness="0" 
-        GlowBrush="Black"
+        BorderThickness="1" 
+        GlowBrush="{DynamicResource AccentColorBrush}"
         ResizeMode="CanResizeWithGrip"
         WindowTransitionsEnabled="False">
     <Window.Resources>
