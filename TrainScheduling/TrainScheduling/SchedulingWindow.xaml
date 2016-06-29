@@ -53,10 +53,12 @@
             <Button x:Name="EditButton" Content="编辑"  />
             <Button x:Name="ViewButton" Content="查看"  />
             <Button x:Name="ParameterSettingButton" Content="列车路网参数设置"  />
+            <Button x:Name="DataBaseButton" Content="数据库"  />
             <Button x:Name="AlgsEditButton" Content="编制算法" />
             <Button x:Name="PrintButton" Content="打印"  />
             <Button x:Name="HelpButton" Content="帮助"  />
             <Button x:Name="ShowChosenLineButton" Content="选择路线展示" />
+            <Button x:Name="DevideButton" Content="分格" />
             <Image x:Name="Sch_win_image_title" Source="Resources/title.png" Width="100px" Stretch="Fill"></Image>
         </WrapPanel>
 
