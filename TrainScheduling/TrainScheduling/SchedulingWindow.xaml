@@ -27,7 +27,7 @@
             <Setter Property="Margin" Value="1px"/>
         </Style>
     </Window.Resources>
-    <Grid Margin="20px">
+    <Grid Margin="20px" >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="4*"/>
             <ColumnDefinition Width="5px"/>
@@ -52,7 +52,7 @@
             <Button x:Name="FileButton" Content="文件"  />
             <Button x:Name="EditButton" Content="编辑"  />
             <Button x:Name="ViewButton" Content="查看"  />
-            <Button x:Name="ParameterSettingButton" Content="列车路网参数设置"  />
+            <Button x:Name="ParameterSettingButton" Content="列车路网参数设置" Click="ParameterSettingButton_Click"  />
             <Button x:Name="DataBaseButton" Content="数据库"  />
             <Button x:Name="AlgsEditButton" Content="编制算法" />
             <Button x:Name="PrintButton" Content="打印"  />
@@ -62,10 +62,13 @@
             <Image x:Name="Sch_win_image_title" Source="Resources/title.png" Width="100px" Stretch="Fill"></Image>
         </WrapPanel>
 
-        <Grid x:Name="GridSchWinTimeSpace" Grid.Row="1" Grid.Column="0" Margin="30 30 10 20" >
-            <Canvas x:Name="CanvasTimetableTimeSpace" Width="520" Height = "280" HorizontalAlignment="Center" VerticalAlignment="Center" 
+        <Grid x:Name="GridSchWinTimeSpace" Grid.Row="1" Grid.Column="0" Margin="30 30 10 20" >  <!--   Initialized="GridSchWinTimeSpace_Initialized" >-->
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" Width="520" Height="250">
+                <StackPanel Name="stack_GridTimetableTimespace" />
+            </ScrollViewer>
+             <Canvas x:Name="CanvasTimetableTimeSpace" Width="520" Height = "280" HorizontalAlignment="Center" VerticalAlignment="Center" 
                         Margin="0" Initialized="CanvasTimetableTimeSpace_Initialized" RenderTransformOrigin="0.5,0.5" >
-                              <!-- Draws a diagonal line from (10,10) to (50,50). -->
+                              <!--   Draws a diagonal line from (10,10) to (50,50).  -->
             </Canvas>
         </Grid>
 
