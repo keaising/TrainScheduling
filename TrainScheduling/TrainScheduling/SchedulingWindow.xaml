@@ -27,7 +27,7 @@
             <Setter Property="Margin" Value="1px"/>
         </Style>
     </Window.Resources>
-    <Grid Margin="20px" >
+    <Grid Margin="20px" x:Name="root">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="4*"/>
             <ColumnDefinition Width="5px"/>

@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using MahApps.Metro.Controls;
 using System.Globalization;
+using TrainScheduling.Helper;
 
 namespace TrainScheduling
 {
@@ -24,15 +25,6 @@ namespace TrainScheduling
         public SchedulingWindow()
         {
             InitializeComponent();
-            test(ref a);
-            BiggestDelayTimeTextbox.Text = a.ToString();
-        }
-
-        int a = 0;
-
-        void test(ref int b)
-        {
-            b = 2000;
         }
 
         private void ParameterSettingButton_Click(object sender, RoutedEventArgs e)
@@ -40,7 +32,9 @@ namespace TrainScheduling
             //根据grid的划分，合理设计原点，保证时间坐标对齐，stationname 对齐
             GridSchWinTimetable.Children.Clear();
             // get H and W of grid
-            double H = 200.0, W = 400.0;
+            //double H = 200.0, W = 400.0;
+            var rootGrid = GridSchWinTimetable.FindParentGridByName("root");
+            double H = rootGrid.ActualHeight, W = rootGrid.ActualWidth;
             //get 分格信息 合理划分 W, 1440 分钟
             int TimeInteval = 120; int NumSta = 3; double RouteLength = 1100; //(in km)
             //number of time lines displayed and the time interval
