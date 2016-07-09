@@ -10,7 +10,7 @@
         BorderThickness="1" 
         GlowBrush="{DynamicResource AccentColorBrush}"
         ResizeMode="CanResizeWithGrip"
-        WindowTransitionsEnabled="False">
+        WindowTransitionsEnabled="False" SizeChanged="MetroWindow_SizeChanged">
     <Window.Resources>
         <Style TargetType="{x:Type Button}">
             <Setter Property="Margin" Value="2px" />
@@ -82,7 +82,7 @@
                 <Grid x:Name="GridSchWinStationName" Grid.Row="0" Grid.Column="1" Margin="0 0 2 0">
                 </Grid>
             </Grid>
-            <Grid x:Name="GridSchWinTimetable" Grid.Row="0" Grid.Column="1" Margin="0 0 0 0">
+            <Grid x:Name="GridSchWinTimetable" Grid.Row="0" Grid.Column="1" Margin="0 0 0 0" >
             </Grid>
             <Grid x:Name="GridSchWinTimeIndex" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"  Margin="0 0 0 0">
             </Grid>

@@ -29,12 +29,27 @@ namespace TrainScheduling
 
         private void ParameterSettingButton_Click(object sender, RoutedEventArgs e)
         {
+            BasicTimetable(); initialized = true;
+        }
+
+        bool initialized = false;
+
+        //draw station name, line span et al. 
+        private void BasicTimetable()
+        {
             //根据grid的划分，合理设计原点，保证时间坐标对齐，stationname 对齐
             GridSchWinTimetable.Children.Clear();
-            // get H and W of grid
-            //double H = 200.0, W = 400.0;
-            var rootGrid = GridSchWinTimetable.FindParentGridByName("root");
-            double H = rootGrid.ActualHeight, W = rootGrid.ActualWidth;
+            GridSchWinTimeIndex.Children.Clear();
+            GridSchWinStationName.Children.Clear();
+            GridSchWinLineName.Children.Clear();
+            
+           // get H and W of grid
+           //double H = 200.0, W = 400.0;
+           var rootGrid = GridSchWinTimetable.FindParentGridByName("root");
+
+            // double H = rootGrid.ActualHeight, W = rootGrid.ActualWidth;
+
+            double H = GridSchWinTimetable.ActualHeight; double W = GridSchWinTimetable.ActualWidth;
             //get 分格信息 合理划分 W, 1440 分钟
             int TimeInteval = 120; int NumSta = 3; double RouteLength = 1100; //(in km)
             //number of time lines displayed and the time interval
@@ -43,7 +58,7 @@ namespace TrainScheduling
 
             //origin position; left corner
             //double x_origin = (W / _num_time_line) * 0.5; double y_origin = (H / NumSta) * 0.5;
-            double x_origin = 0; double y_origin = (H / NumSta) * 0.5;
+            double x_origin = 0; double y_origin = 0;// (H / NumSta) * 0.5;
             // CanvasTimetableTimeSpace.
             var myRectangle = new Rectangle();
             myRectangle.StrokeThickness = 1.5;
@@ -141,15 +156,16 @@ namespace TrainScheduling
             //draw lineIndex
             for (int i = 0; i <= _num_time_span + 1; i++)
             {
-                ColumnDefinition coldef = new ColumnDefinition();//创建行布局对向
+                ColumnDefinition coldef = new ColumnDefinition();//创建列布局对向
                 GridSchWinTimeIndex.ColumnDefinitions.Add(coldef);
                 TextBlock TextBlockaTimeSpanName = new TextBlock();
                 //get timespan span
                 var timeinterval = 1440.0 / _num_time_span;
-                var timespan = W / (_num_time_span + 0.5);
-                // var x = GridSchWinTimeIndex.Width;
-                if (i == 0) TextBlockaTimeSpanName.Width = W / 6 - timespan / 2; //6(n)是画布相对站名部分宽度的比例 6:1，若果布局变化，这里需要调整: w/n - 1/2*(w/(_num_time_line+0.5))
-                else TextBlockaTimeSpanName.Width = timespan;
+                var timespan = W / (_num_time_span + 0.5); var timespan2 = W / _num_time_span;
+
+                var sb = new SolidColorBrush(Colors.Red);
+                if (i == 0) TextBlockaTimeSpanName.Width = W / 6;// - timespan/2; //6(n)是画布相对站名部分宽度的比例 6:1，若果布局变化，这里需要调整: w/n - 1/2*(w/(_num_time_line+0.5))
+                else TextBlockaTimeSpanName.Width = timespan2;
                 if (i > 0)
                 {
                     var cur_time = (double)(i - 1) * timeinterval;
@@ -157,38 +173,46 @@ namespace TrainScheduling
                     var hour = cur_time == 1440 ? "24" : string.Format("{0:hh}", ts);
                     var minute = string.Format("{0:mm}", ts);
                     TextBlockaTimeSpanName.Text = hour + ":" + minute;
+                    TextBlockaTimeSpanName.Background = sb;
 
                     //get font size
                     int fontsize = 12; TextBlockaTimeSpanName.FontSize = fontsize;
                     Color color = new Color(); color.R = 55; color.G = 0; color.B = 255; color.A = 255;
                     TextBlockaTimeSpanName.Foreground = new SolidColorBrush(color);
                     TextBlockaTimeSpanName.FontFamily = new FontFamily("Times New Roman");
+                    TextBlockaTimeSpanName.TextAlignment = TextAlignment.Center;
                     TextBlockaTimeSpanName.VerticalAlignment = VerticalAlignment.Center;
+                    TextBlockaTimeSpanName.HorizontalAlignment = HorizontalAlignment.Center;
                     Grid.SetColumn(TextBlockaTimeSpanName, i);
                     TextBlockaTimeSpanName.FontStretch = FontStretches.UltraCondensed;//87.5%，紧缩或加宽的程度
-                    GridSchWinTimeIndex.Children.Add(TextBlockaTimeSpanName);
+                    GridSchWinTimeIndex.Children.Add(TextBlockaTimeSpanName);                    
                 }
+                else
+                {
+                    var testRectangle = new Rectangle();
+                    testRectangle.StrokeThickness = 1.5;
+                    testRectangle.Stroke = Brushes.Green;
+                    testRectangle.Width = TextBlockaTimeSpanName.Width; testRectangle.Height = 20;
+                    testRectangle.HorizontalAlignment = HorizontalAlignment.Left;
+                    testRectangle.VerticalAlignment = VerticalAlignment.Top;                    
+                    GridSchWinTimeIndex.Children.Add(testRectangle);
+                }                
+            }
+        }
 
-                //ColumnDefinition coldef = new ColumnDefinition();//创建行布局对向
-                //GridSchWinTimeIndex.ColumnDefinitions.Add(coldef);
-                //TextBlock TextBlockaTimeSpanName = new TextBlock();
-                ////get timespan span
-                //var timeinterval = 1440 / _num_time_line;
-                //var cur_time = (double)i * timeinterval;
-                //TimeSpan ts = TimeSpan.FromMinutes(cur_time);
-                //var hour = cur_time == 1440 ? "24" : string.Format("{0:hh}", ts);
-                //var minute = string.Format("{0:mm}", ts);
-                //TextBlockaTimeSpanName.Text = hour + ":" + minute;
+        private void MetroWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (initialized)
+            {
+                var testRectangle = new Rectangle();
+                testRectangle.StrokeThickness = 1.5;
+                testRectangle.Stroke = Brushes.Green;
+                testRectangle.Width = 50; testRectangle.Height = 20;
+                testRectangle.HorizontalAlignment = HorizontalAlignment.Left;
+                testRectangle.VerticalAlignment = VerticalAlignment.Top;
+                GridSchWinTimeIndex.Children.Add(testRectangle);
 
-                ////get font size
-                //int fontsize = 12; TextBlockaTimeSpanName.FontSize = fontsize;
-                //Color color = new Color(); color.R = 55; color.G = 0; color.B = 255; color.A = 255;
-                //TextBlockaTimeSpanName.Foreground = new SolidColorBrush(color);
-                //TextBlockaTimeSpanName.FontFamily = new FontFamily("Times New Roman");
-                //TextBlockaTimeSpanName.VerticalAlignment = VerticalAlignment.Center;
-                //Grid.SetColumn(TextBlockaTimeSpanName, i);
-                //TextBlockaTimeSpanName.FontStretch = FontStretches.UltraCondensed;//87.5%，紧缩或加宽的程度
-                //GridSchWinTimeIndex.Children.Add(TextBlockaTimeSpanName);
+                BasicTimetable();
             }
         }
     }
