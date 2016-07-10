@@ -52,16 +52,22 @@ namespace TrainScheduling
 
             // double H = rootGrid.ActualHeight, W = rootGrid.ActualWidth;
 
-            double H = GridSchWinTimetable.ActualHeight; double W = GridSchWinTimetable.ActualWidth;
+            double H = GridSchWinTimetable.ActualHeight;
+            double W = GridSchWinTimetable.ActualWidth;
             //get 分格信息 合理划分 W, 1440 分钟
-            int TimeInteval = 120; int NumSta = 3; double RouteLength = 1100; //(in km)
+            int TimeInteval = 120;
+            int NumSta = 3;
+            double RouteLength = 1100; //(in km)
             //number of time lines displayed and the time interval
-            int totalFenge = 1440; int _num_time_span = (int)totalFenge / TimeInteval;
-            double TimeSpanInUnitMinute = (double)H / 1440, StationSpanInUnitKm = (double)W / RouteLength;
+            int totalFenge = 1440;
+            int _num_time_span = (int)totalFenge / TimeInteval;
+            double TimeSpanInUnitMinute = (double)H / 1440;
+            double StationSpanInUnitKm = (double)W / RouteLength;
 
             //origin position; left corner
             //double x_origin = (W / _num_time_line) * 0.5; double y_origin = (H / NumSta) * 0.5;
-            double x_origin = 0; double y_origin = 0;// (H / NumSta) * 0.5;
+            double x_origin = 0;
+            double y_origin = 0;// (H / NumSta) * 0.5;
             // CanvasTimetableTimeSpace.
             var myRectangle = new Rectangle();
             myRectangle.StrokeThickness = 1.5;
@@ -71,7 +77,8 @@ namespace TrainScheduling
             myRectangle.VerticalAlignment = VerticalAlignment.Top;
             //GridSchWinTimetable.Children.Add(myRectangle);
 
-            double timeInterval = (double)(W / _num_time_span); double stationInterval = (double)(H / NumSta);
+            double timeInterval = (double)(W / _num_time_span);
+            double stationInterval = (double)(H / NumSta);
             //draw time line
             for (int i = 0; i <= _num_time_span; i++)
             {
@@ -105,7 +112,10 @@ namespace TrainScheduling
                 GridSchWinTimetable.Children.Add(mylinestation);
             }
 
-            List<string> strName = new List<string>(); strName.Add("京"); strName.Add("沪"); strName.Add("线");
+            List<string> strName = new List<string>();
+            strName.Add("京");
+            strName.Add("沪");
+            strName.Add("线");
             ////display railway line name
             for (int i = 0; i < strName.Count; i++)
             {
@@ -120,7 +130,11 @@ namespace TrainScheduling
 
                 //get font size
                 int fontsize = 14; TextBlockStationName.FontSize = fontsize;
-                Color color = new Color(); color.R = 155; color.G = 0; color.B = 255; color.A = 255;
+                Color color = new Color();
+                color.R = 155;
+                color.G = 0;
+                color.B = 255;
+                color.A = 255;
                 TextBlockStationName.Foreground = new SolidColorBrush(color);
                 TextBlockStationName.FontFamily = new FontFamily("Times New Roman");
                 TextBlockStationName.VerticalAlignment = VerticalAlignment.Center;
@@ -164,11 +178,14 @@ namespace TrainScheduling
                 TextBlock TextBlockaTimeSpanName = new TextBlock();
                 //get timespan span
                 var timeinterval = 1440.0 / _num_time_span;
-                var timespan = W / (_num_time_span + 0.5); var timespan2 = W / _num_time_span;
+                var timespan = W / (_num_time_span + 0.5);
+                var timespan2 = W / _num_time_span;
 
                 var sb = new SolidColorBrush(Colors.Red);
-                if (i == 0) TextBlockaTimeSpanName.Width = W / 6;// - timespan/2; //6(n)是画布相对站名部分宽度的比例 6:1，若果布局变化，这里需要调整: w/n - 1/2*(w/(_num_time_line+0.5))
-                else TextBlockaTimeSpanName.Width = timespan2;
+                if (i == 0)
+                    TextBlockaTimeSpanName.Width = W / 12;// - timespan/2; //6(n)是画布相对站名部分宽度的比例 6:1，若果布局变化，这里需要调整: w/n - 1/2*(w/(_num_time_line+0.5))
+                else
+                    TextBlockaTimeSpanName.Width = timespan2;
                 if (i > 0)
                 {
                     var cur_time = (double)(i - 1) * timeinterval;
@@ -180,10 +197,16 @@ namespace TrainScheduling
 
                     //get font size
                     int fontsize = 12; TextBlockaTimeSpanName.FontSize = fontsize;
-                    Color color = new Color(); color.R = 55; color.G = 0; color.B = 255; color.A = 255;
+                    Color color = new Color();
+                    color.R = 55;
+                    color.G = 0;
+                    color.B = 255;
+                    color.A = 255;
                     TextBlockaTimeSpanName.Foreground = new SolidColorBrush(color);
                     TextBlockaTimeSpanName.FontFamily = new FontFamily("Times New Roman");
                     TextBlockaTimeSpanName.TextAlignment = TextAlignment.Center;
+                    //设置每个textBlock的Margin
+                    TextBlockaTimeSpanName.Margin = new Thickness(0, 0, 0, 0);
                     TextBlockaTimeSpanName.VerticalAlignment = VerticalAlignment.Center;
                     TextBlockaTimeSpanName.HorizontalAlignment = HorizontalAlignment.Center;
                     Grid.SetColumn(TextBlockaTimeSpanName, i);
