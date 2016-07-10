@@ -9,7 +9,7 @@ using System.Windows.Media;
 
 namespace TrainScheduling.Helper
 {
-    public static class FindParent
+    public static class StaticHelper
     {
         /// <summary>
         /// 利用VisualTreeHelper寻找指定依赖对象的父级对象
@@ -64,6 +64,14 @@ namespace TrainScheduling.Helper
                 return new Grid();
             }
             return parent;
+        }
+
+        public static double SumFromTo(this List<double> list, int i, int j)
+        {
+            double sum = 0;
+            for (int k = i; k <= j; k++)
+                sum += list[k];
+            return sum;
         }
     }
 }
