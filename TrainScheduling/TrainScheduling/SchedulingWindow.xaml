@@ -10,7 +10,10 @@
         BorderThickness="1" 
         GlowBrush="{DynamicResource AccentColorBrush}"
         ResizeMode="CanResizeWithGrip"
-        WindowTransitionsEnabled="False" SizeChanged="MetroWindow_SizeChanged">
+        ShowTitleBar="True"
+        ShowIconOnTitleBar="True"
+        WindowTransitionsEnabled="False" 
+        SizeChanged="MetroWindow_SizeChanged">
     <Window.Resources>
         <Style TargetType="{x:Type Button}">
             <Setter Property="Margin" Value="2px" />
@@ -27,6 +30,15 @@
             <Setter Property="Margin" Value="1px"/>
         </Style>
     </Window.Resources>
+    <Controls:MetroWindow.RightWindowCommands>
+        <Controls:WindowCommands>
+            <Button x:Name="FileButton" Content="文件"  />
+            <Button x:Name="EditButton" Content="编辑"  />
+            <Button x:Name="ViewButton" Content="查看"  />
+            <Button x:Name="PrintButton" Content="打印"  />
+            <Button x:Name="HelpButton" Content="帮助"  />
+        </Controls:WindowCommands>
+    </Controls:MetroWindow.RightWindowCommands>
     <Grid Margin="20px" x:Name="root">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="4*"/>
@@ -49,14 +61,9 @@
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
             </WrapPanel.Resources>-->
-            <Button x:Name="FileButton" Content="文件"  />
-            <Button x:Name="EditButton" Content="编辑"  />
-            <Button x:Name="ViewButton" Content="查看"  />
             <Button x:Name="ParameterSettingButton" Content="列车路网参数设置" Click="ParameterSettingButton_Click"  />
             <Button x:Name="DataBaseButton" Content="数据库"  />
             <Button x:Name="AlgsEditButton" Content="编制算法" />
-            <Button x:Name="PrintButton" Content="打印"  />
-            <Button x:Name="HelpButton" Content="帮助"  />
             <Button x:Name="ShowChosenLineButton" Content="选择路线展示" />
             <Button x:Name="DevideButton" Content="分格" />
             <Image x:Name="Sch_win_image_title" Source="Resources/title.png" Width="100px" Stretch="Fill"></Image>
