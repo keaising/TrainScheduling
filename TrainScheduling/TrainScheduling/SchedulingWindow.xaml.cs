@@ -42,10 +42,13 @@ namespace TrainScheduling
             GridSchWinTimeIndex.Children.Clear();
             GridSchWinStationName.Children.Clear();
             GridSchWinLineName.Children.Clear();
-            
-           // get H and W of grid
-           //double H = 200.0, W = 400.0;
-           var rootGrid = GridSchWinTimetable.FindParentGridByName("root");
+            GridSchWinLineName.RowDefinitions.Clear();
+            GridSchWinTimeIndex.ColumnDefinitions.Clear();
+            GridSchWinStationName.RowDefinitions.Clear();
+
+        // get H and W of grid
+        //double H = 200.0, W = 400.0;
+        var rootGrid = GridSchWinTimetable.FindParentGridByName("root");
 
             // double H = rootGrid.ActualHeight, W = rootGrid.ActualWidth;
 
