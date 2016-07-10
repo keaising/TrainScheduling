@@ -270,7 +270,7 @@ namespace TrainScheduling.Model
             StreamReader[] stream_input_data = new StreamReader[3];
             var def_path = new Cdef_path();
             string defaultPath = def_path.def_path();
-            string inputdatapath = System.IO.Path.GetDirectoryName(@defaultPath + "\\Input_Data" + "\\");
+            string inputdatapath = System.IO.Path.GetDirectoryName(@defaultPath + "\\Data" + "\\");
             FileInfo[] input_data = new FileInfo[3]; //0-train; 2-station; 3-section
             FileStream[] file_data = new FileStream[3];
 
@@ -294,9 +294,14 @@ namespace TrainScheduling.Model
     {
         public string def_path()
         {
-            string defaultPath = System.IO.Directory.GetCurrentDirectory().ToString();//读取txt文件address
-            CParameter parameter = new CParameter();
-            DirectoryInfo FragmentInput = new DirectoryInfo(@defaultPath + "\\Input_Data");
+            //string defaultPath = System.IO.Directory.GetCurrentDirectory().ToString();//读取txt文件address
+            //CParameter parameter = new CParameter();
+            //DirectoryInfo FragmentInput = new DirectoryInfo(@defaultPath + "\\Input_Data");
+
+            string defaultPath = @"..\..\";
+
+            string path = @"..\..\Data";
+            DirectoryInfo FragmentInput = new DirectoryInfo(path);
             if (!FragmentInput.Exists)
             {
                 System.Console.WriteLine("There is no file Input_Data. Please create it! Press any key to exit . . . ");
