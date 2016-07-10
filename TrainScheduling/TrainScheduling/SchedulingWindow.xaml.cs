@@ -46,9 +46,9 @@ namespace TrainScheduling
             GridSchWinTimeIndex.ColumnDefinitions.Clear();
             GridSchWinStationName.RowDefinitions.Clear();
 
-        // get H and W of grid
-        //double H = 200.0, W = 400.0;
-        var rootGrid = GridSchWinTimetable.FindParentGridByName("root");
+            // get H and W of grid
+            //double H = 200.0, W = 400.0;
+            var rootGrid = GridSchWinTimetable.FindParentGridByName("root");
 
             // double H = rootGrid.ActualHeight, W = rootGrid.ActualWidth;
 
@@ -77,13 +77,14 @@ namespace TrainScheduling
             myRectangle.VerticalAlignment = VerticalAlignment.Top;
             //GridSchWinTimetable.Children.Add(myRectangle);
 
-            double timeInterval = (double)(W / _num_time_span);
+            double timeInterval = (double)(W / (_num_time_span + 0.5)); //空出右边一部分
+            double TimetableWidth = timeInterval * _num_time_span; //timetable所占用宽度
             double stationInterval = (double)(H / NumSta);
             //draw time line
             for (int i = 0; i <= _num_time_span; i++)
             {
                 var x1 = x_origin + i * timeInterval; var x2 = x_origin + i * timeInterval;
-                var y1 = y_origin; var y2 = y_origin + H;
+                var y1 = y_origin; var y2 = y_origin + H + 0.02 * H; //伸出的做为标识
                 var myLine = new Line();
                 myLine.Stroke = System.Windows.Media.Brushes.Green;
                 myLine.X1 = x1;
@@ -98,7 +99,7 @@ namespace TrainScheduling
             //draw station line
             for (int i = 0; i <= NumSta; i++)
             {
-                var a1 = x_origin; var a2 = x_origin + W;
+                var a1 = x_origin; var a2 = x_origin + TimetableWidth;
                 var b1 = y_origin + i * stationInterval; var b2 = y_origin + i * stationInterval;
                 var mylinestation = new Line();
                 mylinestation.Stroke = System.Windows.Media.Brushes.Green;
@@ -177,23 +178,27 @@ namespace TrainScheduling
                 GridSchWinTimeIndex.ColumnDefinitions.Add(coldef);
                 TextBlock TextBlockaTimeSpanName = new TextBlock();
                 //get timespan span
-                var timeinterval = 1440.0 / _num_time_span;
-                var timespan = W / (_num_time_span + 0.5);
-                var timespan2 = W / _num_time_span;
+                var TimeNumber = 1440.0 / _num_time_span;
 
                 var sb = new SolidColorBrush(Colors.Red);
                 if (i == 0)
-                    TextBlockaTimeSpanName.Width = W / 12;// - timespan/2; //6(n)是画布相对站名部分宽度的比例 6:1，若果布局变化，这里需要调整: w/n - 1/2*(w/(_num_time_line+0.5))
+                {
+                    TextBlockaTimeSpanName.Width = W / 6 - timeInterval / 2;
+                    coldef.Width = new GridLength(W / 6 - timeInterval / 2);
+                } //6(n)是画布相对站名部分宽度的比例 6:1，若果布局变化，这里需要调整: w/n - 1/2*(w/(_num_time_line+0.5))
                 else
-                    TextBlockaTimeSpanName.Width = timespan2;
+                {
+                    TextBlockaTimeSpanName.Width = timeInterval;
+                    coldef.Width = new GridLength(timeInterval);
+                }
                 if (i > 0)
                 {
-                    var cur_time = (double)(i - 1) * timeinterval;
+                    var cur_time = (double)(i - 1) * TimeNumber;
                     TimeSpan ts = TimeSpan.FromMinutes(cur_time);
                     var hour = cur_time == 1440 ? "24" : string.Format("{0:hh}", ts);
                     var minute = string.Format("{0:mm}", ts);
                     TextBlockaTimeSpanName.Text = hour + ":" + minute;
-                    TextBlockaTimeSpanName.Background = sb;
+                    //TextBlockaTimeSpanName.Background = sb;
 
                     //get font size
                     int fontsize = 12; TextBlockaTimeSpanName.FontSize = fontsize;
@@ -207,11 +212,11 @@ namespace TrainScheduling
                     TextBlockaTimeSpanName.TextAlignment = TextAlignment.Center;
                     //设置每个textBlock的Margin
                     TextBlockaTimeSpanName.Margin = new Thickness(0, 0, 0, 0);
-                    TextBlockaTimeSpanName.VerticalAlignment = VerticalAlignment.Center;
+                    TextBlockaTimeSpanName.VerticalAlignment = VerticalAlignment.Top;
                     TextBlockaTimeSpanName.HorizontalAlignment = HorizontalAlignment.Center;
                     Grid.SetColumn(TextBlockaTimeSpanName, i);
                     TextBlockaTimeSpanName.FontStretch = FontStretches.UltraCondensed;//87.5%，紧缩或加宽的程度
-                    GridSchWinTimeIndex.Children.Add(TextBlockaTimeSpanName);                    
+                    GridSchWinTimeIndex.Children.Add(TextBlockaTimeSpanName);
                 }
                 else
                 {
@@ -220,9 +225,9 @@ namespace TrainScheduling
                     testRectangle.Stroke = Brushes.Green;
                     testRectangle.Width = TextBlockaTimeSpanName.Width; testRectangle.Height = 20;
                     testRectangle.HorizontalAlignment = HorizontalAlignment.Left;
-                    testRectangle.VerticalAlignment = VerticalAlignment.Top;                    
-                    GridSchWinTimeIndex.Children.Add(testRectangle);
-                }                
+                    testRectangle.VerticalAlignment = VerticalAlignment.Top;
+                    //GridSchWinTimeIndex.Children.Add(testRectangle);
+                }
             }
         }
 
