@@ -46,40 +46,36 @@ namespace TrainScheduling
             GridSchWinTimeIndex.ColumnDefinitions.Clear();
             GridSchWinStationName.RowDefinitions.Clear();
 
-            // get H and W of grid
-            //double H = 200.0, W = 400.0;
+            // get H and W of grid          
             var rootGrid = GridSchWinTimetable.FindParentGridByName("root");
-
             // double H = rootGrid.ActualHeight, W = rootGrid.ActualWidth;
-
             double H = GridSchWinTimetable.ActualHeight;
             double W = GridSchWinTimetable.ActualWidth;
             //get 分格信息 合理划分 W, 1440 分钟
             int TimeInteval = 120;
             int NumSta = 3;
-            double RouteLength = 1100; //(in km)
+
+            //input section length; station name et al.  
+            List<string> StaName = new List<string>(); StaName.Add("北京南"); StaName.Add("蚌埠南"); StaName.Add("南京南"); StaName.Add("上海虹桥");
+            List<double> SectionLength = new List<double>();
+            SectionLength.Add(400); SectionLength.Add(200); SectionLength.Add(300);
+            double RouteLength = SectionLength.Sum(); //(in km)
+
             //number of time lines displayed and the time interval
             int totalFenge = 1440;
             int _num_time_span = (int)totalFenge / TimeInteval;
-            double TimeSpanInUnitMinute = (double)H / 1440;
-            double StationSpanInUnitKm = (double)W / RouteLength;
 
-            //origin position; left corner
-            //double x_origin = (W / _num_time_line) * 0.5; double y_origin = (H / NumSta) * 0.5;
-            double x_origin = 0;
-            double y_origin = 0;// (H / NumSta) * 0.5;
-            // CanvasTimetableTimeSpace.
-            var myRectangle = new Rectangle();
-            myRectangle.StrokeThickness = 1.5;
-            myRectangle.Stroke = Brushes.Green;
-            myRectangle.Width = W; myRectangle.Height = H;
-            myRectangle.HorizontalAlignment = HorizontalAlignment.Left;
-            myRectangle.VerticalAlignment = VerticalAlignment.Top;
-            //GridSchWinTimetable.Children.Add(myRectangle);
 
             double timeInterval = (double)(W / (_num_time_span + 0.5)); //空出右边一部分
             double TimetableWidth = timeInterval * _num_time_span; //timetable所占用宽度
-            double stationInterval = (double)(H / NumSta);
+            double stationInterval = (double)(H / (NumSta + 0.4)); //空出上边一部分
+            double TimetableHight = stationInterval * NumSta;
+            double TimeSpanInUnitMinute = (double)TimetableWidth / 1440.0;
+            double StationSpanInUnitKm = (double)TimetableHight / RouteLength;
+            //origin position; left corner
+            double x_origin = 0;
+            double y_origin = 0.4 * stationInterval;// (H / NumSta) * 0.5;
+
             //draw time line
             for (int i = 0; i <= _num_time_span; i++)
             {
@@ -99,8 +95,20 @@ namespace TrainScheduling
             //draw station line
             for (int i = 0; i <= NumSta; i++)
             {
-                var a1 = x_origin; var a2 = x_origin + TimetableWidth;
-                var b1 = y_origin + i * stationInterval; var b2 = y_origin + i * stationInterval;
+                var a1 = x_origin;
+                var a2 = x_origin + TimetableWidth;
+                double b1 = 0;
+                double b2 = 0;
+                if (i == 0)
+                {
+                    b1 = y_origin;
+                    b2 = y_origin;
+                }
+                else
+                {
+                    b1 = y_origin + SumList(SectionLength, 0, i - 1) * StationSpanInUnitKm;
+                    b2 = y_origin + SumList(SectionLength, 0, i - 1) * StationSpanInUnitKm;
+                }
                 var mylinestation = new Line();
                 mylinestation.Stroke = System.Windows.Media.Brushes.Green;
                 mylinestation.X1 = a1;
@@ -126,9 +134,6 @@ namespace TrainScheduling
                 //get station name
                 TextBlockStationName.Text = strName[i];
 
-                //根据车站数目和区间长度调整textblock的高度
-                //if(i==0) TextBlockStationName.Height = 100;
-
                 //get font size
                 int fontsize = 14; TextBlockStationName.FontSize = fontsize;
                 Color color = new Color();
@@ -145,7 +150,7 @@ namespace TrainScheduling
                 GridSchWinLineName.Children.Add(TextBlockStationName);
             }
 
-            List<string> StaName = new List<string>(); StaName.Add("北京南"); StaName.Add("蚌埠南"); StaName.Add("南京南"); StaName.Add("上海虹桥");
+
             ////display railway station name
             for (int i = 0; i < StaName.Count; i++)
             {
@@ -154,10 +159,13 @@ namespace TrainScheduling
                 TextBlock TextBlockStationName = new TextBlock();
                 //get station name
                 TextBlockStationName.Text = StaName[i];
+                TextBlockStationName.Margin = new Thickness(0, 0, 5, 0);
 
                 //根据车站数目和区间长度调整textblock的高度
-                if (i == 0) TextBlockStationName.Height = y_origin;
-                else TextBlockStationName.Height = stationInterval / 2;
+                if (i == 0)
+                    rowdef.Height = new GridLength(y_origin);
+                else
+                    rowdef.Height = new GridLength(SectionLength[i - 1] * StationSpanInUnitKm);
 
                 //get font size
                 //int fontsize = 12; TextBlockStationName.FontSize = fontsize;
@@ -169,9 +177,17 @@ namespace TrainScheduling
                 Grid.SetRow(TextBlockStationName, i);
                 TextBlockStationName.FontStretch = FontStretches.Medium;//100%，紧缩或加宽的程度
                 GridSchWinStationName.Children.Add(TextBlockStationName);
+
+                var testRectangle = new Rectangle();
+                testRectangle.StrokeThickness = 1.5;
+                testRectangle.Stroke = Brushes.Green;
+                testRectangle.Width = 20; testRectangle.Height = y_origin;
+                testRectangle.HorizontalAlignment = HorizontalAlignment.Left;
+                testRectangle.VerticalAlignment = VerticalAlignment.Top;
+                GridSchWinStationName.Children.Add(testRectangle);
             }
 
-            //draw lineIndex
+            //draw time line Index
             for (int i = 0; i <= _num_time_span + 1; i++)
             {
                 ColumnDefinition coldef = new ColumnDefinition();//创建列布局对向
@@ -211,7 +227,7 @@ namespace TrainScheduling
                     TextBlockaTimeSpanName.FontFamily = new FontFamily("Times New Roman");
                     TextBlockaTimeSpanName.TextAlignment = TextAlignment.Center;
                     //设置每个textBlock的Margin
-                    TextBlockaTimeSpanName.Margin = new Thickness(0, 0, 0, 0);
+                    TextBlockaTimeSpanName.Margin = new Thickness(0, 5, 0, 0);
                     TextBlockaTimeSpanName.VerticalAlignment = VerticalAlignment.Top;
                     TextBlockaTimeSpanName.HorizontalAlignment = HorizontalAlignment.Center;
                     Grid.SetColumn(TextBlockaTimeSpanName, i);
@@ -220,12 +236,12 @@ namespace TrainScheduling
                 }
                 else
                 {
-                    var testRectangle = new Rectangle();
-                    testRectangle.StrokeThickness = 1.5;
-                    testRectangle.Stroke = Brushes.Green;
-                    testRectangle.Width = TextBlockaTimeSpanName.Width; testRectangle.Height = 20;
-                    testRectangle.HorizontalAlignment = HorizontalAlignment.Left;
-                    testRectangle.VerticalAlignment = VerticalAlignment.Top;
+                    // var testRectangle = new Rectangle();
+                    //testRectangle.StrokeThickness = 1.5;
+                    //testRectangle.Stroke = Brushes.Green;
+                    //testRectangle.Width = TextBlockaTimeSpanName.Width; testRectangle.Height = 20;
+                    //testRectangle.HorizontalAlignment = HorizontalAlignment.Left;
+                    //testRectangle.VerticalAlignment = VerticalAlignment.Top;
                     //GridSchWinTimeIndex.Children.Add(testRectangle);
                 }
             }
@@ -245,6 +261,14 @@ namespace TrainScheduling
 
                 BasicTimetable();
             }
+        }
+
+        private double SumList(List<double> list, int i, int j)
+        {
+            double sum = 0;
+            for (int k = i; k <= j; k++)
+                sum += list[k];
+            return sum;
         }
     }
 }
