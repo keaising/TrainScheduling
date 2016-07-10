@@ -106,8 +106,8 @@ namespace TrainScheduling
                 }
                 else
                 {
-                    b1 = y_origin + SumList(SectionLength, 0, i - 1) * StationSpanInUnitKm;
-                    b2 = y_origin + SumList(SectionLength, 0, i - 1) * StationSpanInUnitKm;
+                    b1 = y_origin + SectionLength.SumFromTo(0, i - 1) * StationSpanInUnitKm;
+                    b2 = y_origin + SectionLength.SumFromTo(0, i - 1) * StationSpanInUnitKm;
                 }
                 var mylinestation = new Line();
                 mylinestation.Stroke = System.Windows.Media.Brushes.Green;
@@ -263,12 +263,6 @@ namespace TrainScheduling
             }
         }
 
-        private double SumList(List<double> list, int i, int j)
-        {
-            double sum = 0;
-            for (int k = i; k <= j; k++)
-                sum += list[k];
-            return sum;
-        }
+  
     }
 }
