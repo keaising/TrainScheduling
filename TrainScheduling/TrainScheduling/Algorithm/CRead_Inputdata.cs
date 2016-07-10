@@ -12,18 +12,9 @@ namespace TrainScheduling.Algorithm
     {
         public CRead_Inputdata()
         { }
-        public void CRead_Inputdata_return(StreamReader LB_input_train_data, StreamReader LB_input_station_data, StreamReader LB_input_section_data, List<Ctrain> train, List<Crailway_station> station, List<Crailway_section> section)
+        public void CRead_Inputdata_return()
         {
-            //Console.WriteLine("******Start to read input data******");
-            input_train_data(LB_input_train_data, train);
-            Console.WriteLine();
-            Console.WriteLine("****** Input TRAIN Data is Read Successfully ******");
-            input_network_data(LB_input_station_data, station);
-            Console.WriteLine();
-            Console.WriteLine("****** Input STATION Data is Read Successfully ******");
-            input_section_data(LB_input_section_data, section);
-            Console.WriteLine();
-            Console.WriteLine("****** Input SECTION Data is Read Successfully ******");
+            Console.WriteLine("CRead_Inputdata...");            
         }
 
         //read train data
@@ -67,7 +58,7 @@ namespace TrainScheduling.Algorithm
         }
 
         //read station data
-        public void input_network_data(StreamReader LB_input_station_data, List<Crailway_station> station)
+        public void input_station_data(StreamReader LB_input_station_data, List<Crailway_station> station)
         {
             string Input_data = null; int ROW = 0; string ss = "SPLIT";
             while ((Input_data = LB_input_station_data.ReadLine()) != null)

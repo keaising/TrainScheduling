@@ -862,7 +862,7 @@ namespace TrainScheduling.Algorithm
             INumVar[][][] xiDD = new INumVar[_ntrain][][];//, _ntrain, _nstation];
             INumVar[][][] xiAD = new INumVar[_ntrain][][];//, _ntrain, _nstation];
             INumVar[][][] xiDA = new INumVar[_ntrain][][];//, _ntrain, _nstation];            
-            //INumVar[][][] Myu = new INumVar[_ntrain][][]; //_nstation, station_capacity
+            INumVar[][][] Myu = new INumVar[_ntrain][][]; //_nstation, station_capacity
             INumVar[][][][] Omega = new INumVar[_ntrain][][][];//, _ntrain, _nstation, _nstation];
             NumVarType[] train_IntType = new NumVarType[_ntrain];
             for (int i = 0; i < _ntrain; i++)
@@ -917,16 +917,16 @@ namespace TrainScheduling.Algorithm
             }
 
             //myu
-            //for (int i = 0; i < _ntrain; i++)
-            //{
-            //    Myu[i] = new INumVar[_nstation][];
-            //    for (int k = 0; k < _nstation; k++)
-            //    {
-            //        Myu[i][k] = model.NumVarArray(Parameter.C_Station, lb_c, up_c, C_IntType);
-            //        for (int c = 0; c < Parameter.C_Station; c++)
-            //            Myu[i][k][c] = model.IntVar(0, 1);
-            //    }
-            //}
+            for (int i = 0; i < _ntrain; i++)
+            {
+                Myu[i] = new INumVar[_nstation][];
+                for (int k = 0; k < _nstation; k++)
+                {
+                    Myu[i][k] = model.NumVarArray(Parameter.C_Station, lb_c, up_c, C_IntType);
+                    for (int c = 0; c < Parameter.C_Station; c++)
+                        Myu[i][k][c] = model.IntVar(0, 1);
+                }
+            }
 
             //omega
             for (int i = 0; i < _ntrain; i++)
@@ -1058,23 +1058,23 @@ namespace TrainScheduling.Algorithm
                                 model.AddGe(Omega[i][j][k][n], 0);
 
             //Station capacity constraints            
-            //for (int i = 0; i < _ntrain; i++)
-            //    for (int k = 1; k < _nstation - 1; k++)
-            //    {
-            //        INumExpr SC = model.IntExpr();
-            //        for (int c = 0; c < Parameter.C_Station; c++)
-            //        { SC = model.Sum(SC, Myu[i][k][c]); }
-            //        model.AddEq(SC, 1);
-            //    }
-            //for (int i = 0; i < _ntrain; i++)
-            //    for (int j = 0; j < _ntrain; j++)
-            //        if (i != j)
-            //            for (int k = 1; k < _nstation - 1; k++)
-            //                for (int c = 0; c < Parameter.C_Station; c++)
-            //                    model.AddLe(model.Sum(D[i][k], Parameter.Hda),
-            //                        model.Sum(A[j][k], model.Prod(Max_int, model.Sum(1, model.Prod(-1, xiAA[i][j][k]))),
-            //                        model.Prod(Max_int, model.Sum(1, model.Prod(-1, Myu[i][k][c]))),
-            //                        model.Prod(Max_int, model.Sum(1, model.Prod(-1, Myu[j][k][c])))));
+            for (int i = 0; i < _ntrain; i++)
+                for (int k = 1; k < _nstation - 1; k++)
+                {
+                    INumExpr SC = model.IntExpr();
+                    for (int c = 0; c < Parameter.C_Station; c++)
+                    { SC = model.Sum(SC, Myu[i][k][c]); }
+                    model.AddEq(SC, 1);
+                }
+            for (int i = 0; i < _ntrain; i++)
+                for (int j = 0; j < _ntrain; j++)
+                    if (i != j)
+                        for (int k = 1; k < _nstation - 1; k++)
+                            for (int c = 0; c < Parameter.C_Station; c++)
+                                model.AddLe(model.Sum(D[i][k], Parameter.Hda),
+                                    model.Sum(A[j][k], model.Prod(Max_int, model.Sum(1, model.Prod(-1, xiAA[i][j][k]))),
+                                    model.Prod(Max_int, model.Sum(1, model.Prod(-1, Myu[i][k][c]))),
+                                    model.Prod(Max_int, model.Sum(1, model.Prod(-1, Myu[j][k][c])))));
 
             //Departure constraints
             for (int i = 0; i < _ntrain; i++)
@@ -1119,7 +1119,7 @@ namespace TrainScheduling.Algorithm
              */
             #endregion
 
-            double obj = 0.0;
+            double obj = 0.0, lower_bound = 0.0;
             double cplex_time_start = model.CplexTime;
             model.SetParam(Cplex.DoubleParam.TiLim, Parameter.total_time_limit); //set compute time
 
@@ -1147,6 +1147,7 @@ namespace TrainScheduling.Algorithm
                     System.Console.WriteLine("Has Solution");
 
                     obj = model.ObjValue;
+                    lower_bound = model.BestObjValue;
                 }
 
                 //int free_run_time_total = 0;
@@ -1157,8 +1158,8 @@ namespace TrainScheduling.Algorithm
                 sw.Stop();
                 int cplex_cpu_Time;
                 cplex_cpu_Time = Int32.Parse(sw.ElapsedMilliseconds.ToString()) / 1000; // unit is sec
-
-                CPLEX_output.WriteLine(_nset + "\t" + train.Count + "\t" + obj + "\t" + cplex_cpu_Time);
+              
+                CPLEX_output.WriteLine(_nset + "\t" + train.Count + "\t" + obj + "\t" + lower_bound + "\t" + cplex_cpu_Time);
 
                 for (int i = 0; i < _ntrain; i++)
                     for (int k = 0; k < _nstation; k++)
@@ -1175,642 +1176,11 @@ namespace TrainScheduling.Algorithm
             {
                 System.Console.WriteLine("Concert exception '" + exc + "' caught");
             }
+            model.End();
 
             //System.Console.Write(" Time is over. Press any key to exit ...");
             //Console.ReadKey(true);
             //System.Environment.Exit(0);  // end this project
         }
-
-        internal void Cplex_LB(List<Ctrain> train, List<Crailway_station> station, List<Crailway_section> section, StreamWriter CPLEX_output, int _nset)
-        {
-            Cplex model = new Cplex();
-            CParameter Parameter = new CParameter();
-            INumVar[][] vax = new INumVar[6][];
-            int Max_int = 10000000;
-            int _ntrain = train.Count; int _nstation = station.Count;
-
-            INumVar[][] A = new INumVar[_ntrain][];//, _nstation]; //arrival time
-            INumVar[][] D = new INumVar[_ntrain][];//, _nstation]; //departure time
-            INumVar[][][] xiAA = new INumVar[_ntrain][][];//, _ntrain, _nstation];
-            INumVar[][][] xiDD = new INumVar[_ntrain][][];//, _ntrain, _nstation];
-            INumVar[][][] xiAD = new INumVar[_ntrain][][];//, _ntrain, _nstation];
-            INumVar[][][] xiDA = new INumVar[_ntrain][][];//, _ntrain, _nstation];            
-            INumVar[][][] Myu = new INumVar[_ntrain][][]; //_nstation, station_capacity
-            INumVar[][][][] Omega = new INumVar[_ntrain][][][];//, _ntrain, _nstation, _nstation];
-            NumVarType[] train_IntType = new NumVarType[_ntrain];
-            for (int i = 0; i < _ntrain; i++)
-            { train_IntType[i] = NumVarType.Int; }
-
-            NumVarType[] station_IntType = new NumVarType[_nstation];
-            for (int k = 0; k < _nstation; k++)
-            { station_IntType[k] = NumVarType.Int; }
-
-            NumVarType[] C_IntType = new NumVarType[Parameter.C_Station];
-            for (int c = 0; c < Parameter.C_Station; c++)
-            { C_IntType[c] = NumVarType.Int; }
-
-            double[] lb_train = new double[_ntrain], up_train = new double[_ntrain];
-            for (int i = 0; i < _ntrain; i++) { lb_train[i] = 0.0; up_train[i] = System.Double.MaxValue; }
-
-            double[] lb_station = new double[_nstation], up_station = new double[_nstation];
-            for (int k = 0; k < _nstation; k++) { lb_station[k] = 0.0; up_station[k] = System.Double.MaxValue; }
-
-            double[] lb_c = new double[Parameter.C_Station], up_c = new double[Parameter.C_Station];
-            for (int c = 0; c < Parameter.C_Station; c++) { lb_c[c] = 0.0; up_c[c] = 1.0; }
-
-            //A,D                 
-            for (int i = 0; i < _ntrain; i++)
-            {
-                A[i] = model.NumVarArray(_nstation, lb_station, up_station, station_IntType);
-                D[i] = model.NumVarArray(_nstation, lb_station, up_station, station_IntType);
-            }
-
-            //xiaa, xidd, xiad, xida
-            for (int i = 0; i < _ntrain; i++)
-            {
-                xiAA[i] = new INumVar[_ntrain][];
-                xiDD[i] = new INumVar[_ntrain][];
-                xiAD[i] = new INumVar[_ntrain][];
-                xiDA[i] = new INumVar[_ntrain][];
-                for (int j = 0; j < _ntrain; j++)
-                {
-                    xiAA[i][j] = model.NumVarArray(_nstation, lb_station, up_station, station_IntType);
-                    xiDD[i][j] = model.NumVarArray(_nstation, lb_station, up_station, station_IntType);
-                    xiAD[i][j] = model.NumVarArray(_nstation, lb_station, up_station, station_IntType);
-                    xiDA[i][j] = model.NumVarArray(_nstation, lb_station, up_station, station_IntType);
-
-                    for (int k = 0; k < _nstation; k++)
-                    {
-                        xiAA[i][j][k] = model.IntVar(0, 1);
-                        xiDD[i][j][k] = model.IntVar(0, 1);
-                        xiAD[i][j][k] = model.IntVar(0, 1);
-                        xiDA[i][j][k] = model.IntVar(0, 1);
-                    }
-                }
-            }
-
-            //myu
-            for (int i = 0; i < _ntrain; i++)
-            {
-                Myu[i] = new INumVar[_nstation][];
-                for (int k = 0; k < _nstation; k++)
-                {
-                    Myu[i][k] = model.NumVarArray(Parameter.C_Station, lb_c, up_c, C_IntType);
-                    for (int c = 0; c < Parameter.C_Station; c++)
-                        Myu[i][k][c] = model.IntVar(0, 1);
-                }
-            }
-
-            //omega
-            for (int i = 0; i < _ntrain; i++)
-            {
-                Omega[i] = new INumVar[_ntrain][][];
-                for (int j = 0; j < _ntrain; j++)
-                {
-                    Omega[i][j] = new INumVar[_nstation][];
-                    for (int k = 0; k < _nstation; k++)
-                    {
-                        Omega[i][j][k] = model.NumVarArray(_nstation, lb_station, up_station, station_IntType);
-                        for (int n = 0; n < _nstation; n++)
-                        { Omega[i][j][k][n] = model.IntVar(0, 1); }
-                    }
-                }
-            }
-
-            INumExpr objective = model.IntExpr();
-            //double free_total = 0;
-            for (int i = 0; i < _ntrain; i++)
-            {
-                objective = model.Sum(D[i][train[i].route[train[i].route.Count - 1]], objective);
-                //free_total = free_total + train[i].free_run_time;
-                //objective = model.Sum(model.Prod(train[i].cost_factor,
-                //    model.Sum(D[i][train[i].route[train[i].route.Count - 1]], -1 * train[i].free_departure[train[i].route[train[i].route.Count - 1]])), objective);
-            }
-            //objective = model.Prod(objective, 1 / free_total);
-
-            IObjective obj_function = model.Minimize(objective);
-            IObjective no_function = model.Minimize();
-
-            model.Add(obj_function);
-            //model.Add(no_function);
-
-            //a i,k + t i,k ≤ d i,k ∀i ∈ N; k ∈ R i 
-            for (int i = 0; i < _ntrain; i++)
-                for (int k = 0; k < train[i].route.Count; k++)
-                    model.AddLe(model.Sum(train[i].dwellingtime[train[i].route[k]], A[i][train[i].route[k]]), D[i][train[i].route[k]]);
-
-            //d i,k + t_{i}^{k,k^+} ≤ a i,k^+  ∀i ∈ N; k ∈ R i \Des(i) 
-            for (int i = 0; i < _ntrain; i++)
-                for (int k = 0; k < train[i].route.Count - 1; k++)
-                    model.AddLe(model.Sum(train[i].SectionTime[train[i].route[k], train[i].route[k + 1]], D[i][train[i].route[k]]), A[i][train[i].route[k + 1]]);
-
-            // (I) Headway for trains in the same direction
-            //(i) Arrival-Arrival headway constraints
-            for (int i = 0; i < _ntrain; i++)
-                for (int j = 0; j < _ntrain; j++)
-                    if (i != j)
-                        for (int k = 0; k < train[i].route.Count; k++)
-                        {
-                            model.AddLe(model.Sum(A[i][k], Parameter.Haa), model.Sum(A[j][k], model.Prod(Max_int, model.Sum(1, model.Prod(-1, xiAA[i][j][k])))));
-                            model.AddEq(model.Sum(xiAA[i][j][k], xiAA[j][i][k]), 1);
-                        }
-
-            //Departure-Departure headway constraints
-            for (int i = 0; i < _ntrain; i++)
-                for (int j = 0; j < _ntrain; j++)
-                    if (i != j)
-                        for (int k = 0; k < train[i].route.Count; k++)
-                        {
-                            model.AddLe(model.Sum(D[i][k], Parameter.Hdd), model.Sum(D[j][k], model.Prod(Max_int, model.Sum(1, model.Prod(-1, xiDD[i][j][k])))));
-                            model.AddEq(model.Sum(xiDD[i][j][k], xiDD[j][i][k]), 1);
-                        }
-
-            // Headway constraints for trains in different directions            
-            //Arrival-Departure headway constraints
-            for (int i = 0; i < _ntrain; i++)
-                for (int j = 0; j < _ntrain; j++)
-                    if (i != j)
-                        for (int k = 0; k < train[i].route.Count; k++)
-                        {
-                            model.AddLe(model.Sum(A[i][k], Parameter.Had), model.Sum(D[j][k], model.Prod(Max_int, model.Sum(1, model.Prod(-1, xiAD[i][j][k])))));
-                            //model.AddEq(model.Sum(xiAD[i, j, k], xiAD[j, i, k]), 1);
-                        }
-
-            //Departure-Arrival headway constraints
-            for (int i = 0; i < _ntrain; i++)
-                for (int j = 0; j < _ntrain; j++)
-                    if (i != j)
-                        for (int k = 0; k < train[i].route.Count; k++)
-                        {
-                            model.AddLe(model.Sum(D[i][k], Parameter.Hda), model.Sum(A[j][k], model.Prod(Max_int, model.Sum(1, model.Prod(-1, xiDA[i][j][k])))));
-                            //model.AddEq(model.Sum(xiDA[i, j, k], xiDA[j, i, k]), 1);
-                        }
-
-            //xiDA[i, j, k] +  xiAD[j, i, k] =1
-            for (int i = 0; i < _ntrain; i++)
-                for (int j = 0; j < _ntrain; j++)
-                    if (i != j)
-                        for (int k = 0; k < train[i].route.Count; k++)
-                            model.AddEq(model.Sum(xiDA[i][j][k], xiAD[j][i][k]), 1);
-
-            //Tracing constraints
-            for (int i = 0; i < _ntrain; i++)
-                for (int j = 0; j < _ntrain; j++)
-                    if (train[i].trainType == train[j].trainType)
-                        for (int k = 0; k < train[i].route.Count - 1; k++)
-                            model.AddEq(xiDD[i][j][train[i].route[k]], xiAA[i][j][train[i].route[k + 1]]);
-
-            //Meeting-crossing constraints
-            for (int i = 0; i < _ntrain; i++)
-                for (int j = 0; j < _ntrain; j++)
-                    if (train[i].trainType != train[j].trainType)
-                        for (int k = 0; k < train[i].route.Count - 1; k++)
-                        {
-                            model.AddLe(model.Sum(A[i][train[i].route[k + 1]], Parameter.Had),
-                                model.Sum(D[j][train[i].route[k + 1]], model.Prod(Max_int, model.Sum(1, model.Prod(-1, Omega[i][j][train[i].route[k]][train[i].route[k + 1]])))));
-
-                            model.AddEq(model.Sum(Omega[i][j][train[i].route[k]][train[i].route[k + 1]], Omega[j][i][train[i].route[k]][train[i].route[k + 1]]), 1);
-                        }
-            for (int i = 0; i < _ntrain; i++)
-                for (int j = 0; j < _ntrain; j++)
-                    if (train[i].trainType != train[j].trainType)
-                        for (int k = 0; k < _nstation - 1; k++)
-                            model.AddEq(Omega[i][j][k][k + 1], Omega[i][j][k + 1][k]);
-            for (int i = 0; i < _ntrain; i++)
-                for (int j = 0; j < _ntrain; j++)
-                    if (train[i].trainType != train[j].trainType)
-                        for (int k = 0; k < _nstation; k++)
-                            for (int n = 0; n < _nstation; n++)
-                                model.AddGe(Omega[i][j][k][n], 0);
-
-            //Station capacity constraints            
-            for (int i = 0; i < _ntrain; i++)
-                for (int k = 1; k < _nstation - 1; k++)
-                {
-                    INumExpr SC = model.IntExpr();
-                    for (int c = 0; c < Parameter.C_Station; c++)
-                    { SC = model.Sum(SC, Myu[i][k][c]); }
-                    model.AddEq(SC, 1);
-                }
-            for (int i = 0; i < _ntrain; i++)
-                for (int j = 0; j < _ntrain; j++)
-                    if (i != j)
-                        for (int k = 1; k < _nstation - 1; k++)
-                            for (int c = 0; c < Parameter.C_Station; c++)
-                                model.AddLe(model.Sum(D[i][k], Parameter.Hda),
-                                    model.Sum(A[j][k], model.Prod(Max_int, model.Sum(1, model.Prod(-1, xiAA[i][j][k]))),
-                                    model.Prod(Max_int, model.Sum(1, model.Prod(-1, Myu[i][k][c]))),
-                                    model.Prod(Max_int, model.Sum(1, model.Prod(-1, Myu[j][k][c])))));
-
-            //Departure constraints
-            for (int i = 0; i < _ntrain; i++)
-                model.AddGe(A[i][train[i].route[0]], train[i].arrival[train[i].route[0]]);
-
-            //model.ExportModel("2.Lp");
-
-            //***********************************************
-            double[][] a, d; double[][][] xiaa, xidd, xiad, xida, myu; double[][][][] omega;
-            a = new double[_ntrain][]; d = new double[_ntrain][]; xiaa = new double[_ntrain][][]; xidd = new double[_ntrain][][];
-            xiad = new double[_ntrain][][]; xida = new double[_ntrain][][]; myu = new double[_ntrain][][]; omega = new double[_ntrain][][][];
-            for (int i = 0; i < _ntrain; i++)
-            {
-                a[i] = new double[_nstation]; d[i] = new double[_nstation]; xiaa[i] = new double[_ntrain][]; xidd[i] = new double[_ntrain][];
-                xiad[i] = new double[_ntrain][]; xida[i] = new double[_ntrain][]; myu[i] = new double[_nstation][]; omega[i] = new double[_ntrain][][];
-                for (int j = 0; j < _ntrain; j++)
-                {
-                    xiaa[i][j] = new double[_nstation]; xidd[i][j] = new double[_nstation]; xiad[i][j] = new double[_nstation]; xida[i][j] = new double[_nstation];
-                    omega[i][j] = new double[_nstation][];
-                    for (int k = 0; k < _nstation; k++)
-                    { omega[i][j][k] = new double[_nstation]; }
-                }
-                for (int k = 0; k < _nstation; k++)
-                { myu[i][k] = new double[Parameter.C_Station]; }
-            }
-
-            string defaultPath = System.IO.Directory.GetCurrentDirectory().ToString();//读取txt文件address
-            DirectoryInfo Experiment = new DirectoryInfo(@defaultPath + "\\CPLEX_LB_Statistic_Result"); //save this set of experiments in this file
-            if (!Experiment.Exists)
-                Experiment.Create();
-            string cplex_outputdatapath = System.IO.Path.GetDirectoryName(@defaultPath + "\\CPLEX_LB_Statistic_Result\\");
-
-            //import initial solution
-            //Initial_solution(train, station, a, d, xiaa, xidd, xiad, xida, myu, omega);
-            //model.Use(new Solve(A, D, xiAA, xiDD, xiAD, xiDA, Myu, Omega, a, d, xiaa, xidd, xiad, xida, myu, omega));
-            // ***********************************************
-            double obj = 0.0;
-
-            double cplex_time_start = model.CplexTime;
-            model.SetParam(Cplex.DoubleParam.TiLim, Parameter.total_time_limit); //set compute time
-
-            model.SetParam(Cplex.BooleanParam.LBHeur, true);
-
-            //model.SetParam(Cplex.LongParam.RINSHeur, 20); // the frequency to use RINS
-
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-            try
-            {
-                TextWriter cplex_log = File.CreateText(@cplex_outputdatapath + "\\cplex_LB_log_" + train.Count + "_trains_" + _nset + "_case.txt");
-                model.SetOut(cplex_log);
-
-                //model.SetOut(Console.Error);
-                if (model.Solve())
-                {
-                    if (model.GetStatus().Equals(Cplex.Status.Infeasible))
-                    {
-                        System.Console.WriteLine("No Solution");
-                        return;
-                    }
-
-                    //if (model.GetStatus().Equals(Cplex.Status.Optimal))
-                    //{ model.WriteSolution("cplex_LB_solution_" + train.Count + "_trains.txt"); }
-                    System.Console.WriteLine("Has Solution");
-
-                    obj = model.ObjValue;
-                }
-                sw.Stop();
-                int cplex_cpu_Time;
-                cplex_cpu_Time = Int32.Parse(sw.ElapsedMilliseconds.ToString()) / 1000; // unit is sec
-
-                CPLEX_output.WriteLine(_nset + "\t" + train.Count + "\t" + obj + "\t" + cplex_cpu_Time);
-
-                for (int i = 0; i < _ntrain; i++)
-                    for (int k = 0; k < _nstation; k++)
-                    {
-                        train[i].arrival[k] = (int)model.GetValue(A[i][k]);
-                        train[i].departure[k] = (int)model.GetValue(D[i][k]);
-                    }
-
-                //COutput_ITAS_Result output_result = new COutput_ITAS_Result(train, station, section, 111);
-                //System.Console.Write(" Press any key to exit ...");
-                //Console.ReadKey(true);
-                //System.Environment.Exit(0);  // end this project
-            }
-
-            catch (ILOG.Concert.Exception exc)
-            {
-                System.Console.WriteLine("Concert exception '" + exc + "' caught");
-            }
-
-            //System.Console.Write(" Time is over. Press any key to exit ...");
-            //Console.ReadKey(true);
-            //System.Environment.Exit(0);  // end this project
-
-        }
-
-        internal void Cplex_LB_RINS(List<Ctrain> train, List<Crailway_station> station, List<Crailway_section> section, StreamWriter CPLEX_output, int _nset)
-        {
-            Cplex model = new Cplex();
-            CParameter Parameter = new CParameter();
-            INumVar[][] vax = new INumVar[6][];
-            int Max_int = 10000000;
-            int _ntrain = train.Count; int _nstation = station.Count;
-
-            INumVar[][] A = new INumVar[_ntrain][];//, _nstation]; //arrival time
-            INumVar[][] D = new INumVar[_ntrain][];//, _nstation]; //departure time
-            INumVar[][][] xiAA = new INumVar[_ntrain][][];//, _ntrain, _nstation];
-            INumVar[][][] xiDD = new INumVar[_ntrain][][];//, _ntrain, _nstation];
-            INumVar[][][] xiAD = new INumVar[_ntrain][][];//, _ntrain, _nstation];
-            INumVar[][][] xiDA = new INumVar[_ntrain][][];//, _ntrain, _nstation];            
-            INumVar[][][] Myu = new INumVar[_ntrain][][]; //_nstation, station_capacity
-            INumVar[][][][] Omega = new INumVar[_ntrain][][][];//, _ntrain, _nstation, _nstation];
-            NumVarType[] train_IntType = new NumVarType[_ntrain];
-            for (int i = 0; i < _ntrain; i++)
-            { train_IntType[i] = NumVarType.Int; }
-
-            NumVarType[] station_IntType = new NumVarType[_nstation];
-            for (int k = 0; k < _nstation; k++)
-            { station_IntType[k] = NumVarType.Int; }
-
-            NumVarType[] C_IntType = new NumVarType[Parameter.C_Station];
-            for (int c = 0; c < Parameter.C_Station; c++)
-            { C_IntType[c] = NumVarType.Int; }
-
-            double[] lb_train = new double[_ntrain], up_train = new double[_ntrain];
-            for (int i = 0; i < _ntrain; i++) { lb_train[i] = 0.0; up_train[i] = System.Double.MaxValue; }
-
-            double[] lb_station = new double[_nstation], up_station = new double[_nstation];
-            for (int k = 0; k < _nstation; k++) { lb_station[k] = 0.0; up_station[k] = System.Double.MaxValue; }
-
-            double[] lb_c = new double[Parameter.C_Station], up_c = new double[Parameter.C_Station];
-            for (int c = 0; c < Parameter.C_Station; c++) { lb_c[c] = 0.0; up_c[c] = 1.0; }
-
-            //A,D                 
-            for (int i = 0; i < _ntrain; i++)
-            {
-                A[i] = model.NumVarArray(_nstation, lb_station, up_station, station_IntType);
-                D[i] = model.NumVarArray(_nstation, lb_station, up_station, station_IntType);
-            }
-
-            //xiaa, xidd, xiad, xida
-            for (int i = 0; i < _ntrain; i++)
-            {
-                xiAA[i] = new INumVar[_ntrain][];
-                xiDD[i] = new INumVar[_ntrain][];
-                xiAD[i] = new INumVar[_ntrain][];
-                xiDA[i] = new INumVar[_ntrain][];
-                for (int j = 0; j < _ntrain; j++)
-                {
-                    xiAA[i][j] = model.NumVarArray(_nstation, lb_station, up_station, station_IntType);
-                    xiDD[i][j] = model.NumVarArray(_nstation, lb_station, up_station, station_IntType);
-                    xiAD[i][j] = model.NumVarArray(_nstation, lb_station, up_station, station_IntType);
-                    xiDA[i][j] = model.NumVarArray(_nstation, lb_station, up_station, station_IntType);
-
-                    for (int k = 0; k < _nstation; k++)
-                    {
-                        xiAA[i][j][k] = model.IntVar(0, 1);
-                        xiDD[i][j][k] = model.IntVar(0, 1);
-                        xiAD[i][j][k] = model.IntVar(0, 1);
-                        xiDA[i][j][k] = model.IntVar(0, 1);
-                    }
-                }
-            }
-
-            //myu
-            for (int i = 0; i < _ntrain; i++)
-            {
-                Myu[i] = new INumVar[_nstation][];
-                for (int k = 0; k < _nstation; k++)
-                {
-                    Myu[i][k] = model.NumVarArray(Parameter.C_Station, lb_c, up_c, C_IntType);
-                    for (int c = 0; c < Parameter.C_Station; c++)
-                        Myu[i][k][c] = model.IntVar(0, 1);
-                }
-            }
-
-            //omega
-            for (int i = 0; i < _ntrain; i++)
-            {
-                Omega[i] = new INumVar[_ntrain][][];
-                for (int j = 0; j < _ntrain; j++)
-                {
-                    Omega[i][j] = new INumVar[_nstation][];
-                    for (int k = 0; k < _nstation; k++)
-                    {
-                        Omega[i][j][k] = model.NumVarArray(_nstation, lb_station, up_station, station_IntType);
-                        for (int n = 0; n < _nstation; n++)
-                        { Omega[i][j][k][n] = model.IntVar(0, 1); }
-                    }
-                }
-            }
-
-            INumExpr objective = model.IntExpr();
-            //double free_total = 0;
-            for (int i = 0; i < _ntrain; i++)
-            {
-                objective = model.Sum(D[i][train[i].route[train[i].route.Count - 1]], objective);
-                //free_total = free_total + train[i].free_run_time;
-                //objective = model.Sum(model.Prod(train[i].cost_factor,
-                //    model.Sum(D[i][train[i].route[train[i].route.Count - 1]], -1 * train[i].free_departure[train[i].route[train[i].route.Count - 1]])), objective);
-            }
-            //objective = model.Prod(objective, 1 / free_total);
-
-            IObjective obj_function = model.Minimize(objective);
-            IObjective no_function = model.Minimize();
-
-            model.Add(obj_function);
-            //model.Add(no_function);
-
-            //a i,k + t i,k ≤ d i,k ∀i ∈ N; k ∈ R i 
-            for (int i = 0; i < _ntrain; i++)
-                for (int k = 0; k < train[i].route.Count; k++)
-                    model.AddLe(model.Sum(train[i].dwellingtime[train[i].route[k]], A[i][train[i].route[k]]), D[i][train[i].route[k]]);
-
-            //d i,k + t_{i}^{k,k^+} ≤ a i,k^+  ∀i ∈ N; k ∈ R i \Des(i) 
-            for (int i = 0; i < _ntrain; i++)
-                for (int k = 0; k < train[i].route.Count - 1; k++)
-                    model.AddLe(model.Sum(train[i].SectionTime[train[i].route[k], train[i].route[k + 1]], D[i][train[i].route[k]]), A[i][train[i].route[k + 1]]);
-
-            // (I) Headway for trains in the same direction
-            //(i) Arrival-Arrival headway constraints
-            for (int i = 0; i < _ntrain; i++)
-                for (int j = 0; j < _ntrain; j++)
-                    if (i != j)
-                        for (int k = 0; k < train[i].route.Count; k++)
-                        {
-                            model.AddLe(model.Sum(A[i][k], Parameter.Haa), model.Sum(A[j][k], model.Prod(Max_int, model.Sum(1, model.Prod(-1, xiAA[i][j][k])))));
-                            model.AddEq(model.Sum(xiAA[i][j][k], xiAA[j][i][k]), 1);
-                        }
-
-            //Departure-Departure headway constraints
-            for (int i = 0; i < _ntrain; i++)
-                for (int j = 0; j < _ntrain; j++)
-                    if (i != j)
-                        for (int k = 0; k < train[i].route.Count; k++)
-                        {
-                            model.AddLe(model.Sum(D[i][k], Parameter.Hdd), model.Sum(D[j][k], model.Prod(Max_int, model.Sum(1, model.Prod(-1, xiDD[i][j][k])))));
-                            model.AddEq(model.Sum(xiDD[i][j][k], xiDD[j][i][k]), 1);
-                        }
-
-            // Headway constraints for trains in different directions            
-            //Arrival-Departure headway constraints
-            for (int i = 0; i < _ntrain; i++)
-                for (int j = 0; j < _ntrain; j++)
-                    if (i != j)
-                        for (int k = 0; k < train[i].route.Count; k++)
-                        {
-                            model.AddLe(model.Sum(A[i][k], Parameter.Had), model.Sum(D[j][k], model.Prod(Max_int, model.Sum(1, model.Prod(-1, xiAD[i][j][k])))));
-                            //model.AddEq(model.Sum(xiAD[i, j, k], xiAD[j, i, k]), 1);
-                        }
-
-            //Departure-Arrival headway constraints
-            for (int i = 0; i < _ntrain; i++)
-                for (int j = 0; j < _ntrain; j++)
-                    if (i != j)
-                        for (int k = 0; k < train[i].route.Count; k++)
-                        {
-                            model.AddLe(model.Sum(D[i][k], Parameter.Hda), model.Sum(A[j][k], model.Prod(Max_int, model.Sum(1, model.Prod(-1, xiDA[i][j][k])))));
-                            //model.AddEq(model.Sum(xiDA[i, j, k], xiDA[j, i, k]), 1);
-                        }
-
-            //xiDA[i, j, k] +  xiAD[j, i, k] =1
-            for (int i = 0; i < _ntrain; i++)
-                for (int j = 0; j < _ntrain; j++)
-                    if (i != j)
-                        for (int k = 0; k < train[i].route.Count; k++)
-                            model.AddEq(model.Sum(xiDA[i][j][k], xiAD[j][i][k]), 1);
-
-            //Tracing constraints
-            for (int i = 0; i < _ntrain; i++)
-                for (int j = 0; j < _ntrain; j++)
-                    if (train[i].trainType == train[j].trainType)
-                        for (int k = 0; k < train[i].route.Count - 1; k++)
-                            model.AddEq(xiDD[i][j][train[i].route[k]], xiAA[i][j][train[i].route[k + 1]]);
-
-            //Meeting-crossing constraints
-            for (int i = 0; i < _ntrain; i++)
-                for (int j = 0; j < _ntrain; j++)
-                    if (train[i].trainType != train[j].trainType)
-                        for (int k = 0; k < train[i].route.Count - 1; k++)
-                        {
-                            model.AddLe(model.Sum(A[i][train[i].route[k + 1]], Parameter.Had),
-                                model.Sum(D[j][train[i].route[k + 1]], model.Prod(Max_int, model.Sum(1, model.Prod(-1, Omega[i][j][train[i].route[k]][train[i].route[k + 1]])))));
-
-                            model.AddEq(model.Sum(Omega[i][j][train[i].route[k]][train[i].route[k + 1]], Omega[j][i][train[i].route[k]][train[i].route[k + 1]]), 1);
-                        }
-            for (int i = 0; i < _ntrain; i++)
-                for (int j = 0; j < _ntrain; j++)
-                    if (train[i].trainType != train[j].trainType)
-                        for (int k = 0; k < _nstation - 1; k++)
-                            model.AddEq(Omega[i][j][k][k + 1], Omega[i][j][k + 1][k]);
-            for (int i = 0; i < _ntrain; i++)
-                for (int j = 0; j < _ntrain; j++)
-                    if (train[i].trainType != train[j].trainType)
-                        for (int k = 0; k < _nstation; k++)
-                            for (int n = 0; n < _nstation; n++)
-                                model.AddGe(Omega[i][j][k][n], 0);
-
-            //Station capacity constraints            
-            for (int i = 0; i < _ntrain; i++)
-                for (int k = 1; k < _nstation - 1; k++)
-                {
-                    INumExpr SC = model.IntExpr();
-                    for (int c = 0; c < Parameter.C_Station; c++)
-                    { SC = model.Sum(SC, Myu[i][k][c]); }
-                    model.AddEq(SC, 1);
-                }
-            for (int i = 0; i < _ntrain; i++)
-                for (int j = 0; j < _ntrain; j++)
-                    if (i != j)
-                        for (int k = 1; k < _nstation - 1; k++)
-                            for (int c = 0; c < Parameter.C_Station; c++)
-                                model.AddLe(model.Sum(D[i][k], Parameter.Hda),
-                                    model.Sum(A[j][k], model.Prod(Max_int, model.Sum(1, model.Prod(-1, xiAA[i][j][k]))),
-                                    model.Prod(Max_int, model.Sum(1, model.Prod(-1, Myu[i][k][c]))),
-                                    model.Prod(Max_int, model.Sum(1, model.Prod(-1, Myu[j][k][c])))));
-
-            //Departure constraints
-            for (int i = 0; i < _ntrain; i++)
-                model.AddGe(A[i][train[i].route[0]], train[i].arrival[train[i].route[0]]);
-
-            //***********************************************
-            double[][] a, d; double[][][] xiaa, xidd, xiad, xida, myu; double[][][][] omega;
-            a = new double[_ntrain][]; d = new double[_ntrain][]; xiaa = new double[_ntrain][][]; xidd = new double[_ntrain][][];
-            xiad = new double[_ntrain][][]; xida = new double[_ntrain][][]; myu = new double[_ntrain][][]; omega = new double[_ntrain][][][];
-            for (int i = 0; i < _ntrain; i++)
-            {
-                a[i] = new double[_nstation]; d[i] = new double[_nstation]; xiaa[i] = new double[_ntrain][]; xidd[i] = new double[_ntrain][];
-                xiad[i] = new double[_ntrain][]; xida[i] = new double[_ntrain][]; myu[i] = new double[_nstation][]; omega[i] = new double[_ntrain][][];
-                for (int j = 0; j < _ntrain; j++)
-                {
-                    xiaa[i][j] = new double[_nstation]; xidd[i][j] = new double[_nstation]; xiad[i][j] = new double[_nstation]; xida[i][j] = new double[_nstation];
-                    omega[i][j] = new double[_nstation][];
-                    for (int k = 0; k < _nstation; k++)
-                    { omega[i][j][k] = new double[_nstation]; }
-                }
-                for (int k = 0; k < _nstation; k++)
-                { myu[i][k] = new double[Parameter.C_Station]; }
-            }
-
-            string defaultPath = System.IO.Directory.GetCurrentDirectory().ToString();//读取txt文件address
-            DirectoryInfo Experiment = new DirectoryInfo(@defaultPath + "\\CPLEX_LB_RINS_Statistic_Result"); //save this set of experiments in this file
-            if (!Experiment.Exists)
-                Experiment.Create();
-            string cplex_outputdatapath = System.IO.Path.GetDirectoryName(@defaultPath + "\\CPLEX_LB_RINS_Statistic_Result\\");
-
-            //import initial solution
-            // Initial_solution(train, station, a, d, xiaa, xidd, xiad, xida, myu, omega);
-            //model.Use(new Solve(A, D, xiAA, xiDD, xiAD, xiDA, Myu, Omega, a, d, xiaa, xidd, xiad, xida, myu, omega));
-            // ***********************************************
-            double obj = 0.0;
-
-            double cplex_time_start = model.CplexTime;
-            model.SetParam(Cplex.DoubleParam.TiLim, Parameter.total_time_limit); //set compute time
-
-            model.SetParam(Cplex.BooleanParam.LBHeur, true);
-            model.SetParam(Cplex.LongParam.RINSHeur, 20); // the frequency to use RINS
-
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-            try
-            {
-                TextWriter cplex_log = File.CreateText(@cplex_outputdatapath + "\\cplex_LB_RINS_log_" + train.Count + "_trains_" + _nset + "_case.txt");
-                model.SetOut(cplex_log);
-
-                //model.SetOut(Console.Error);
-                if (model.Solve())
-                {
-                    if (model.GetStatus().Equals(Cplex.Status.Infeasible))
-                    {
-                        System.Console.WriteLine("No Solution");
-                        return;
-                    }
-
-                    //if (model.GetStatus().Equals(Cplex.Status.Optimal))
-                    //{ model.WriteSolution("cplex_LB_RINS_solution_" + train.Count + "_trains.txt"); }
-                    System.Console.WriteLine("Has Solution");
-
-                    obj = model.ObjValue;
-                }
-                sw.Stop();
-                int cplex_cpu_Time;
-                cplex_cpu_Time = Int32.Parse(sw.ElapsedMilliseconds.ToString()) / 1000; // unit is sec
-
-                CPLEX_output.WriteLine(_nset + "\t" + train.Count + "\t" + obj + "\t" + cplex_cpu_Time);
-
-                for (int i = 0; i < _ntrain; i++)
-                    for (int k = 0; k < _nstation; k++)
-                    {
-                        train[i].arrival[k] = (int)model.GetValue(A[i][k]);
-                        train[i].departure[k] = (int)model.GetValue(D[i][k]);
-                    }
-
-                //COutput_ITAS_Result output_result = new COutput_ITAS_Result(train, station, section, 111);
-                //System.Console.Write(" Press any key to exit ...");
-                //Console.ReadKey(true);
-                //System.Environment.Exit(0);  // end this project
-            }
-
-            catch (ILOG.Concert.Exception exc)
-            {
-                System.Console.WriteLine("Concert exception '" + exc + "' caught");
-            }
-
-            //System.Console.Write(" Time is over. Press any key to exit ...");
-            //Console.ReadKey(true);
-            //System.Environment.Exit(0);  // end this project
-
-        }
-
     }
 }

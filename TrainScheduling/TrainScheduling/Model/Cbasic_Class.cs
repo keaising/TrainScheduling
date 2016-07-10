@@ -60,13 +60,6 @@ namespace TrainScheduling.Model
         public int time_receive_loco; // the time that train receive the locomotive
         public int Loco_re_or_new; // illustrate whether the used locomotive is come from opposing (=1) or the new one (=0);
 
-        //public Ctrain Clone()
-        //{
-        //    //    //return this as object;      //引用同一个对象
-        //    //    return (Ctrain)this.MemberwiseClone(); //浅复制
-        //    return new Ctrain() as Ctrain;//深复制         
-        //}
-
         public Ctrain Clone()
         {
             using (Stream objectStream = new MemoryStream())
@@ -94,12 +87,7 @@ namespace TrainScheduling.Model
         public int stationCapacity; //number of tracks at this station
         public List<int> front_station_ID;
         public List<int> succeeding_station_ID;
-        //public Crailway_station Clone()
-        //{
-        //    //return this as object;      //引用同一个对象
-        //    //return (Crailway_station)this.MemberwiseClone(); //浅复制
-        //    return new Crailway_station() as Crailway_station;//深复制
-        //}
+
         public Crailway_station Clone()
         {
             using (Stream objectStream = new MemoryStream())
@@ -110,13 +98,6 @@ namespace TrainScheduling.Model
                 return formatter.Deserialize(objectStream) as Crailway_station;
             }
         }
-        //public Crailway_station Clone()
-        //{
-        //    Crailway_station other = (Crailway_station)this.MemberwiseClone();
-        //    other.stationID = this.stationID;
-        //    other.front_station_ID = this.front_station_ID;
-        //    return other;
-        //}
     }
 
     [Serializable]
@@ -134,12 +115,7 @@ namespace TrainScheduling.Model
         public int length;
         public int start_station_ID;
         public int end_station_ID;
-        //public Crailway_section Clone()
-        //{
-        //    //return this as object;      //引用同一个对象
-        //    //return (Crailway_section)this.MemberwiseClone(); //浅复制
-        //    return new Crailway_section() as Crailway_section;//深复制
-        //}
+
         public Crailway_section Clone()
         {
             using (Stream objectStream = new MemoryStream())
@@ -248,6 +224,91 @@ namespace TrainScheduling.Model
                 method_timetable.WriteLine();
             }
             method_timetable.Close();
+        }
+    }
+
+    public class Coutput_Experiment_Statistic_Result_Stream
+    {
+        public Coutput_Experiment_Statistic_Result_Stream() { }
+
+        /// <summary>
+        /// Return the streamwriter of two statistic result
+        /// </summary>
+        /// <returns></returns>
+        public StreamWriter DTrains_statistic_output(string method_name)
+        {
+            var def_path = new Cdef_path();
+            string defaultPath = def_path.def_path();
+            CParameter parameter = new CParameter();
+            string DTrains_static_address = System.IO.Path.GetDirectoryName(@defaultPath + "\\DTrains_Experiment_Statistic_Result" + "\\");
+            StreamWriter Dtrains_opt_output = File.CreateText(DTrains_static_address + "\\DTrains_" + method_name + "_results.txt");
+            Dtrains_opt_output.WriteLine("DTrains_Record of {0}'s Results", method_name);
+            Dtrains_opt_output.WriteLine("-----------------------------------------------");
+            Dtrains_opt_output.WriteLine("NbStaCase\t" + "NbTrains\t" + "Trip_time\t" + "CPU time(s)");
+            return Dtrains_opt_output;
+        }
+
+        public StreamWriter DStation_statistic_output(string method_name)
+        {
+            var def_path = new Cdef_path();
+            string defaultPath = def_path.def_path();
+            CParameter parameter = new CParameter();
+            string Dstation_static_address = System.IO.Path.GetDirectoryName(@defaultPath + "\\DStations_Experiment_Statistic_Result" + "\\");
+            StreamWriter Dstation_opt_output = File.CreateText(Dstation_static_address + "\\DStation_" + method_name + "_results.txt");
+            Dstation_opt_output.WriteLine("Dstation_Record of {0}'s Results", method_name);
+            Dstation_opt_output.WriteLine("-----------------------------------------------");
+            Dstation_opt_output.WriteLine("NbStaCase\t" + "NbTrains\t" + "Trip_time\t" + "CPU time (s)");
+            return Dstation_opt_output;
+        }
+
+        /// <summary>
+        /// stream_input_data[] 0-input_train_data, 1-input_station_data, 2-input_section_data
+        /// </summary>
+        /// <returns></returns>
+        public StreamReader[] input_data_streamwriter(int _num_train, int _num_set)
+        {
+            StreamReader[] stream_input_data = new StreamReader[3];
+            var def_path = new Cdef_path();
+            string defaultPath = def_path.def_path();
+            string inputdatapath = System.IO.Path.GetDirectoryName(@defaultPath + "\\Input_Data" + "\\");
+            FileInfo[] input_data = new FileInfo[3]; //0-train; 2-station; 3-section
+            FileStream[] file_data = new FileStream[3];
+
+            input_data[0] = new FileInfo(inputdatapath + "\\Input_train_data_" + _num_train + ".txt");
+            input_data[1] = new FileInfo(inputdatapath + "\\Input_station_data.txt");
+            input_data[2] = new FileInfo(inputdatapath + "\\Input_section_data_" + _num_set + ".txt");
+            for (int i = 0; i < 3; i++)
+                file_data[i] = input_data[i].Open(FileMode.Open);
+            StreamReader input_train_data = new StreamReader(file_data[0], System.Text.Encoding.Default);
+            StreamReader input_station_data = new StreamReader(file_data[1], System.Text.Encoding.Default);
+            StreamReader input_section_data = new StreamReader(file_data[2], System.Text.Encoding.Default);
+
+            stream_input_data[0] = input_train_data; stream_input_data[1] = input_station_data;
+            stream_input_data[2] = input_section_data;
+            return stream_input_data;
+        }
+    }
+
+    //output default stress
+    public class Cdef_path
+    {
+        public string def_path()
+        {
+            string defaultPath = System.IO.Directory.GetCurrentDirectory().ToString();//读取txt文件address
+            CParameter parameter = new CParameter();
+            DirectoryInfo FragmentInput = new DirectoryInfo(@defaultPath + "\\Input_Data");
+            if (!FragmentInput.Exists)
+            {
+                System.Console.WriteLine("There is no file Input_Data. Please create it! Press any key to exit . . . ");
+                //System.Environment.Exit(0);  // end this project
+            }
+            DirectoryInfo Dtrain_Experiment = new DirectoryInfo(@defaultPath + "\\DTrains_Experiment_Statistic_Result"); //save this set of experiments in this file
+            if (!Dtrain_Experiment.Exists)
+                Dtrain_Experiment.Create();
+            DirectoryInfo Dstation_Experiment = new DirectoryInfo(@defaultPath + "\\DStations_Experiment_Statistic_Result"); //save this set of experiments in this file
+            if (!Dstation_Experiment.Exists)
+                Dstation_Experiment.Create();
+            return defaultPath;
         }
     }
 

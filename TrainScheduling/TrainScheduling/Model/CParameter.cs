@@ -25,7 +25,7 @@ namespace TrainScheduling.Model
         //Dstation parameter
         public int _nset_start = 0; // minimum nb of stations in  test_station case
         public int _nTestSet = 20;  // maximum nb of stations in  test_station case
-        public int Dstation_data_input_nbtrain = 26; //number of trains in test_station case
+        public int Dstation_data_input_nbtrain = 30; //number of trains in test_station case
 
         //loco_assginment_algorithm
         public int time_threshold_loco = 55 * 60; //the time_threshold for train to use the locomotive from oppposing train
