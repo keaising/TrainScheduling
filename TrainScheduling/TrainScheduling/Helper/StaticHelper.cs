@@ -69,7 +69,7 @@ namespace TrainScheduling.Helper
         public static double SumFromTo(this List<double> list, int i, int j)
         {
             double sum = 0;
-            for (int k = i; k <= j; k++)
+            for (int k = i; k < j; k++)
                 sum += list[k];
             return sum;
         }
