@@ -29,12 +29,13 @@ namespace TrainScheduling
         {
             InitializeComponent();
         }
-
+        
         List<Ctrain> gtrain = new List<Ctrain>();
         List<Crailway_station> gstation = new List<Crailway_station>();
         List<Crailway_section> gsection = new List<Crailway_section>();
-
+        bool initialized = false;
         bool BoolInputData = false;
+        bool RunTSTA = false;
         //button_click input data，这里输入data的方式后面需要改动
         private void ParameterSettingButton_Click(object sender, RoutedEventArgs e)
         {
@@ -45,16 +46,23 @@ namespace TrainScheduling
             }
         }
 
-        bool initialized = false;
-        //button_click 画底图
+        /// <summary>
+        /// button_click 画底图
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DrawBasicPanel_Click(object sender, RoutedEventArgs e)
         {
             if (!initialized)
                 BasicTimetable(gstation, gsection); initialized = true;
         }
 
-        bool RunTSTA = false;
-        //button_click 运行TSTA算法
+
+        /// <summary>
+        /// button_click 运行TSTA算法
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Alg_TSTA_Click(object sender, RoutedEventArgs e)
         {
             if (gtrain.Count == 0 || gsection.Count == 0 || gstation.Count == 0)
@@ -72,7 +80,11 @@ namespace TrainScheduling
             }
         }
 
-        //button_click 画运行图
+        /// <summary>
+        /// button_click 画运行图
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DrawTimetable_Click(object sender, RoutedEventArgs e)
         {
             if (gtrain.Count == 0 || gsection.Count == 0 || gstation.Count == 0)
@@ -321,7 +333,11 @@ namespace TrainScheduling
         //}
         #endregion
 
-        //draw station name, line span et al. 
+        /// <summary>
+        /// draw station name, line span et al. 
+        /// </summary>
+        /// <param name="inputstation"></param>
+        /// <param name="inputsection"></param>
         private void BasicTimetable(List<Crailway_station> inputstation, List<Crailway_section> inputsection)
         {
             if (inputsection.Count == 0 || inputsection.Count == 0)
@@ -555,6 +571,11 @@ namespace TrainScheduling
             }
         }
 
+        /// <summary>
+        /// 拖动窗口大小之后重绘
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MetroWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (initialized)
@@ -574,7 +595,12 @@ namespace TrainScheduling
                 DisplayTrainTimeTable(gtrain, 120, gsection);
         }
 
-        //draw train timetable line
+        /// <summary>
+        /// draw train timetable line
+        /// </summary>
+        /// <param name="train"></param>
+        /// <param name="GivenFengeInUnitTimeSpan"></param>
+        /// <param name="Section"></param>
         private void DisplayTrainTimeTable(List<Ctrain> train, int GivenFengeInUnitTimeSpan, List<Crailway_section> Section)
         {
             List<double> SectionLength = new List<double>();
