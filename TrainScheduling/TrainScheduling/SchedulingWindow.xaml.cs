@@ -669,6 +669,13 @@ namespace TrainScheduling
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="mygrid"></param>
+        /// <param name="FengeInUnitTimeSpan"></param>
+        /// <param name="SectionLength"></param>
+        /// <returns></returns>
         private double[] GridTimeTableParameter(Grid mygrid, int FengeInUnitTimeSpan, List<double> SectionLength)
         {
             //0-x_origin; 1-y_origin; 2-TimeTableWidth
@@ -707,6 +714,12 @@ namespace TrainScheduling
             return GTP;
         }
 
+        /// <summary>
+        /// 导入数据
+        /// </summary>
+        /// <param name="train"></param>
+        /// <param name="station"></param>
+        /// <param name="section"></param>
         private void InputData(List<Ctrain> train, List<Crailway_station> station, List<Crailway_section> section)
         {
             CParameter parameter = new CParameter();
