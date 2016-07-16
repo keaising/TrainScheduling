@@ -160,27 +160,18 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="其他" HorizontalAlignment="Right" FontWeight="Bold"/>
-                <TextBox Grid.Row="0" Grid.Column="1" x:Name="OtherTextbox" HorizontalAlignment="Left" FontWeight="Bold" Width="60px" Margin="5 0 0 0"/> 
+                <TextBox Grid.Row="0" Grid.Column="1" x:Name="OtherTextbox" HorizontalAlignment="Left" FontWeight="Bold" Width="60px" Margin="5 0 0 0"/>
             </Grid>
-
-            <!--  <TextBlock Grid.Row="0" Grid.Column="0" Text="最大延迟时间" FontWeight="Bold" FontFamily= "Times New Roman"/>
-            <TextBlock Grid.Row="0" Grid.Column="2" Text="对应列车" FontWeight="Bold" />
-            <TextBlock Grid.Row="0" Grid.Column="4" Text="总能耗" FontWeight="Bold" />
-            <TextBlock Grid.Row="1" Grid.Column="0" Text="总延迟时间" FontWeight="Bold"/>
-            <TextBlock Grid.Row="1" Grid.Column="2" Text="线路清空时间" FontWeight="Bold"/>
-            <TextBlock Grid.Row="1" Grid.Column="4" Text="其他" FontWeight="Bold"/>
-            <TextBox Grid.Row="0" Grid.Column="1" x:Name="BiggestDelayTimeTextbox" FontWeight="Bold"/>
-            <TextBox Grid.Row="0" Grid.Column="3" x:Name="ExactTrainTextbox" FontWeight="Bold"/>
-            <TextBox Grid.Row="0" Grid.Column="5" x:Name="TotalFuelTextbox" FontWeight="Bold"/>
-            <TextBox Grid.Row="1" Grid.Column="1" x:Name="TotalDelayTimeTextbox" FontWeight="Bold"/>
-            <TextBox Grid.Row="1" Grid.Column="3" x:Name="LineCleanTimeTextbox" FontWeight="Bold"/>
-            <TextBox Grid.Row="1" Grid.Column="5" x:Name="OtherTextbox" FontWeight="Bold"/>--> 
         </Grid>
         <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" Margin="2">
             <CheckBox>列车1</CheckBox>
             <CheckBox>列车2</CheckBox>
             <CheckBox>列车3</CheckBox>
             <CheckBox>列车4</CheckBox>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="帧率：" />
+                <Label x:Name="FpsLabel" Content="XX帧/秒" />
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Controls:MetroWindow>

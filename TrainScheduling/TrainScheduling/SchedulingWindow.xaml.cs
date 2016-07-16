@@ -31,7 +31,7 @@ namespace TrainScheduling
         {
             InitializeComponent();
         }
-        
+
         List<Ctrain> gtrain = new List<Ctrain>();
         List<Crailway_station> gstation = new List<Crailway_station>();
         List<Crailway_section> gsection = new List<Crailway_section>();
@@ -336,7 +336,7 @@ namespace TrainScheduling
         #endregion
 
         /// <summary>
-        /// draw station name, line span et al. 
+        /// 画底图
         /// </summary>
         /// <param name="inputstation"></param>
         /// <param name="inputsection"></param>
@@ -580,6 +580,7 @@ namespace TrainScheduling
         /// <param name="e"></param>
         private void MetroWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            var t1 = DateTime.Now;
             if (initialized)
             {
                 var testRectangle = new System.Windows.Shapes.Rectangle();
@@ -595,10 +596,19 @@ namespace TrainScheduling
 
             if (RunTSTA)
                 DisplayTrainTimeTable(gtrain, 120, gsection);
+            var t2 = DateTime.Now;
+            var ts = t2 - t1;
+            
+            if (ts.Milliseconds != 0)
+            {
+                float per = 1000 / ts.Milliseconds;
+                FpsLabel.Content = per.ToString() + "帧/s";
+            }
+
         }
 
         /// <summary>
-        /// draw train timetable line
+        /// 画运行图
         /// </summary>
         /// <param name="train"></param>
         /// <param name="GivenFengeInUnitTimeSpan"></param>
