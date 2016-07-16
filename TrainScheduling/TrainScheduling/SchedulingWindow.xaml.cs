@@ -365,12 +365,36 @@ namespace TrainScheduling
                 DisplayTrainTimeTable(gtrain, 120, gsection);
             var t2 = DateTime.Now;
             var ts = t2 - t1;
-            
+
             if (ts.Milliseconds != 0)
             {
                 float per = 1000 / ts.Milliseconds;
                 FpsLabel.Content = per.ToString() + "帧/s";
             }
+
+            #region 双缓冲绘图
+            ////1、在内存中建立一块“虚拟画布”  
+            //Bitmap bmp = new Bitmap(200, 200);
+
+            ////2、获取这块内存画布的Graphics引用  
+            //Graphics bufferGraphics = Graphics.FromImage(bmp);
+
+            ////3、在这块内存画布上绘图  
+            //bufferGraphics.Clear(System.Drawing.Color.White);
+            //bufferGraphics.DrawRectangle(Pens.Black, 0, 0, bmp.Width - 1, bmp.Height - 1);
+            //bufferGraphics.DrawEllipse(Pens.Red, 10, 10, 100, 50);
+            //bufferGraphics.DrawLine(Pens.Green, 10, 100, 100, 200);
+
+            ////4、将内存画布画到窗口中  
+            //using (Graphics g = e.Graphics)
+            //{
+            //    g.DrawImage(bmp, 10, 10);
+            //}
+
+            ////5. 释放资源  
+            //bmp.Dispose();
+            //bufferGraphics.Dispose();
+            #endregion
 
         }
 
