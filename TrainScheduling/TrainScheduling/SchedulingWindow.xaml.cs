@@ -17,6 +17,8 @@ using TrainScheduling.Helper;
 using TrainScheduling.Model;
 using TrainScheduling.Algorithm;
 using System.IO;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace TrainScheduling
 {
@@ -459,13 +461,13 @@ namespace TrainScheduling
 
                     //get font size
                     int fontsize = 14; TextBlockStationName.FontSize = fontsize;
-                    Color color = new Color();
+                    var color = new System.Windows.Media.Color();
                     color.R = 155;
                     color.G = 0;
                     color.B = 255;
                     color.A = 255;
                     TextBlockStationName.Foreground = new SolidColorBrush(color);
-                    TextBlockStationName.FontFamily = new FontFamily("Times New Roman");
+                    TextBlockStationName.FontFamily = new System.Windows.Media.FontFamily("Times New Roman");
                     TextBlockStationName.VerticalAlignment = VerticalAlignment.Center;
                     TextBlockStationName.HorizontalAlignment = HorizontalAlignment.Left;
                     Grid.SetRow(TextBlockStationName, i);
@@ -492,18 +494,18 @@ namespace TrainScheduling
 
                     //get font size
                     //int fontsize = 12; TextBlockStationName.FontSize = fontsize;
-                    Color color = new Color(); color.R = 55; color.G = 0; color.B = 255; color.A = 255;
+                    var color = new System.Windows.Media.Color(); color.R = 55; color.G = 0; color.B = 255; color.A = 255;
                     TextBlockStationName.Foreground = new SolidColorBrush(color);
-                    TextBlockStationName.FontFamily = new FontFamily("Times New Roman");
+                    TextBlockStationName.FontFamily = new System.Windows.Media.FontFamily("Times New Roman");
                     TextBlockStationName.VerticalAlignment = VerticalAlignment.Bottom;
                     TextBlockStationName.HorizontalAlignment = HorizontalAlignment.Right;
                     Grid.SetRow(TextBlockStationName, i);
                     TextBlockStationName.FontStretch = FontStretches.Medium;//100%，紧缩或加宽的程度
                     GridSchWinStationName.Children.Add(TextBlockStationName);
 
-                    var testRectangle = new Rectangle();
+                    var testRectangle = new System.Windows.Shapes.Rectangle();
                     testRectangle.StrokeThickness = 1.5;
-                    testRectangle.Stroke = Brushes.Green;
+                    testRectangle.Stroke = System.Windows.Media.Brushes.Green;
                     testRectangle.Width = 20; testRectangle.Height = y_origin;
                     testRectangle.HorizontalAlignment = HorizontalAlignment.Left;
                     testRectangle.VerticalAlignment = VerticalAlignment.Top;
@@ -541,13 +543,13 @@ namespace TrainScheduling
 
                         //get font size
                         int fontsize = 12; TextBlockaTimeSpanName.FontSize = fontsize;
-                        Color color = new Color();
+                        var color = new System.Windows.Media.Color();
                         color.R = 55;
                         color.G = 0;
                         color.B = 255;
                         color.A = 255;
                         TextBlockaTimeSpanName.Foreground = new SolidColorBrush(color);
-                        TextBlockaTimeSpanName.FontFamily = new FontFamily("Times New Roman");
+                        TextBlockaTimeSpanName.FontFamily = new System.Windows.Media.FontFamily("Times New Roman");
                         TextBlockaTimeSpanName.TextAlignment = TextAlignment.Center;
                         //设置每个textBlock的Margin
                         TextBlockaTimeSpanName.Margin = new Thickness(0, 5, 0, 0);
@@ -580,9 +582,9 @@ namespace TrainScheduling
         {
             if (initialized)
             {
-                var testRectangle = new Rectangle();
+                var testRectangle = new System.Windows.Shapes.Rectangle();
                 testRectangle.StrokeThickness = 1.5;
-                testRectangle.Stroke = Brushes.Green;
+                testRectangle.Stroke = System.Windows.Media.Brushes.Green;
                 testRectangle.Width = 50; testRectangle.Height = 20;
                 testRectangle.HorizontalAlignment = HorizontalAlignment.Left;
                 testRectangle.VerticalAlignment = VerticalAlignment.Top;
