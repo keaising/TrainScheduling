@@ -66,10 +66,10 @@
             <Button x:Name="AlgsEditButton" Content="编制算法" />
             <Button x:Name="ShowChosenLineButton" Content="选择路线展示" />
             <Button x:Name="DevideButton" Content="分格" />
-            <Image x:Name="Sch_win_image_title" Source="Resources/title.png" Width="100px" Stretch="Fill"></Image>
             <Button x:Name="DrawBasicPanel" Content="底图" Click="DrawBasicPanel_Click" />
             <Button x:Name="DrawTimetable" Content="运行图" Click="DrawTimetable_Click" />
             <Button x:Name="Alg_TSTA" Content="TSTA算法" Click="Alg_TSTA_Click"  />
+            <Image x:Name="Sch_win_image_title" Source="Resources/title.png" Width="100px" Stretch="Fill"></Image>
         </WrapPanel>
 
         <Grid x:Name="GridSchWinTimeSpace" Grid.Row="1" Grid.Column="0" Margin="20 20 20 10" >
@@ -87,14 +87,14 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="2*" />
                 </Grid.ColumnDefinitions>
-                <Grid x:Name="GridSchWinLineName" Grid.Row="0" Grid.Column="0" Margin="0 0 1 0">
+                <Grid x:Name="GridSchWinLineName" Grid.Row="0" Grid.Column="0" Margin="0 0 0 0">
                 </Grid>
-                <Grid x:Name="GridSchWinStationName" Grid.Row="0" Grid.Column="1" Margin="0 0 2 0">
+                <Grid x:Name="GridSchWinStationName" Grid.Row="0" Grid.Column="1" Margin="0 0 10 0">
                 </Grid>
             </Grid>
             <Grid x:Name="GridSchWinTimetable" Grid.Row="0" Grid.Column="1" Margin="0 0 0 0" >
             </Grid>
-            <Grid x:Name="GridSchWinTimeIndex" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"  Margin="0 0 0 0">
+            <Grid x:Name="GridSchWinTimeIndex" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"  Margin="0 10 0 0">
             </Grid>
         </Grid>
 

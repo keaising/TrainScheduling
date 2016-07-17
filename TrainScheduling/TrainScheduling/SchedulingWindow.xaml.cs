@@ -243,41 +243,6 @@ namespace TrainScheduling
                 }
 
 
-                ////display railway station name
-                for (int i = 0; i < StaName.Count; i++)
-                {
-                    RowDefinition rowdef = new RowDefinition();//创建行布局对向
-                    GridSchWinStationName.RowDefinitions.Add(rowdef);
-                    TextBlock TextBlockStationName = new TextBlock();
-                    //get station name
-                    TextBlockStationName.Text = StaName[i];
-                    TextBlockStationName.Margin = new Thickness(0, 0, 5, 0);
-
-                    //根据车站数目和区间长度调整textblock的高度
-                    if (i == 0)
-                        rowdef.Height = new GridLength(y_origin);
-                    else
-                        rowdef.Height = new GridLength(SectionLength[i - 1] * StationSpanInUnitKm);
-
-                    //get font size
-                    //int fontsize = 12; TextBlockStationName.FontSize = fontsize;
-                    var color = new System.Windows.Media.Color(); color.R = 55; color.G = 0; color.B = 255; color.A = 255;
-                    TextBlockStationName.Foreground = new SolidColorBrush(color);
-                    TextBlockStationName.FontFamily = new System.Windows.Media.FontFamily("Times New Roman");
-                    TextBlockStationName.VerticalAlignment = VerticalAlignment.Bottom;
-                    TextBlockStationName.HorizontalAlignment = HorizontalAlignment.Right;
-                    Grid.SetRow(TextBlockStationName, i);
-                    TextBlockStationName.FontStretch = FontStretches.Medium;//100%，紧缩或加宽的程度
-                    GridSchWinStationName.Children.Add(TextBlockStationName);
-
-                    var testRectangle = new System.Windows.Shapes.Rectangle();
-                    testRectangle.StrokeThickness = 1.5;
-                    testRectangle.Stroke = System.Windows.Media.Brushes.Green;
-                    testRectangle.Width = 20; testRectangle.Height = y_origin;
-                    testRectangle.HorizontalAlignment = HorizontalAlignment.Left;
-                    testRectangle.VerticalAlignment = VerticalAlignment.Top;
-                    // GridSchWinStationName.Children.Add(testRectangle);
-                }
 
                 //draw time line Index
                 for (int i = 0; i <= _num_time_span + 1; i++)
@@ -336,6 +301,34 @@ namespace TrainScheduling
                         //testRectangle.VerticalAlignment = VerticalAlignment.Top;
                         //GridSchWinTimeIndex.Children.Add(testRectangle);
                     }
+                }
+
+                ////display railway station name
+                for (int i = 0; i < StaName.Count; i++)
+                {
+                    RowDefinition rowdef = new RowDefinition();//创建行布局对向
+                    GridSchWinStationName.RowDefinitions.Add(rowdef);
+                    TextBlock TextBlockStationName = new TextBlock();
+                    //get station name
+                    TextBlockStationName.Text = StaName[i];
+                    TextBlockStationName.Margin = new Thickness(0, 0, 5, 0);
+
+                    //根据车站数目和区间长度调整textblock的高度
+                    if (i == 0)
+                        rowdef.Height = new GridLength(y_origin);
+                    else
+                        rowdef.Height = new GridLength(SectionLength[i - 1] * StationSpanInUnitKm);
+
+                    //get font size
+                    //int fontsize = 12; TextBlockStationName.FontSize = fontsize;
+                    var color = new System.Windows.Media.Color(); color.R = 55; color.G = 0; color.B = 255; color.A = 255;
+                    TextBlockStationName.Foreground = new SolidColorBrush(color);
+                    TextBlockStationName.FontFamily = new System.Windows.Media.FontFamily("Times New Roman");
+                    TextBlockStationName.VerticalAlignment = VerticalAlignment.Bottom;
+                    TextBlockStationName.HorizontalAlignment = HorizontalAlignment.Right;
+                    Grid.SetRow(TextBlockStationName, i);
+                    TextBlockStationName.FontStretch = FontStretches.Medium;//100%，紧缩或加宽的程度
+                    GridSchWinStationName.Children.Add(TextBlockStationName);
                 }
             }
         }
