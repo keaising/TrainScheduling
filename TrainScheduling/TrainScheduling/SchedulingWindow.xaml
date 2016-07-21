@@ -47,8 +47,8 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="6*" />
+            <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
         <Border BorderThickness="0 2 0 2" BorderBrush="Gray" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"/>
         <Border BorderThickness="2 0 0 0" BorderBrush="Gray" Grid.Row="1"  Grid.Column="2"/>
@@ -98,8 +98,16 @@
             </Grid>
         </Grid>
 
-        <Grid Grid.Row="2" Grid.Column="0" Margin="0 10 0 0">
-            <Grid.ColumnDefinitions>
+        <Grid  Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="1*"/>    
+            </Grid.RowDefinitions>
+            <Grid x:Name="GridSchWinRailwayMap" Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" >
+            </Grid>
+            <Grid x:Name="GridSchWinRailwayMapStationName" Grid.Row="1" Grid.Column="0" Margin="0 0 0 0" >
+            </Grid>
+                <!--  <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -161,7 +169,7 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="其他" HorizontalAlignment="Right" FontWeight="Bold"/>
                 <TextBox Grid.Row="0" Grid.Column="1" x:Name="OtherTextbox" HorizontalAlignment="Left" FontWeight="Bold" Width="60px" Margin="5 0 0 0"/>
-            </Grid>
+            </Grid>-->
         </Grid>
         <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" Margin="2">
             <CheckBox>列车1</CheckBox>
