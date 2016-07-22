@@ -31,6 +31,7 @@ namespace TrainScheduling.Model
             this.time_receive_loco = -1; //initialized as -1
             this.Loco_re_or_new = -1; //initialized as -1;
             this.Loco_using_ID = -1;
+            this.ListPosition = new List<double>();          
             //this.Clone();
         }
         public int trainID;
@@ -54,6 +55,7 @@ namespace TrainScheduling.Model
         public int[] track;// the track of station K train i use [_ntrain,_nstation,station_capacity]; 
         public bool headway_status; // status of the train; =false dont need a headway ; =true need a headway
         public int foretrainID; // train's fore train which leads to a headway for the focal train; -1;
+        public List<double> ListPosition; //记录在每个离散事件时刻的位置       
 
         public int Loco_using_ID; // the ID of the locomotive used by current train
         public int Loco_prepare_using_ID; // the ID of the locomotive the current train may use, it comes from the oppsoing train

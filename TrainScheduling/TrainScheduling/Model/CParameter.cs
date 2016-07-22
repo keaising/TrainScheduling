@@ -16,6 +16,7 @@ namespace TrainScheduling.Model
         public int Max_int = 10000000;
         public int total_time_limit = 3; //* 60 * 60;//60 * 60 * 1;// unit is sec
         public int node_time_limit = 15 * 60; // unit is sec
+        public int DepartureTimeInterval = 1 * 60 * 60;//列车发车间隔
 
         //Dtrain parameter
         public int min_nbtrain = 8;

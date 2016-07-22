@@ -11,7 +11,6 @@ namespace TrainScheduling.Algorithm
 {
     public class CTATS
     {
-
         public CTATS(List<Ctrain> train, List<Crailway_station> station, List<Crailway_section> section, int _nset)
         {
             bool complete = false;
@@ -468,6 +467,8 @@ namespace TrainScheduling.Algorithm
 
             for (int i = 0; i < train.Count; i++)
             {
+                double train_travel_distance = 0;//当前事件中列车行走距离; outbound方向为正；inbound方向为负数
+                double train_current_position = train[i].ListPosition[train[i].ListPosition.Count - 1]; //当前位置为上次记录的最后一个位置信息
                 if (train[i].bdeparture == 0)
                 {
                     if (Dy_Time[i] == min_Dy_Time) // lead to the system discrete event
@@ -478,11 +479,17 @@ namespace TrainScheduling.Algorithm
                         train[i].time = systime + min_Dy_Time;
                         train[i].Nodestatus = 1;
                         train[i].bdeparture = 1;
+
+                        //update position
+                        train_travel_distance = 0;
                         update[i] = true; update_num++;
                     }
                     else
                     {
                         train[i].time = systime + min_Dy_Time;
+
+                        //update position
+                        train_travel_distance = 0;
                         update[i] = true; update_num++;
                     }
                 }
@@ -494,6 +501,9 @@ namespace TrainScheduling.Algorithm
                         { train[i].Nodestatus = 2; }
 
                         train[i].time = systime + min_Dy_Time;
+
+                        //update position
+                        train_travel_distance = 0;
                         update[i] = true; update_num++;
                     }
                     else if (train[i].Nodestatus == 2)
@@ -501,7 +511,7 @@ namespace TrainScheduling.Algorithm
                         if (Dy_Time[i] == min_Dy_Time)
                         {
                             if (train[i].CurRouteNode == train[i].route.Count - 1)
-                                train[i].bdeparture = 2;
+                            { train[i].bdeparture = 2; }
 
                             train[i].headway_status = false; train[i].foretrainID = -1;
 
@@ -510,6 +520,9 @@ namespace TrainScheduling.Algorithm
                         }
 
                         train[i].time = systime + min_Dy_Time;
+
+                        //update position
+                        train_travel_distance = 0;
                         update[i] = true; update_num++;
                     }
                     else if (train[i].Nodestatus == 3)
@@ -568,14 +581,25 @@ namespace TrainScheduling.Algorithm
                         }
 
                         train[i].time = systime + min_Dy_Time;
+
+                        //update position
+                        train_travel_distance = train[i].speed * min_Dy_Time;
+                        if (train[i].trainType == 1) train_travel_distance = 0 - train_travel_distance;
                         update[i] = true; update_num++;
                     }
                 }
                 else if (train[i].bdeparture == 2)
                 {
                     train[i].time = systime + min_Dy_Time;
+
+                    //update position
+                    train_travel_distance = 0;
                     update[i] = true; update_num++;
                 }
+
+                //add position
+                train_current_position = train_current_position + train_travel_distance;
+                train[i].ListPosition.Add(train_current_position);
             }
             systime = systime + min_Dy_Time;
             Debug.Assert(update_num == train.Count);
@@ -637,13 +661,15 @@ namespace TrainScheduling.Algorithm
             for (int i = 0; i < station.Count; i++)
                 for (int j = 0; j < station.Count; j++)
                     sectionlength[i, j] = -1;
+            double RailwayTotalLength = 0;
             for (int i = 0; i < section.Count; i++)
             {
                 sectionlength[section[i].start_station_ID, section[i].end_station_ID] = section[i].length * 1000; //km to m
                 sectionlength[section[i].end_station_ID, section[i].start_station_ID] = section[i].length * 1000; //km to m
+                RailwayTotalLength = RailwayTotalLength + section[i].length * 1000;
             }
 
-            int H = 1 * 60 * 60; // departure interval is 1 hour = 3600 s
+            int H = parameter.DepartureTimeInterval; // departure interval is 1 hour = 3600 s
             for (int i = 0; i < train.Count; i++)
             {
                 train[i].SectionTime = new int[station.Count, station.Count];
@@ -681,6 +707,9 @@ namespace TrainScheduling.Algorithm
                 for (int k = 0; k < train[i].route.Count; k++)
                     train[i].track[train[i].route[k]] = -1;
 
+                //20160722 记录列车在每个事件时的位置,以m为单位记录
+                if (train[i].trainType == 0) train[i].ListPosition.Add(0);
+                else train[i].ListPosition.Add(RailwayTotalLength);
             }
         }
     }
