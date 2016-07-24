@@ -55,6 +55,7 @@ namespace TrainScheduling
         bool g_BoolInputData = false;
         bool g_BoolRunTSTA = false;
         bool g_BoolRailwaymap = false;
+        bool g_BoolTimetable = false;
         //button_click input data，这里输入data的方式后面需要改动
         private void ParameterSettingButton_Click(object sender, RoutedEventArgs e)
         {
@@ -108,21 +109,21 @@ namespace TrainScheduling
         /// <param name="e"></param>
         private void DrawTimetable_Click(object sender, RoutedEventArgs e)
         {
-            if (!g_BoolInputData)
-                MessageBox.Show("未输入基础数据，请选择数据！");
-            else if (!g_BoolInitialized)
-                MessageBox.Show("请先画出底图！");
-            else
-            {
-                if (!g_BoolRunTSTA)
-                    MessageBox.Show("未运行任何调度算法，请先运行调度/调整算法！");
-                else if (g_BoolRunTSTA)
+            if (!g_BoolTimetable)
+                if (!g_BoolInputData)
+                    MessageBox.Show("未输入基础数据，请选择数据！");
+                else if (!g_BoolInitialized)
+                    MessageBox.Show("请先画出底图！");
+                else
                 {
-                    DisplayTrainTimeTable(gtrain, g_GivenFengeInUnitTimeSpan, gsection);
-                    RailwayMap(gstation, gsection);
-                    g_BoolRailwaymap = true;
+                    if (!g_BoolRunTSTA)
+                        MessageBox.Show("未运行任何调度算法，请先运行调度/调整算法！");
+                    else if (g_BoolRunTSTA)
+                    {
+                        DisplayTrainTimeTable(gtrain, g_GivenFengeInUnitTimeSpan, gsection); g_BoolTimetable = true;
+                        RailwayMap(gstation, gsection); g_BoolRailwaymap = true;
+                    }
                 }
-            }
         }
 
 
