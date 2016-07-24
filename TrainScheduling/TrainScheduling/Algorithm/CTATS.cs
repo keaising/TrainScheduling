@@ -600,6 +600,7 @@ namespace TrainScheduling.Algorithm
                 //add position
                 train_current_position = train_current_position + train_travel_distance;
                 train[i].ListPosition.Add(train_current_position);
+                train[i].ListTime.Add(systime + min_Dy_Time);
             }
             systime = systime + min_Dy_Time;
             Debug.Assert(update_num == train.Count);
@@ -710,6 +711,7 @@ namespace TrainScheduling.Algorithm
                 //20160722 记录列车在每个事件时的位置,以m为单位记录
                 if (train[i].trainType == 0) train[i].ListPosition.Add(0);
                 else train[i].ListPosition.Add(RailwayTotalLength);
+                train[i].ListTime.Add(0);
             }
         }
     }

@@ -21,6 +21,11 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Threading;
 
+
+/// <summary>
+/// 160724：需要解决动画重复播放时，对之前的图像的擦除处理，注意逻辑顺序
+/// </summary>
+
 namespace TrainScheduling
 {
     /// <summary>
@@ -36,9 +41,12 @@ namespace TrainScheduling
         //计时器
         DispatcherTimer timer;
         int EventIndex = 0;
+        int g_GivenFengeInUnitTimeSpan = 120;
 
         //用来记录列车位置刷新时候，删除grid.chirldren中的元素<trainID,chirldrenIndex>
-        Dictionary<int, int> g_mapTrainIDandIndex = new Dictionary<int, int>();
+        Dictionary<int, int> g_mapGrirdRailwayTrainIDandIndex = new Dictionary<int, int>();
+        //用来擦除timetable的图像<trainID,chirldrenIndex>
+        List<Dictionary<int, int>> g_mapGrirdTimetableTrainIDandIndexList = new List<Dictionary<int, int>>();
 
         List<Ctrain> gtrain = new List<Ctrain>();
         List<Crailway_station> gstation = new List<Crailway_station>();
@@ -110,7 +118,7 @@ namespace TrainScheduling
                     MessageBox.Show("未运行任何调度算法，请先运行调度/调整算法！");
                 else if (g_BoolRunTSTA)
                 {
-                    DisplayTrainTimeTable(gtrain, 120, gsection);
+                    DisplayTrainTimeTable(gtrain, g_GivenFengeInUnitTimeSpan, gsection);
                     RailwayMap(gstation, gsection);
                     g_BoolRailwaymap = true;
                 }
@@ -132,12 +140,17 @@ namespace TrainScheduling
                 MessageBox.Show("路网图为空，请先画出路网结构图！");
             else if (g_BoolRunTSTA && g_BoolRailwaymap)
             {
+                int mapIndexStart; int mapIndexEnd;
+                if (g_mapGrirdTimetableTrainIDandIndexList.Count > 0)
+                    if (g_mapGrirdTimetableTrainIDandIndexList[0].TryGetValue(0, out mapIndexStart)
+                        && g_mapGrirdTimetableTrainIDandIndexList[g_mapGrirdTimetableTrainIDandIndexList.Count - 1].TryGetValue(gstation.Count - 2, out mapIndexEnd))
+                        GridSchWinTimetable.Children.RemoveRange(mapIndexStart, mapIndexEnd);
+
                 timer = new DispatcherTimer(DispatcherPriority.Normal);
                 timer.Tick += new EventHandler(timer_Tick);
                 timer.Interval = TimeSpan.FromMilliseconds(40);
                 timer.Start();
             }
-
         }
 
         private void timer_Tick(object sender, EventArgs e)
@@ -188,10 +201,8 @@ namespace TrainScheduling
                     section.Add(obj.Clone());
 
                 //input section length; station name et al.  
-
                 List<double> SectionLength = new List<double>();
                 List<double> TimetableSectionLength = new List<double>();
-
                 List<string> StaName = new List<string>();
                 StaName = StationName(station);
 
@@ -414,6 +425,7 @@ namespace TrainScheduling
             {
                 DisplayTrainPosition(gtrain, EventIndex, xorigin, H, WidthInUnitKm);
                 //System.Threading.Thread.Sleep(RefreshTime * 1000); //1 second
+                DynamicDisplayTrainTimetable(gtrain, g_GivenFengeInUnitTimeSpan, gsection, EventIndex);
                 EventIndex += SkipEventNum;
             }
             else
@@ -429,11 +441,11 @@ namespace TrainScheduling
         {
             //擦除原来画面
             int mapIndexStart; int mapIndexEnd;
-            if (g_mapTrainIDandIndex.TryGetValue(train[0].trainID, out mapIndexStart) && g_mapTrainIDandIndex.TryGetValue(train[train.Count - 1].trainID, out mapIndexEnd))
+            if (g_mapGrirdRailwayTrainIDandIndex.TryGetValue(train[0].trainID, out mapIndexStart) && g_mapGrirdRailwayTrainIDandIndex.TryGetValue(train[train.Count - 1].trainID, out mapIndexEnd))
                 GridSchWinRailwayMap.Children.RemoveRange(mapIndexStart, mapIndexEnd);
 
             //清除map
-            g_mapTrainIDandIndex.Clear();
+            g_mapGrirdRailwayTrainIDandIndex.Clear();
 
             //画出新画面
             for (int i = 0; i < train.Count; i++)
@@ -472,7 +484,7 @@ namespace TrainScheduling
             myPath.Data = myRectangleGeometry;
             GridSchWinRailwayMap.Children.Add(myPath);
             //给出trainID对应的Index在刷新的时候删除GridSchWinRailwayMap中对应的元素          
-            g_mapTrainIDandIndex.Add(trainID, GridSchWinRailwayMap.Children.Count - 1);
+            g_mapGrirdRailwayTrainIDandIndex.Add(trainID, GridSchWinRailwayMap.Children.Count - 1);
         }
 
         /// <summary>
@@ -585,7 +597,6 @@ namespace TrainScheduling
             StationTrack[0].X1 = x1; StationTrack[0].Y1 = y2; StationTrack[0].X2 = x2; StationTrack[0].Y2 = y1;
             StationTrack[1].X1 = x2; StationTrack[1].Y1 = y1; StationTrack[1].X2 = x3; StationTrack[1].Y2 = y1;
             StationTrack[2].X1 = x3; StationTrack[2].Y1 = y1; StationTrack[2].X2 = x4; StationTrack[2].Y2 = y2;
-
             StationTrack[3].X1 = x5; StationTrack[3].Y1 = y2; StationTrack[3].X2 = x6; StationTrack[3].Y2 = y3;
             StationTrack[4].X1 = x6; StationTrack[4].Y1 = y3; StationTrack[4].X2 = x7; StationTrack[4].Y2 = y3;
             StationTrack[5].X1 = x7; StationTrack[5].Y1 = y3; StationTrack[5].X2 = x8; StationTrack[5].Y2 = y2;
@@ -659,7 +670,7 @@ namespace TrainScheduling
             }
 
             if (g_BoolRunTSTA)
-                DisplayTrainTimeTable(gtrain, 120, gsection);
+                DisplayTrainTimeTable(gtrain, g_GivenFengeInUnitTimeSpan, gsection);
             var t2 = DateTime.Now;
             var ts = t2 - t1;
 
@@ -734,6 +745,7 @@ namespace TrainScheduling
             //列车图
             for (int i = 0; i < train.Count(); i++)
             {
+                var g_mapGrirdTimetableTrainIDandIndex = new Dictionary<int, int>();
                 //不用分上下行绘图, 但是需要进一步考虑如果列车的途径站点并不存在与当前路径上的情况
                 for (int j = 0; j < train[i].arrival.Count() - 1; j++)
                 {
@@ -765,9 +777,67 @@ namespace TrainScheduling
                     TravellingTimeLine.Y1 = ty1;
                     TravellingTimeLine.Y2 = ty2;
                     GridSchWinTimetable.Children.Add(TravellingTimeLine);
+                    g_mapGrirdTimetableTrainIDandIndex.Add(j, GridSchWinTimetable.Children.Count - 1);
                 }
+                g_mapGrirdTimetableTrainIDandIndexList.Add(g_mapGrirdTimetableTrainIDandIndex);
             }
         }
+
+        //逐事件演示列车运行图
+        private void DynamicDisplayTrainTimetable(List<Ctrain> train, int GivenFengeInUnitTimeSpan, List<Crailway_section> Section, int EnventIndex)
+        {
+            List<double> SectionLength = new List<double>();
+            for (int j = 0; j < Section.Count; j++)
+                SectionLength.Add(Section[j].length);
+
+            int TimeMaxIndex = 0;
+            foreach (Ctrain obj in train)
+                TimeMaxIndex = Math.Max(TimeMaxIndex, obj.departure[obj.route[obj.departure.Count() - 1]]);
+
+            double[] GTP = new double[8];
+            GTP = GridTimeTableParameter(GridSchWinTimetable, GivenFengeInUnitTimeSpan, SectionLength);
+            double x_origin = GTP[0];
+            double y_origin = GTP[1];
+            double TimetableWidth = GTP[2];
+            double TimetableHight = GTP[3];
+            double TimeSpanInUnitMinute = GTP[4];
+            double StationSpanInUnitKm = GTP[5];
+            double TimeInterval = GTP[6];
+            double _num_time_span = GTP[7];
+            double H = GridSchWinTimetable.ActualHeight;
+
+            List<double> TimetableSectionLength = new List<double>();
+            double railwaylength = 0.0; TimetableSectionLength.Add(railwaylength);
+            for (int j = 0; j < SectionLength.Count; j++)
+            {
+                railwaylength = railwaylength + SectionLength[j];
+                TimetableSectionLength.Add(railwaylength);
+            }
+
+            //清除map
+            g_mapGrirdTimetableTrainIDandIndexList.Clear();
+
+            //画出新的运行线
+            if (EventIndex > 0)
+                for (int i = 0; i < train.Count(); i++)
+                {
+                    //plot travelling time line 
+                    var TravellingTimeLine = new Line();
+                    TravellingTimeLine.Stroke = System.Windows.Media.Brushes.DarkBlue;
+                    TravellingTimeLine.StrokeThickness = 1;
+                    double tx1, ty1, tx2, ty2;
+                    tx1 = TimeSpanInUnitMinute * train[i].ListTime[EventIndex - 1] / 60 + x_origin;
+                    ty1 = H - StationSpanInUnitKm * (train[i].ListPosition[EventIndex - 1] / 1000);
+                    tx2 = TimeSpanInUnitMinute * train[i].ListTime[EventIndex] / 60 + x_origin;
+                    ty2 = H - StationSpanInUnitKm * (train[i].ListPosition[EventIndex] / 1000);
+                    TravellingTimeLine.X1 = tx1;
+                    TravellingTimeLine.X2 = tx2;
+                    TravellingTimeLine.Y1 = ty1;
+                    TravellingTimeLine.Y2 = ty2;
+                    GridSchWinTimetable.Children.Add(TravellingTimeLine);
+                }
+        }
+
 
         /// <summary>
         /// 
