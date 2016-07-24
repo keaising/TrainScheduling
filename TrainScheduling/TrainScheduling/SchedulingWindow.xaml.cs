@@ -35,7 +35,7 @@ namespace TrainScheduling
 
         //计时器
         DispatcherTimer timer;
-        int e = 0;
+        int EventIndex = 0;
 
         //用来记录列车位置刷新时候，删除grid.chirldren中的元素<trainID,chirldrenIndex>
         Dictionary<int, int> g_mapTrainIDandIndex = new Dictionary<int, int>();
@@ -46,6 +46,7 @@ namespace TrainScheduling
         bool g_BoolInitialized = false;
         bool g_BoolInputData = false;
         bool g_BoolRunTSTA = false;
+        bool g_BoolRailwaymap = false;
         //button_click input data，这里输入data的方式后面需要改动
         private void ParameterSettingButton_Click(object sender, RoutedEventArgs e)
         {
@@ -111,26 +112,32 @@ namespace TrainScheduling
                 {
                     DisplayTrainTimeTable(gtrain, 120, gsection);
                     RailwayMap(gstation, gsection);
+                    g_BoolRailwaymap = true;
                 }
             }
         }
 
+
+        //动画演示
         private void DevideButton_Click(object sender, RoutedEventArgs e)
         {
+            //update e
+            EventIndex = 0;
+
             if (!g_BoolInputData)
                 MessageBox.Show("未输入基础数据，请选择数据！");
-            else
+            else if (!g_BoolRunTSTA)
+                MessageBox.Show("未运行任何调度算法，请先运行调度/调整算法！");
+            else if (!g_BoolRailwaymap)
+                MessageBox.Show("路网图为空，请先画出路网结构图！");
+            else if (g_BoolRunTSTA && g_BoolRailwaymap)
             {
-                if (!g_BoolRunTSTA)
-                    MessageBox.Show("未运行任何调度算法，请先运行调度/调整算法！");
-                else if (g_BoolRunTSTA)
-                {
-                    timer = new DispatcherTimer(DispatcherPriority.Normal);
-                    timer.Tick += new EventHandler(timer_Tick);
-                    timer.Interval = TimeSpan.FromMilliseconds(20);
-                    timer.Start();
-                }
+                timer = new DispatcherTimer(DispatcherPriority.Normal);
+                timer.Tick += new EventHandler(timer_Tick);
+                timer.Interval = TimeSpan.FromMilliseconds(40);
+                timer.Start();
             }
+
         }
 
         private void timer_Tick(object sender, EventArgs e)
@@ -403,17 +410,11 @@ namespace TrainScheduling
             //线路长度比例,Wb为线路上每公里在图上的长度
             double WidthInUnitKm = 0.9 * W / TotalLength;
 
-            //for (int e = 0; e < NumDiscreteEvent; e += SkipEventNum)
-            //{
-            //    DisplayTrainPosition(gtrain, e, xorigin, H, WidthInUnitKm);
-            //    System.Threading.Thread.Sleep(RefreshTime * 1000); //1 second
-            //}
-
-            if (e < NumDiscreteEvent)
+            if (EventIndex < NumDiscreteEvent)
             {
-                DisplayTrainPosition(gtrain, e, xorigin, H, WidthInUnitKm);
-                System.Threading.Thread.Sleep(RefreshTime * 1000); //1 second
-                e += SkipEventNum;
+                DisplayTrainPosition(gtrain, EventIndex, xorigin, H, WidthInUnitKm);
+                //System.Threading.Thread.Sleep(RefreshTime * 1000); //1 second
+                EventIndex += SkipEventNum;
             }
             else
             {
@@ -426,13 +427,19 @@ namespace TrainScheduling
 
         private void DisplayTrainPosition(List<Ctrain> train, int e, double xorigin, double H, double WidthInUnitKm)
         {
+            //擦除原来画面
+            int mapIndexStart; int mapIndexEnd;
+            if (g_mapTrainIDandIndex.TryGetValue(train[0].trainID, out mapIndexStart) && g_mapTrainIDandIndex.TryGetValue(train[train.Count - 1].trainID, out mapIndexEnd))
+                GridSchWinRailwayMap.Children.RemoveRange(mapIndexStart, mapIndexEnd);
+
+            //清除map
+            g_mapTrainIDandIndex.Clear();
+
+            //画出新画面
             for (int i = 0; i < train.Count; i++)
             {
-                double position = train[i].ListPosition[e] / 1000; //单位由米转换为千米
-                                                                   //出现列车
-                int mapvalue;
-                if (g_mapTrainIDandIndex.TryGetValue(train[i].trainID, out mapvalue))
-                    GridSchWinRailwayMap.Children.RemoveAt(mapvalue);
+                double position = train[i].ListPosition[e] / 1000; //单位由米转换为千米  
+                //出现列车   
                 DisplayTrainImage(train[i].trainID, train[i].trainType, position, xorigin, H, WidthInUnitKm);
             }
         }
@@ -442,7 +449,7 @@ namespace TrainScheduling
         /// </summary>    
         private void DisplayTrainImage(int trainID, int TrainType, double position, double xorigin, double H, double WidthInUnitKm)
         {
-            g_mapTrainIDandIndex.Clear();
+            //g_mapTrainIDandIndex.Clear();
             double UnitH = H / 20;
             double y1 = H / 2 - 3 * UnitH, y2 = H / 2 - 2 * UnitH;
 
@@ -464,7 +471,7 @@ namespace TrainScheduling
             }
             myPath.Data = myRectangleGeometry;
             GridSchWinRailwayMap.Children.Add(myPath);
-            //给出trainID对应的Index在刷新的时候删除GridSchWinRailwayMap中对应的元素
+            //给出trainID对应的Index在刷新的时候删除GridSchWinRailwayMap中对应的元素          
             g_mapTrainIDandIndex.Add(trainID, GridSchWinRailwayMap.Children.Count - 1);
         }
 
