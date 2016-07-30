@@ -101,13 +101,13 @@
         <Grid  Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="2*"/>
-                <RowDefinition Height="1*"/>    
+                <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
             <Grid x:Name="GridSchWinRailwayMap" Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" >
             </Grid>
             <Grid x:Name="GridSchWinRailwayMapStationName" Grid.Row="1" Grid.Column="0" Margin="0 0 0 0" >
             </Grid>
-                <!--  <Grid.ColumnDefinitions>
+            <!--  <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -171,15 +171,55 @@
                 <TextBox Grid.Row="0" Grid.Column="1" x:Name="OtherTextbox" HorizontalAlignment="Left" FontWeight="Bold" Width="60px" Margin="5 0 0 0"/>
             </Grid>-->
         </Grid>
-        <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" Margin="2">
-            <CheckBox>列车1</CheckBox>
+        <Grid  Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" Margin="2,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Grid x:Name="GridParameterDisplay"  Grid.Row="0" Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="当前运行算法:" HorizontalAlignment="Left" FontWeight="Bold" Margin="5 0 0 0"/>
+                <TextBox Grid.Row="1" Grid.Column="0" x:Name="AlgorithmNameTextbox" HorizontalAlignment="Left" FontWeight="Bold" Width="100px" Margin="5 0 0 0"/>
+            </Grid>
+            <Grid x:Name="GridResultDisplay"  Grid.Row="1" Grid.Column="0" Margin="2,10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="总延迟时间:" HorizontalAlignment="Left" FontWeight="Bold" Margin="5 0 0 0"/>
+                <TextBox Grid.Row="1" Grid.Column="1" x:Name="TotalDelayTimeTextbox" HorizontalAlignment="Left" Width="120px" Margin="5 0 0 0" IsReadOnly="True" TextWrapping="Wrap"/>
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="最大延迟时间:" FontWeight="Bold" HorizontalAlignment="Left" FontFamily= "Times New Roman" Margin="5 5 0 0"/>
+                <TextBox Grid.Row="3" Grid.Column="1" x:Name="BiggestDelayTimeTextbox" HorizontalAlignment="Left" Width="120px" Margin="5 0 0 0" Height="20" VerticalAlignment="Top" TextWrapping="Wrap" IsReadOnly="True"/>
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="最大延迟对应的列车:" HorizontalAlignment="Left" FontWeight="Bold"  Margin="5 5 0 0"/>
+                <TextBox Grid.Row="5" Grid.Column="0" x:Name="ExactTrainTextbox" HorizontalAlignment="Left"  Width="120px" Margin="5 0 0 0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" TextWrapping="Wrap" IsReadOnly="True"/>
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="线路清空时间:" HorizontalAlignment="Left" FontWeight="Bold"  Margin="5 5 0 0"/>
+                <TextBox Grid.Row="7" Grid.Column="0" x:Name="ClearTimeTextbox" HorizontalAlignment="Left"  Width="120px" Margin="5 0 0 0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" TextWrapping="Wrap" IsReadOnly="True"/>
+                <TextBlock Grid.Row="8" Grid.Column="0" Text="总能耗:" HorizontalAlignment="Left" FontWeight="Bold"  Margin="5 5 0 0"/>
+                <TextBox Grid.Row="9" Grid.Column="0" x:Name="TotalEnergyTextbox" HorizontalAlignment="Left"  Width="120px" Margin="5 0 0 0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" TextWrapping="Wrap" IsReadOnly="True"/>
+            </Grid>
+            <!--  <CheckBox>列车1</CheckBox>
             <CheckBox>列车2</CheckBox>
             <CheckBox>列车3</CheckBox>
             <CheckBox>列车4</CheckBox>
             <StackPanel Orientation="Horizontal">
                 <Label Content="帧率：" />
                 <Label x:Name="FpsLabel" Content="XX帧/秒" />
-            </StackPanel>
-        </StackPanel>
+            </StackPanel>-->
+        </Grid>
     </Grid>
 </Controls:MetroWindow>

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
+
 
 namespace TrainScheduling.Model
 {
@@ -36,5 +38,51 @@ namespace TrainScheduling.Model
         public int slow_speed = 30;
         public double Time_co = 0.5;
         public double Loco_co = 0.5;
+
+        //转化HexCode到rgb颜色 
+        //调用方式为 Brush br = new SolidBrush(HexColor("#3ea530"));
+        public Color HexColor(String hex)
+        {
+            //將井字號移除
+            hex = hex.Replace("#", "");
+
+            byte a = 255;
+            byte r = 255;
+            byte g = 255;
+            byte b = 255;
+            int start = 0;
+
+            //處理ARGB字串 
+            if (hex.Length == 8)
+            {
+                a = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+                start = 2;
+            }
+
+            // 將RGB文字轉成byte
+            r = byte.Parse(hex.Substring(start, 2), System.Globalization.NumberStyles.HexNumber);
+            g = byte.Parse(hex.Substring(start + 2, 2), System.Globalization.NumberStyles.HexNumber);
+            b = byte.Parse(hex.Substring(start + 4, 2), System.Globalization.NumberStyles.HexNumber);
+
+            return Color.FromArgb(a, r, g, b);
+        }
+
+
+
+        public string[] HexCode = new string[] {"Blue","BlueViolet","DarkBlue","DeepPink","Indigo","Magenta","MidnightBlue","Purple","DarkOrchid"};
+
+        //public string[] HexCode = new string[] {"Transparent","AliceBlue","AntiqueWhite","Aqua","Aquamarine","Azure","Beige","Bisque","Black","BlanchedAlmond",
+        //    "Blue","BlueViolet","Brown","BurlyWood","CadetBlue","Chartreuse","Chocolate","Coral","CornflowerBlue","Cornsilk","Crimson","Cyan","DarkBlue","DarkCyan",
+        //    "DarkGoldenrod","DarkGray","DarkGreen","DarkKhaki","DarkMagenta","DarkOliveGreen","DarkOrange","DarkOrchid","DarkRed","DarkSalmon",
+        //    "DarkSeaGreen","DarkSlateBlue","DarkSlateGray","DarkTurquoise","DarkViolet","DeepPink","DeepSkyBlue","DimGray","DodgerBlue","Firebrick",
+        //    "FloralWhite","ForestGreen","Fuchsia","Gainsboro","GhostWhite","Gold","Goldenrod","Gray","Green","GreenYellow","Honeydew","HotPink",
+        //    "IndianRed","Indigo","Ivory","Khaki","Lavender","LavenderBlush","LawnGreen","LemonChiffon","LightBlue","LightCoral","LightCyan","LightGoldenrodYellow",
+        //    "LightGreen","LightGray","LightPink","LightSalmon","LightSeaGreen","LightSkyBlue","LightSlateGray","LightSteelBlue","LightYellow","Lime",
+        //    "LimeGreen","Linen","Magenta","Maroon","MediumAquamarine","MediumBlue","MediumOrchid","MediumPurple","MediumSeaGreen","MediumSlateBlue",
+        //    "MediumSpringGreen","MediumTurquoise","MediumVioletRed","MidnightBlue","MintCream","MistyRose","Moccasin","NavajoWhite","Navy","OldLace",
+        //    "Olive","OliveDrab","Orange","OrangeRed","Orchid","PaleGoldenrod","PaleGreen","PaleTurquoise","PaleVioletRed","PapayaWhip","PeachPuff",
+        //    "Peru","Pink","Plum","PowderBlue","Purple","Red","RosyBrown","RoyalBlue","SaddleBrown","Salmon","SandyBrown","SeaGreen","SeaShell",
+        //    "Sienna","Silver","SkyBlue","SlateBlue","SlateGray","Snow","SpringGreen","SteelBlue","Tan","Teal","Thistle","Tomato","Turquoise","Violet",
+        //    "Wheat","White","WhiteSmoke","Yellow","YellowGreen"};
     }
 }

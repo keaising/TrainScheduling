@@ -120,7 +120,13 @@ namespace TrainScheduling
                         MessageBox.Show("未运行任何调度算法，请先运行调度/调整算法！");
                     else if (g_BoolRunTSTA)
                     {
+                        //展示算法
+                        AlgorithmNameTextbox.Text = "Alg_TSTA";
+                        //画出运行图
                         DisplayTrainTimeTable(gtrain, g_GivenFengeInUnitTimeSpan, gsection); g_BoolTimetable = true;
+                        //展示结果
+                        DisplayResults(gtrain);
+                        //铁路线路图像
                         RailwayMap(gstation, gsection); g_BoolRailwaymap = true;
                     }
                 }
@@ -411,7 +417,7 @@ namespace TrainScheduling
         /// </summary>
         private void DynamicDisplayTrainTravel(List<Ctrain> train, List<Crailway_section> section, List<Crailway_station> station, int SkipEventNum, int RefreshTime)
         {
-            int NumDiscreteEvent = train[0].ListPosition.Count;
+            int NumDiscreteEvent = train[0].ListTime.Count;
             double H = GridSchWinRailwayMap.ActualHeight;
             double W = GridSchWinRailwayMap.ActualWidth;
             double yorigin = H / 2; double xorigin = W / 20;
@@ -434,10 +440,11 @@ namespace TrainScheduling
                 timer.Stop();
                 MessageBox.Show("动画结束");
             }
-
-
         }
 
+        /// <summary>
+        /// 刷新列车位置
+        /// </summary>       
         private void DisplayTrainPosition(List<Ctrain> train, int e, double xorigin, double H, double WidthInUnitKm)
         {
             //擦除原来画面
@@ -449,38 +456,52 @@ namespace TrainScheduling
             g_mapGrirdRailwayTrainIDandIndex.Clear();
 
             //画出新画面
+            int colorindex = 0;
             for (int i = 0; i < train.Count; i++)
             {
                 double position = train[i].ListPosition[e] / 1000; //单位由米转换为千米  
                 //出现列车   
-                DisplayTrainImage(train[i].trainID, train[i].trainType, position, xorigin, H, WidthInUnitKm);
+                DisplayTrainImage(i, train[i].trainID, train[i].trainType, position, xorigin, H, WidthInUnitKm);
             }
         }
 
         /// <summary>
         /// 出现列车图像
         /// </summary>    
-        private void DisplayTrainImage(int trainID, int TrainType, double position, double xorigin, double H, double WidthInUnitKm)
+        private void DisplayTrainImage(int i, int trainID, int TrainType, double position, double xorigin, double H, double WidthInUnitKm)
         {
             //g_mapTrainIDandIndex.Clear();
+            CParameter parameter = new CParameter();
             double UnitH = H / 20;
             double y1 = H / 2 - 3 * UnitH, y2 = H / 2 - 2 * UnitH;
-
             RectangleGeometry myRectangleGeometry = new RectangleGeometry();
-
             var myPath = new System.Windows.Shapes.Path();
             myPath.Stroke = System.Windows.Media.Brushes.Black;
             myPath.StrokeThickness = 1;
 
+            int ColorIndex = i % (parameter.HexCode.Count() - 1);
             if (TrainType == 0)
             {
-                myPath.Fill = System.Windows.Media.Brushes.Red;
-                myRectangleGeometry.Rect = new Rect(xorigin + position * WidthInUnitKm, H / 2 - (1.4 * UnitH), 6 * WidthInUnitKm, 1.4 * UnitH);
+                var color = new System.Windows.Media.Color();//               
+                var SDcolor = System.Drawing.Color.FromName(parameter.HexCode[ColorIndex]);
+                color.R = SDcolor.R;
+                color.G = SDcolor.G;
+                color.B = SDcolor.B;
+                color.A = SDcolor.B;
+                myPath.Fill = new SolidColorBrush(color);
+                myRectangleGeometry.Rect = new Rect(xorigin + position * WidthInUnitKm, H / 2 - (1.4 * UnitH), 8 * WidthInUnitKm, 1.4 * UnitH);
             }
             else
             {
-                myPath.Fill = System.Windows.Media.Brushes.Blue;
-                myRectangleGeometry.Rect = new Rect(xorigin + position * WidthInUnitKm, H / 2, 6 * WidthInUnitKm, 1.4 * UnitH);
+                var color = new System.Windows.Media.Color();//               
+                var SDcolor = System.Drawing.Color.FromName(parameter.HexCode[ColorIndex]);
+                color.R = SDcolor.R;
+                color.G = SDcolor.G;
+                color.B = SDcolor.B;
+                color.A = SDcolor.B;
+                myPath.Fill = new SolidColorBrush(color);
+                //myPath.Fill = System.Windows.Media.Brushes.YellowGreen;
+                myRectangleGeometry.Rect = new Rect(xorigin + position * WidthInUnitKm, H / 2, 8 * WidthInUnitKm, 1.4 * UnitH);
             }
             myPath.Data = myRectangleGeometry;
             GridSchWinRailwayMap.Children.Add(myPath);
@@ -667,18 +688,21 @@ namespace TrainScheduling
                 GridSchWinTimeIndex.Children.Add(testRectangle);
 
                 BasicTimetable(gstation, gsection);
-                RailwayMap(gstation, gsection);
             }
 
-            if (g_BoolRunTSTA)
+            if (g_BoolTimetable)
                 DisplayTrainTimeTable(gtrain, g_GivenFengeInUnitTimeSpan, gsection);
+
+            if (g_BoolRailwaymap)
+                RailwayMap(gstation, gsection);
+
             var t2 = DateTime.Now;
             var ts = t2 - t1;
 
             if (ts.Milliseconds != 0)
             {
                 float per = 1000 / ts.Milliseconds;
-                FpsLabel.Content = per.ToString() + "帧/s";
+                //FpsLabel.Content = per.ToString() + "帧/s";
             }
 
             #region 双缓冲绘图
@@ -709,10 +733,7 @@ namespace TrainScheduling
 
         /// <summary>
         /// 画运行图
-        /// </summary>
-        /// <param name="train"></param>
-        /// <param name="GivenFengeInUnitTimeSpan"></param>
-        /// <param name="Section"></param>
+        /// </summary>      
         private void DisplayTrainTimeTable(List<Ctrain> train, int GivenFengeInUnitTimeSpan, List<Crailway_section> Section)
         {
             List<double> SectionLength = new List<double>();
@@ -787,6 +808,7 @@ namespace TrainScheduling
         //逐事件演示列车运行图
         private void DynamicDisplayTrainTimetable(List<Ctrain> train, int GivenFengeInUnitTimeSpan, List<Crailway_section> Section, int EnventIndex)
         {
+            CParameter parameter = new CParameter();
             List<double> SectionLength = new List<double>();
             for (int j = 0; j < Section.Count; j++)
                 SectionLength.Add(Section[j].length);
@@ -817,36 +839,83 @@ namespace TrainScheduling
 
             //清除map
             g_mapGrirdTimetableTrainIDandIndexList.Clear();
-
-            //画出新的运行线
+            //画出新的运行线          
             if (EventIndex > 0)
                 for (int i = 0; i < train.Count(); i++)
-                {
-                    //plot travelling time line 
-                    var TravellingTimeLine = new Line();
-                    TravellingTimeLine.Stroke = System.Windows.Media.Brushes.DarkBlue;
-                    TravellingTimeLine.StrokeThickness = 1;
-                    double tx1, ty1, tx2, ty2;
-                    tx1 = TimeSpanInUnitMinute * train[i].ListTime[EventIndex - 1] / 60 + x_origin;
-                    ty1 = H - StationSpanInUnitKm * (train[i].ListPosition[EventIndex - 1] / 1000);
-                    tx2 = TimeSpanInUnitMinute * train[i].ListTime[EventIndex] / 60 + x_origin;
-                    ty2 = H - StationSpanInUnitKm * (train[i].ListPosition[EventIndex] / 1000);
-                    TravellingTimeLine.X1 = tx1;
-                    TravellingTimeLine.X2 = tx2;
-                    TravellingTimeLine.Y1 = ty1;
-                    TravellingTimeLine.Y2 = ty2;
-                    GridSchWinTimetable.Children.Add(TravellingTimeLine);
-                }
+                    if (train[i].ListPosition[EventIndex] >= 0 && train[i].ListPosition[EventIndex - 1] >= 0)
+                    {
+                        int ColorIndex = i % (parameter.HexCode.Count() - 1);
+
+                        //plot travelling time line 
+                        var TravellingTimeLine = new Line();
+
+                        var color = new System.Windows.Media.Color();//               
+                        var SDcolor = System.Drawing.Color.FromName(parameter.HexCode[ColorIndex]);
+                        color.R = SDcolor.R;
+                        color.G = SDcolor.G;
+                        color.B = SDcolor.B;
+                        color.A = SDcolor.B;
+                        //myPath.Fill = new SolidColorBrush(color);
+                        TravellingTimeLine.Stroke = new SolidColorBrush(color);
+
+                        //TravellingTimeLine.Stroke = System.Windows.Media.Brushes.DarkBlue;
+                        TravellingTimeLine.StrokeThickness = 1.5;
+                        double tx1, ty1, tx2, ty2;
+                        tx1 = TimeSpanInUnitMinute * train[i].ListTime[EventIndex - 1] / 60 + x_origin;
+                        ty1 = H - StationSpanInUnitKm * (train[i].ListPosition[EventIndex - 1] / 1000);
+                        tx2 = TimeSpanInUnitMinute * train[i].ListTime[EventIndex] / 60 + x_origin;
+                        ty2 = H - StationSpanInUnitKm * (train[i].ListPosition[EventIndex] / 1000);
+                        TravellingTimeLine.X1 = tx1;
+                        TravellingTimeLine.X2 = tx2;
+                        TravellingTimeLine.Y1 = ty1;
+                        TravellingTimeLine.Y2 = ty2;
+                        GridSchWinTimetable.Children.Add(TravellingTimeLine);
+                    }
         }
 
 
         /// <summary>
-        /// 
+        /// Display results generated by scheduling algorithm
         /// </summary>
-        /// <param name="mygrid"></param>
-        /// <param name="FengeInUnitTimeSpan"></param>
-        /// <param name="SectionLength"></param>
-        /// <returns></returns>
+        private void DisplayResults(List<Ctrain> train)
+        {
+            string[] ResultStr = new string[6];
+            List<int> MaxDelayTrainID = new List<int>();
+            double TotalDelay = 0; double MaxDelay = 0;
+            double ClearTimeStart = 0; double ClearTimeEnd = 0; double ClearTime = 0;
+            for (int i = 0; i < train.Count; i++)
+            {
+                TotalDelay = TotalDelay + train[i].DelayTime;
+                MaxDelay = Math.Max(MaxDelay, train[i].DelayTime);
+                ClearTimeStart = Math.Min(ClearTimeStart, train[i].arrival[0]);
+                ClearTimeEnd = Math.Max(ClearTimeEnd, train[i].departure[train[i].route[train[i].route.Count - 1]]);
+            }
+            ClearTime = ClearTimeEnd - ClearTimeStart;
+
+            string MTID = "";
+            for (int i = 0; i < train.Count; i++)
+            {
+                if (train[i].DelayTime == MaxDelay)
+                {
+                    MaxDelayTrainID.Add(train[i].trainID);
+                    MTID = MTID + train[i].trainID + "；";
+                }
+            }
+
+            ResultStr[0] = (int)(TotalDelay / 60) + " 分钟";
+            ResultStr[1] = (int)(MaxDelay / 60) + " 分钟";
+            ResultStr[2] = MTID;
+            ResultStr[3] = "列车总能耗";
+
+            TotalDelayTimeTextbox.Text = ResultStr[0];
+            BiggestDelayTimeTextbox.Text = ResultStr[1];
+            ExactTrainTextbox.Text = ResultStr[2];
+            ClearTimeTextbox.Text = (int)(ClearTime / 60) + " 分钟";
+        }
+
+        /// <summary>
+        /// 返回grid参数
+        /// </summary>       
         private double[] GridTimeTableParameter(Grid mygrid, int FengeInUnitTimeSpan, List<double> SectionLength)
         {
             //0-x_origin; 1-y_origin; 2-TimeTableWidth
@@ -906,7 +975,5 @@ namespace TrainScheduling
             input_reader[0].Close(); input_reader[1].Close(); input_reader[2].Close();
             CInitialize_Information Initial = new CInitialize_Information(train, station, section);
         }
-
-
     }
 }

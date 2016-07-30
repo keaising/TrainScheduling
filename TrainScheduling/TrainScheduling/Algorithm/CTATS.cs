@@ -48,7 +48,10 @@ namespace TrainScheduling.Algorithm
 
             double ITAS_UB = 0;
             for (int i = 0; i < _ntrain; i++)
-                ITAS_UB = ITAS_UB + train[i].departure[train[i].route[train[i].route.Count - 1]];
+            {
+                train[i].DelayTime = train[i].departure[train[i].route[train[i].route.Count - 1]] - train[i].free_departure[train[i].route[train[i].route.Count - 1]];
+                ITAS_UB = ITAS_UB + train[i].DelayTime;
+            }
             //ITAS_outpu.WriteLine(_nset + "\t" + train.Count + "\t" + ITAS_UB + "\t" + ITAS_cpu_Time);
         }
 
@@ -467,8 +470,7 @@ namespace TrainScheduling.Algorithm
 
             for (int i = 0; i < train.Count; i++)
             {
-                double train_travel_distance = 0;//当前事件中列车行走距离; outbound方向为正；inbound方向为负数
-                double train_current_position = train[i].ListPosition[train[i].ListPosition.Count - 1]; //当前位置为上次记录的最后一个位置信息
+                double train_travel_distance = 0;//当前事件中列车行走距离; outbound方向为正；inbound方向为负数              
                 if (train[i].bdeparture == 0)
                 {
                     if (Dy_Time[i] == min_Dy_Time) // lead to the system discrete event
@@ -598,8 +600,13 @@ namespace TrainScheduling.Algorithm
                 }
 
                 //add position
-                train_current_position = train_current_position + train_travel_distance;
-                train[i].ListPosition.Add(train_current_position);
+                train[i].CurrentPosition = train[i].CurrentPosition + train_travel_distance;
+
+                if (train[i].bdeparture == 0 || train[i].bdeparture == 2)
+                    train[i].ListPosition.Add(-1);
+                else
+                    train[i].ListPosition.Add(train[i].CurrentPosition);
+
                 train[i].ListTime.Add(systime + min_Dy_Time);
             }
             systime = systime + min_Dy_Time;
@@ -709,8 +716,16 @@ namespace TrainScheduling.Algorithm
                     train[i].track[train[i].route[k]] = -1;
 
                 //20160722 记录列车在每个事件时的位置,以m为单位记录
-                if (train[i].trainType == 0) train[i].ListPosition.Add(0);
-                else train[i].ListPosition.Add(RailwayTotalLength);
+                if (train[i].trainType == 0)
+                {
+                    train[i].ListPosition.Add(0);
+                    train[i].CurrentPosition = 0;
+                }
+                else
+                {
+                    train[i].ListPosition.Add(RailwayTotalLength);
+                    train[i].CurrentPosition = RailwayTotalLength;
+                }
                 train[i].ListTime.Add(0);
             }
         }

@@ -33,6 +33,8 @@ namespace TrainScheduling.Model
             this.Loco_using_ID = -1;
             this.ListPosition = new List<double>();
             this.ListTime = new List<int>();
+            this.DelayTime = 0;
+            this.CurrentPosition = new double();
             //this.Clone();
         }
         public int trainID;
@@ -58,6 +60,8 @@ namespace TrainScheduling.Model
         public int foretrainID; // train's fore train which leads to a headway for the focal train; -1;
         public List<double> ListPosition; //记录在每个离散事件时刻的位置       
         public List<int> ListTime;//记录每个离散时刻
+        public int DelayTime; //记录列车延迟时间
+        public double CurrentPosition;
 
         public int Loco_using_ID; // the ID of the locomotive used by current train
         public int Loco_prepare_using_ID; // the ID of the locomotive the current train may use, it comes from the oppsoing train
@@ -320,6 +324,8 @@ namespace TrainScheduling.Model
             return defaultPath;
         }
     }
+
+
 
 }
 
