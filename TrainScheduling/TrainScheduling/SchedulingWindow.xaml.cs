@@ -123,7 +123,8 @@ namespace TrainScheduling
                         //展示算法
                         AlgorithmNameTextbox.Text = "Alg_TSTA";
                         //画出运行图
-                        DisplayTrainTimeTable(gtrain, g_GivenFengeInUnitTimeSpan, gsection); g_BoolTimetable = true;
+                        DisplayTrainTimeTable(gtrain, g_GivenFengeInUnitTimeSpan, gsection);
+                        g_BoolTimetable = true;
                         //展示结果
                         DisplayResults(gtrain);
                         //铁路线路图像
@@ -420,8 +421,10 @@ namespace TrainScheduling
             int NumDiscreteEvent = train[0].ListTime.Count;
             double H = GridSchWinRailwayMap.ActualHeight;
             double W = GridSchWinRailwayMap.ActualWidth;
-            double yorigin = H / 2; double xorigin = W / 20;
-            int NumSta = station.Count; int NumSec = section.Count;
+            double yorigin = H / 2;
+            double xorigin = W / 20;
+            int NumSta = station.Count;
+            int NumSec = section.Count;
             double TotalLength = 0;
             for (int i = 0; i < section.Count; i++)
                 TotalLength = TotalLength + section[i].length;
