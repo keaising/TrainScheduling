@@ -5,27 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TrainScheduling"
         mc:Ignorable="d"
-        Title="列车运行图调整" Height="500" Width="768"
-        BorderThickness="1"        
-        ResizeMode="CanResizeWithGrip"   
-        SizeChanged="MetroWindow_SizeChanged">
-    <Window.Resources>
-        <Style TargetType="{x:Type Button}">
-            <Setter Property="Margin" Value="2px" />
-            <Setter Property="MinWidth" Value="60px" />
-            <Setter Property="Height" Value="25px" />
-        </Style>
-        <Style TargetType="{x:Type TextBlock}">
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="10 2 0 2" />
-        </Style>
-        <Style TargetType="{x:Type TextBox}">
-            <Setter Property="MaxWidth" Value="170px"/>
-            <Setter Property="Margin" Value="1px"/>
-        </Style>
-    </Window.Resources> 
-         
+        Title="列车运行图调整" Height="300" Width="300">
     <Grid>
         
     </Grid>
