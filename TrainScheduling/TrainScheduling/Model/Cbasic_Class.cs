@@ -9,9 +9,9 @@ using System.IO;
 namespace TrainScheduling.Model
 {
     [Serializable]
-    public class Ctrain
+    public class CTrain
     {
-        public Ctrain()
+        public CTrain()
         {
             this.trainID = new int();
             this.speed = new double();
@@ -68,22 +68,22 @@ namespace TrainScheduling.Model
         public int time_receive_loco; // the time that train receive the locomotive
         public int Loco_re_or_new; // illustrate whether the used locomotive is come from opposing (=1) or the new one (=0);
 
-        public Ctrain Clone()
+        public CTrain Clone()
         {
             using (Stream objectStream = new MemoryStream())
             {
                 IFormatter formatter = new BinaryFormatter();
                 formatter.Serialize(objectStream, this);
                 objectStream.Seek(0, SeekOrigin.Begin);
-                return formatter.Deserialize(objectStream) as Ctrain;
+                return formatter.Deserialize(objectStream) as CTrain;
             }
         }
     }
 
     [Serializable]
-    public class Crailway_station
+    public class CRailwayStation
     {
-        public Crailway_station()
+        public CRailwayStation()
         {
             this.stationID = new int();
             this.stationCapacity = new int();
@@ -96,22 +96,22 @@ namespace TrainScheduling.Model
         public List<int> front_station_ID;
         public List<int> succeeding_station_ID;
 
-        public Crailway_station Clone()
+        public CRailwayStation Clone()
         {
             using (Stream objectStream = new MemoryStream())
             {
                 IFormatter formatter = new BinaryFormatter();
                 formatter.Serialize(objectStream, this);
                 objectStream.Seek(0, SeekOrigin.Begin);
-                return formatter.Deserialize(objectStream) as Crailway_station;
+                return formatter.Deserialize(objectStream) as CRailwayStation;
             }
         }
     }
 
     [Serializable]
-    public class Crailway_section
+    public class CRailwaySection
     {
-        public Crailway_section()
+        public CRailwaySection()
         {
             this.sectionID = new int();
             this.length = new int();
@@ -124,14 +124,14 @@ namespace TrainScheduling.Model
         public int start_station_ID;
         public int end_station_ID;
 
-        public Crailway_section Clone()
+        public CRailwaySection Clone()
         {
             using (Stream objectStream = new MemoryStream())
             {
                 IFormatter formatter = new BinaryFormatter();
                 formatter.Serialize(objectStream, this);
                 objectStream.Seek(0, SeekOrigin.Begin);
-                return formatter.Deserialize(objectStream) as Crailway_section;
+                return formatter.Deserialize(objectStream) as CRailwaySection;
             }
         }
 
@@ -170,14 +170,14 @@ namespace TrainScheduling.Model
     {
         public Crailway_system()
         {
-            this.sys_train = new List<Ctrain>();
-            this.sys_station = new List<Crailway_station>();
-            this.sys_section = new List<Crailway_section>();
+            this.sys_train = new List<CTrain>();
+            this.sys_station = new List<CRailwayStation>();
+            this.sys_section = new List<CRailwaySection>();
             this.sys_delay = new int();
         }
-        public List<Ctrain> sys_train = new List<Ctrain>();
-        public List<Crailway_section> sys_section = new List<Crailway_section>();
-        public List<Crailway_station> sys_station = new List<Crailway_station>();
+        public List<CTrain> sys_train = new List<CTrain>();
+        public List<CRailwaySection> sys_section = new List<CRailwaySection>();
+        public List<CRailwayStation> sys_station = new List<CRailwayStation>();
         public int sys_delay = new int(); //corresponding delay of current train timetable: total deviation of free-run time and obstacle-run time 
 
     }
@@ -199,7 +199,7 @@ namespace TrainScheduling.Model
 
     public class COutput_Timetable_Result
     {
-        public COutput_Timetable_Result(List<Ctrain> train, List<Crailway_station> station, List<Crailway_section> section, string method, int _nset)
+        public COutput_Timetable_Result(List<CTrain> train, List<CRailwayStation> station, List<CRailwaySection> section, string method, int _nset)
         {
             Console.WriteLine();
             Console.WriteLine("******* " + method + " IS COMPLETE **********");

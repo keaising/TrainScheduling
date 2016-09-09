@@ -18,7 +18,7 @@ namespace TrainScheduling.Algorithm
         }
 
         //read train data
-        public void input_train_data(StreamReader LB_input_train_data, List<Ctrain> train)
+        public void input_train_data(StreamReader LB_input_train_data, List<CTrain> train)
         {
             string Input_data; int ROW = 0; string ss = "SPLIT";
             while ((Input_data = LB_input_train_data.ReadLine()) != null)
@@ -26,7 +26,7 @@ namespace TrainScheduling.Algorithm
                 int flag = 0; string[] arrstr = Input_data.Split('\t');
                 if (ROW > 1)
                 {
-                    Ctrain thetrain = new Ctrain();
+                    CTrain thetrain = new CTrain();
                     int hasCount = arrstr.Where(delegate (string s) { return !string.IsNullOrEmpty(s); }).Count();
                     int split = 0;
                     while (flag < hasCount)
@@ -58,7 +58,7 @@ namespace TrainScheduling.Algorithm
         }
 
         //read station data
-        public void input_station_data(StreamReader LB_input_station_data, List<Crailway_station> station)
+        public void input_station_data(StreamReader LB_input_station_data, List<CRailwayStation> station)
         {
             string Input_data = null; int ROW = 0; string ss = "SPLIT";
             while ((Input_data = LB_input_station_data.ReadLine()) != null)
@@ -67,7 +67,7 @@ namespace TrainScheduling.Algorithm
                 int split = 0;
                 if (ROW > 1)
                 {
-                    Crailway_station thestation = new Crailway_station();
+                    CRailwayStation thestation = new CRailwayStation();
                     int hasCount = arrstr.Where(delegate (string s) { return !string.IsNullOrEmpty(s); }).Count();
                     while (flag < hasCount)
                     {
@@ -96,14 +96,14 @@ namespace TrainScheduling.Algorithm
         }
 
         //read section data 
-        public void input_section_data(StreamReader LB_input_section_data, List<Crailway_section> section)
+        public void input_section_data(StreamReader LB_input_section_data, List<CRailwaySection> section)
         {
             string Input_data; int ROW = 0;
             while ((Input_data = LB_input_section_data.ReadLine()) != null)
             {
                 if (ROW > 1)
                 {
-                    Crailway_section thesection = new Crailway_section();
+                    CRailwaySection thesection = new CRailwaySection();
                     int flag = 0; string[] arrstr = Input_data.Split('\t');
                     int hasCount = arrstr.Where(delegate (string s) { return !string.IsNullOrEmpty(s); }).Count();
                     while (flag < hasCount)

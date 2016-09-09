@@ -41,27 +41,30 @@ namespace TrainScheduling
         //计时器
         DispatcherTimer timer;
         int EventIndex = 0;
-        int g_GivenFengeInUnitTimeSpan = 120;
+        int unitTimeSpan = 120;
 
         //用来记录列车位置刷新时候，删除grid.chirldren中的元素<trainID,chirldrenIndex>
         Dictionary<int, int> g_mapGrirdRailwayTrainIDandIndex = new Dictionary<int, int>();
         //用来擦除timetable的图像<trainID,chirldrenIndex>
         List<Dictionary<int, int>> g_mapGrirdTimetableTrainIDandIndexList = new List<Dictionary<int, int>>();
 
-        List<Ctrain> gtrain = new List<Ctrain>();
-        List<Crailway_station> gstation = new List<Crailway_station>();
-        List<Crailway_section> gsection = new List<Crailway_section>();
-        bool g_BoolInitialized = false;
-        bool g_BoolInputData = false;
-        bool g_BoolRunTSTA = false;
-        bool g_BoolRailwaymap = false;
-        bool g_BoolTimetable = false;
+        List<CTrain> gtrain = new List<CTrain>();
+        List<CRailwayStation> gstation = new List<CRailwayStation>();
+        List<CRailwaySection> gsection = new List<CRailwaySection>();
+        bool hasInitialized = false;
+        bool hasInputData = false;
+        bool hasRunTSTA = false;
+        bool hasDrawRailwayMap = false;
+        bool hasDrawTimetable = false;
+
+
         //button_click input data，这里输入data的方式后面需要改动
         private void ParameterSettingButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!g_BoolInputData)
+            if (!hasInputData)
             {
-                InputData(gtrain, gstation, gsection); g_BoolInputData = true;
+                InputData(gtrain, gstation, gsection);
+                hasInputData = true;
                 MessageBox.Show("基础数据读取成功！");
             }
 
@@ -70,7 +73,7 @@ namespace TrainScheduling
             //设置这个对话框的起始打开路径  
             ofd.InitialDirectory = @"D:\";
             //设置打开的文件的类型，注意过滤器的语法  
-            ofd.Filter = "PNG图片|*.png|JPG图片|*.jpg";
+            ofd.Filter = "txt文本|*.txt";
             //调用ShowDialog()方法显示该对话框，该方法的返回值代表用户是否点击了确定按钮  
             if (ofd.ShowDialog() == true)
             {
@@ -89,10 +92,10 @@ namespace TrainScheduling
         /// <param name="e"></param>
         private void DrawBasicPanel_Click(object sender, RoutedEventArgs e)
         {
-            if (!g_BoolInitialized)
+            if (!hasInitialized)
             {
                 BasicTimetable(gstation, gsection);
-                g_BoolInitialized = true;
+                hasInitialized = true;
             }
         }
 
@@ -103,17 +106,17 @@ namespace TrainScheduling
         /// <param name="e"></param>
         private void Alg_TSTA_Click(object sender, RoutedEventArgs e)
         {
-            if (!g_BoolInputData)
+            if (!hasInputData)
                 MessageBox.Show("未输入基础数据，请选择数据！");
             else
             {
-                if (g_BoolRunTSTA)
+                if (hasRunTSTA)
                     MessageBox.Show("不要调皮，你已经运行过TSTA算法咯！");
                 else
                 {
                     CTATS railway_sys = new CTATS(gtrain, gstation, gsection, 0);
                     MessageBox.Show("TSTA算法运行成功！");
-                    g_BoolRunTSTA = true;
+                    hasRunTSTA = true;
                 }
             }
         }
@@ -125,26 +128,27 @@ namespace TrainScheduling
         /// <param name="e"></param>
         private void DrawTimetable_Click(object sender, RoutedEventArgs e)
         {
-            if (!g_BoolTimetable)
-                if (!g_BoolInputData)
+            if (!hasDrawTimetable)
+                if (!hasInputData)
                     MessageBox.Show("未输入基础数据，请选择数据！");
-                else if (!g_BoolInitialized)
+                else if (!hasInitialized)
                     MessageBox.Show("请先画出底图！");
                 else
                 {
-                    if (!g_BoolRunTSTA)
+                    if (!hasRunTSTA)
                         MessageBox.Show("未运行任何调度算法，请先运行调度/调整算法！");
-                    else if (g_BoolRunTSTA)
+                    else if (hasRunTSTA)
                     {
                         //展示算法
                         AlgorithmNameTextbox.Text = "Alg_TSTA";
                         //画出运行图
-                        DisplayTrainTimeTable(gtrain, g_GivenFengeInUnitTimeSpan, gsection);
-                        g_BoolTimetable = true;
+                        DisplayTrainTimeTable(gtrain, unitTimeSpan, gsection);
+                        hasDrawTimetable = true;
                         //展示结果
                         DisplayResults(gtrain);
                         //铁路线路图像
-                        RailwayMap(gstation, gsection); g_BoolRailwaymap = true;
+                        DrawRailwayMap(gstation, gsection);
+                        hasDrawRailwayMap = true;
                     }
                 }
         }
@@ -156,13 +160,13 @@ namespace TrainScheduling
             //update e
             EventIndex = 0;
 
-            if (!g_BoolInputData)
+            if (!hasInputData)
                 MessageBox.Show("未输入基础数据，请选择数据！");
-            else if (!g_BoolRunTSTA)
+            else if (!hasRunTSTA)
                 MessageBox.Show("未运行任何调度算法，请先运行调度/调整算法！");
-            else if (!g_BoolRailwaymap)
+            else if (!hasDrawRailwayMap)
                 MessageBox.Show("路网图为空，请先画出路网结构图！");
-            else if (g_BoolRunTSTA && g_BoolRailwaymap)
+            else if (hasRunTSTA && hasDrawRailwayMap)
             {
                 int mapIndexStart; int mapIndexEnd;
                 if (g_mapGrirdTimetableTrainIDandIndexList.Count > 0)
@@ -183,9 +187,9 @@ namespace TrainScheduling
             DynamicDisplayTrainTravel(gtrain, gsection, gstation, 1, 1);
         }
 
-        private List<string> StationName(List<Crailway_station> inputstation)
+        private List<string> GetStationNames(List<CRailwayStation> inputstation)
         {
-            List<Crailway_station> station = new List<Crailway_station>();
+            List<CRailwayStation> station = new List<CRailwayStation>();
             //InputData(train, station, section);
             foreach (var obj in inputstation)
                 station.Add(obj.Clone());
@@ -198,11 +202,11 @@ namespace TrainScheduling
         /// <summary>
         /// 画底图
         /// </summary>
-        /// <param name="inputstation"></param>
-        /// <param name="inputsection"></param>
-        private void BasicTimetable(List<Crailway_station> inputstation, List<Crailway_section> inputsection)
+        /// <param name="stations"></param>
+        /// <param name="sections"></param>
+        private void BasicTimetable(List<CRailwayStation> stations, List<CRailwaySection> sections)
         {
-            if (inputsection.Count == 0 || inputsection.Count == 0)
+            if (sections.Count == 0 || sections.Count == 0)
                 MessageBox.Show("未输入基础数据，请选择数据！");
             else
             {
@@ -216,55 +220,56 @@ namespace TrainScheduling
                 GridSchWinTimeIndex.ColumnDefinitions.Clear();
                 GridSchWinStationName.RowDefinitions.Clear();
 
-                List<Crailway_station> station = new List<Crailway_station>();
-                List<Crailway_section> section = new List<Crailway_section>();
+                //wsx: 这段为什么要这样赋值？
+                List<CRailwayStation> stationes = new List<CRailwayStation>();
+                List<CRailwaySection> sectiones = new List<CRailwaySection>();
                 //InputData(train, station, section);
-                foreach (var obj in inputstation)
-                    station.Add(obj.Clone());
-                foreach (var obj in inputsection)
-                    section.Add(obj.Clone());
+                foreach (var obj in stations)
+                    stationes.Add(obj.Clone());
+                foreach (var obj in sections)
+                    sectiones.Add(obj.Clone());
 
                 //input section length; station name et al.  
-                List<double> SectionLength = new List<double>();
-                List<double> TimetableSectionLength = new List<double>();
-                List<string> StaName = new List<string>();
-                StaName = StationName(station);
+                List<double> sectionLengthes = new List<double>();
+                List<double> timetableSectionLengthes = new List<double>();
+                var stationNames = GetStationNames(stationes);
 
-                for (int j = 0; j < section.Count; j++)
+                for (int j = 0; j < sectiones.Count; j++)
                 {
-                    SectionLength.Add(section[section.Count - 1 - j].length);
-                    TimetableSectionLength.Add(section[j].length);
+                    sectionLengthes.Add(sectiones[sectiones.Count - 1 - j].length);
+                    timetableSectionLengthes.Add(sectiones[j].length);
                 }
 
                 //StaName.Add("北京南"); StaName.Add("蚌埠南"); StaName.Add("南京南"); StaName.Add("上海虹桥");           
                 //SectionLength.Add(400); SectionLength.Add(200); SectionLength.Add(300);
-                double RouteLength = SectionLength.Sum(); //(in km)
+                double routeLength = sectionLengthes.Sum(); //(in km)
 
                 //// get H and W of grid          
                 //var rootGrid = GridSchWinTimetable.FindParentGridByName("root");
                 //// double H = rootGrid.ActualHeight, W = rootGrid.ActualWidth;
-                double H = GridSchWinTimetable.ActualHeight;
-                double W = GridSchWinTimetable.ActualWidth;
+                double panelHeight = GridSchWinTimetable.ActualHeight;
+                double panelWidth = GridSchWinTimetable.ActualWidth;
                 //get 分格信息 合理划分 W, 1440 分钟
-                int GivenFengeInUnitTimeSpan = 120;
-                int NumSection = StaName.Count - 1;
+                int sectionCount = stationNames.Count - 1;
 
+                //wsx:这是什么？不要用简写
                 double[] GTP = new double[8];
-                GTP = GridTimeTableParameter(GridSchWinTimetable, GivenFengeInUnitTimeSpan, SectionLength);
-                double x_origin = GTP[0];
-                double y_origin = GTP[1];
-                double TimetableWidth = GTP[2];
-                double TimetableHight = GTP[3];
-                double TimeSpanInUnitMinute = GTP[4];
-                double StationSpanInUnitKm = GTP[5];
-                double TimeInterval = GTP[6];
-                double _num_time_span = GTP[7];
+                GTP = GridTimeTableParameter(GridSchWinTimetable, unitTimeSpan, sectionLengthes);
+                //wsx:自动赋值，不要挨个赋值，没有扩展性
+                double originX = GTP[0];
+                double originY = GTP[1];
+                double timetableWidth = GTP[2];
+                double timetableHight = GTP[3];
+                double timeSpanInUnitMinute = GTP[4];
+                double stationSpanInUnitKm = GTP[5];
+                double timeInterval = GTP[6];
+                double timespanCount = GTP[7];
 
                 //draw time line
-                for (int i = 0; i <= _num_time_span * 4; i++)
+                for (int i = 0; i <= timespanCount * 4; i++)
                 {
-                    var x1 = x_origin + i * TimeInterval / 4; var x2 = x_origin + i * TimeInterval / 4;
-                    var y1 = y_origin; var y2 = y_origin + H + 0.02 * H; //伸出的做为标识
+                    var x1 = originX + i * timeInterval / 4; var x2 = originX + i * timeInterval / 4;
+                    var y1 = originY; var y2 = originY + panelHeight + 0.02 * panelHeight; //伸出的做为标识
                     var myLine = new Line();
                     myLine.Stroke = System.Windows.Media.Brushes.Green;
                     myLine.X1 = x1;
@@ -277,21 +282,21 @@ namespace TrainScheduling
                     GridSchWinTimetable.Children.Add(myLine);
                 }
                 //draw station line
-                for (int i = 0; i <= NumSection; i++)
+                for (int i = 0; i <= sectionCount; i++)
                 {
-                    var a1 = x_origin;
-                    var a2 = x_origin + TimetableWidth;
+                    var a1 = originX;
+                    var a2 = originX + timetableWidth;
                     double b1 = 0;
                     double b2 = 0;
                     if (i == 0)
                     {
-                        b1 = y_origin;
-                        b2 = y_origin;
+                        b1 = originY;
+                        b2 = originY;
                     }
                     else
                     {
-                        b1 = y_origin + SectionLength.SumFromTo(0, i - 1) * StationSpanInUnitKm;
-                        b2 = y_origin + SectionLength.SumFromTo(0, i - 1) * StationSpanInUnitKm;
+                        b1 = originY + sectionLengthes.SumFromTo(0, i - 1) * stationSpanInUnitKm;
+                        b2 = originY + sectionLengthes.SumFromTo(0, i - 1) * stationSpanInUnitKm;
                     }
                     var mylinestation = new Line();
                     mylinestation.Stroke = System.Windows.Media.Brushes.Green;
@@ -305,6 +310,8 @@ namespace TrainScheduling
                     GridSchWinTimetable.Children.Add(mylinestation);
                 }
 
+
+                //wsx：这个跟上面的stationNames有什么关系？
                 List<string> strName = new List<string>();
                 strName.Add("京");
                 strName.Add("沪");
@@ -317,11 +324,7 @@ namespace TrainScheduling
                     TextBlock TextBlockStationName = new TextBlock();
                     //get station name
                     TextBlockStationName.Text = strName[i];
-                    //get font size
-                    int fontsize = 14;
-                    //if (WidthInUnitKm > 1 && WidthInUnitKm < 1.2) fontsize = 14;
-                    //if (WidthInUnitKm > 1.2) fontsize = 16;
-                    TextBlockStationName.FontSize = fontsize;
+                    TextBlockStationName.FontSize = 14;
                     var color = new System.Windows.Media.Color();
                     color.R = 155;
                     color.G = 0;
@@ -337,23 +340,23 @@ namespace TrainScheduling
                 }
 
                 //draw time line Index
-                for (int i = 0; i <= _num_time_span + 1; i++)
+                for (int i = 0; i <= timespanCount + 1; i++)
                 {
                     ColumnDefinition coldef = new ColumnDefinition();//创建列布局对向
                     GridSchWinTimeIndex.ColumnDefinitions.Add(coldef);
                     TextBlock TextBlockaTimeSpanName = new TextBlock();
                     //get timespan span
-                    var TimeNumber = 1440.0 / _num_time_span;
+                    var TimeNumber = 1440.0 / timespanCount;
 
                     if (i == 0)
                     {
-                        TextBlockaTimeSpanName.Width = W / 6 - TimeInterval / 2;
-                        coldef.Width = new GridLength(W / 6 - TimeInterval / 2);
+                        TextBlockaTimeSpanName.Width = panelWidth / 6 - timeInterval / 2;
+                        coldef.Width = new GridLength(panelWidth / 6 - timeInterval / 2);
                     } //6(n)是画布相对站名部分宽度的比例 6:1，若果布局变化，这里需要调整: w/n - 1/2*(w/(_num_time_line+0.5))
                     else
                     {
-                        TextBlockaTimeSpanName.Width = TimeInterval;
-                        coldef.Width = new GridLength(TimeInterval);
+                        TextBlockaTimeSpanName.Width = timeInterval;
+                        coldef.Width = new GridLength(timeInterval);
                     }
                     if (i > 0)
                     {
@@ -364,9 +367,9 @@ namespace TrainScheduling
                         TextBlockaTimeSpanName.Text = hour + ":" + minute;
                         //get font size
                         int fontsize = 10; //默认大概36多
-                        if (TimeInterval > 40 && TimeInterval < 46) fontsize = 12;
-                        if (TimeInterval > 46 && TimeInterval < 52) fontsize = 14;
-                        if (TimeInterval > 52) fontsize = 15;
+                        if (timeInterval > 40 && timeInterval < 46) fontsize = 12;
+                        if (timeInterval > 46 && timeInterval < 52) fontsize = 14;
+                        if (timeInterval > 52) fontsize = 15;
                         TextBlockaTimeSpanName.FontSize = fontsize;
                         var color = new System.Windows.Media.Color();
                         color.R = 55;
@@ -397,25 +400,25 @@ namespace TrainScheduling
                 }
 
                 //display railway station name
-                for (int i = 0; i < StaName.Count; i++)
+                for (int i = 0; i < stationNames.Count; i++)
                 {
                     RowDefinition rowdef = new RowDefinition();//创建行布局对向
                     GridSchWinStationName.RowDefinitions.Add(rowdef);
                     TextBlock TextBlockStationName = new TextBlock();
                     //get station name
-                    TextBlockStationName.Text = StaName[i];
+                    TextBlockStationName.Text = stationNames[i];
                     TextBlockStationName.Margin = new Thickness(0, 0, 5, 0);
 
                     //根据车站数目和区间长度调整textblock的高度
                     if (i == 0)
-                        rowdef.Height = new GridLength(y_origin);
+                        rowdef.Height = new GridLength(originY);
                     else
-                        rowdef.Height = new GridLength(SectionLength[i - 1] * StationSpanInUnitKm);
+                        rowdef.Height = new GridLength(sectionLengthes[i - 1] * stationSpanInUnitKm);
                     //get font size
                     int fontsize = 9; //y_origin 大概10多
-                    if (y_origin > 14 && y_origin <= 18) fontsize = 10;
-                    if (y_origin > 18 && y_origin <= 22) fontsize = 12;
-                    if (y_origin >= 22) fontsize = 14;
+                    if (originY > 14 && originY <= 18) fontsize = 10;
+                    if (originY > 18 && originY <= 22) fontsize = 12;
+                    if (originY >= 22) fontsize = 14;
                     TextBlockStationName.FontSize = fontsize;
                     var color = new System.Windows.Media.Color(); color.R = 55; color.G = 0; color.B = 255; color.A = 255;
                     TextBlockStationName.Foreground = new SolidColorBrush(color);
@@ -432,27 +435,28 @@ namespace TrainScheduling
         /// <summary>
         /// 动态演示列车的运行过程
         /// </summary>
-        private void DynamicDisplayTrainTravel(List<Ctrain> train, List<Crailway_section> section, List<Crailway_station> station, int SkipEventNum, int RefreshTime)
+        private void DynamicDisplayTrainTravel(List<CTrain> trains, List<CRailwaySection> sections, List<CRailwayStation> stations, int skipEventNum, int refreshTime)
         {
-            int NumDiscreteEvent = train[0].ListTime.Count;
+            int NumDiscreteEvent = trains[0].ListTime.Count;
             double H = GridSchWinRailwayMap.ActualHeight;
             double W = GridSchWinRailwayMap.ActualWidth;
-            double yorigin = H / 2;
-            double xorigin = W / 20;
-            int NumSta = station.Count;
-            int NumSec = section.Count;
+            double originY = H / 2;
+            double originX = W / 20;
+            int NumSta = stations.Count;
+            int NumSec = sections.Count;
             double TotalLength = 0;
-            for (int i = 0; i < section.Count; i++)
-                TotalLength = TotalLength + section[i].length;
+            for (int i = 0; i < sections.Count; i++)
+                TotalLength = TotalLength + sections[i].length;
             //线路长度比例,Wb为线路上每公里在图上的长度
             double WidthInUnitKm = 0.9 * W / TotalLength;
 
             if (EventIndex < NumDiscreteEvent)
             {
-                DisplayTrainPosition(gtrain, EventIndex, xorigin, H, WidthInUnitKm);
+                DisplayTrainPosition(gtrain, EventIndex, originX, H, WidthInUnitKm);
+                //wsx: 这里为什么还保罗RefreshTime这个参数
                 //System.Threading.Thread.Sleep(RefreshTime * 1000); //1 second
-                DynamicDisplayTrainTimetable(gtrain, g_GivenFengeInUnitTimeSpan, gsection, EventIndex);
-                EventIndex += SkipEventNum;
+                DynamicDisplayTrainTimetable(gtrain, unitTimeSpan, gsection, EventIndex);
+                EventIndex += skipEventNum;
             }
             else
             {
@@ -464,23 +468,24 @@ namespace TrainScheduling
         /// <summary>
         /// 刷新列车位置
         /// </summary>       
-        private void DisplayTrainPosition(List<Ctrain> train, int e, double xorigin, double H, double WidthInUnitKm)
+        private void DisplayTrainPosition(List<CTrain> trains, int eventIndex, double originX, double H, double widthInUnitKm) //wsx: widthInUnitKm是什么
         {
             //擦除原来画面
-            int mapIndexStart; int mapIndexEnd;
-            if (g_mapGrirdRailwayTrainIDandIndex.TryGetValue(train[0].trainID, out mapIndexStart) && g_mapGrirdRailwayTrainIDandIndex.TryGetValue(train[train.Count - 1].trainID, out mapIndexEnd))
+            int mapIndexStart;
+            int mapIndexEnd;
+            //wsx: 三秒钟内告诉我这里判断了啥。。。
+            if (g_mapGrirdRailwayTrainIDandIndex.TryGetValue(trains[0].trainID, out mapIndexStart) && g_mapGrirdRailwayTrainIDandIndex.TryGetValue(trains[trains.Count - 1].trainID, out mapIndexEnd))
                 GridSchWinRailwayMap.Children.RemoveRange(mapIndexStart, mapIndexEnd);
 
             //清除map
             g_mapGrirdRailwayTrainIDandIndex.Clear();
 
             //画出新画面
-            int colorindex = 0;
-            for (int i = 0; i < train.Count; i++)
+            for (int i = 0; i < trains.Count; i++)
             {
-                double position = train[i].ListPosition[e] / 1000; //单位由米转换为千米  
+                double position = trains[i].ListPosition[eventIndex] / 1000; //单位由米转换为千米  
                 //出现列车   
-                DisplayTrainImage(i, train[i].trainID, train[i].trainType, position, xorigin, H, WidthInUnitKm);
+                DisplayTrainImage(i, trains[i].trainID, trains[i].trainType, position, originX, H, widthInUnitKm);
             }
         }
 
@@ -531,7 +536,7 @@ namespace TrainScheduling
         /// <summary>
         /// 铁路线路基本图
         /// </summary>    
-        private void RailwayMap(List<Crailway_station> station, List<Crailway_section> section)
+        private void DrawRailwayMap(List<CRailwayStation> station, List<CRailwaySection> sections)
         {
             GridSchWinRailwayMap.Children.Clear();
             GridSchWinRailwayMapStationName.Children.Clear();
@@ -539,38 +544,36 @@ namespace TrainScheduling
 
             double H = GridSchWinRailwayMap.ActualHeight;
             double W = GridSchWinRailwayMap.ActualWidth;
-            double yorigin = H / 2; double xorigin = W / 20;
-            int NumSta = station.Count; int NumSec = section.Count;
-            double TotalLength = 0;
-            for (int i = 0; i < section.Count; i++)
-                TotalLength = TotalLength + section[i].length;
+            double originY = H / 2;
+            double originX = W / 20;
+            var lengthSum = sections.Sum(e => e.length);
             //线路长度比例,Wb为线路上每公里在图上的长度
-            double WidthInUnitKm = 0.9 * W / TotalLength;
+            double WidthInUnitKm = 0.9 * W / lengthSum;
 
-            List<double> SectionLength = new List<double>();
-            for (int j = 0; j < section.Count; j++)
-                SectionLength.Add(section[j].length);
+            List<double> sectionLengthes = new List<double>();
+            for (int j = 0; j < sections.Count; j++)
+                sectionLengthes.Add(sections[j].length);
 
             //比照铁路作图，画出25个白色格子，35个黑色格子，组成铁路线路
-            RailwayBlackWhiteGrid(xorigin, yorigin, 0.9 * W, 35);
+            RailwayBlackWhiteGrid(originX, originY, 0.9 * W, 35);
             //画终端站
-            RailwayTerminal(xorigin, yorigin, H, 0.9 * W);
+            RailwayTerminal(originX, originY, H, 0.9 * W);
             //画中间车站布局
-            for (int i = 1; i < NumSta - 1; i++)
-                RailwayStaion(SectionLength.SumFromTo(0, i) * WidthInUnitKm + xorigin, station[i].stationCapacity, xorigin, H);
+            for (int i = 1; i < station.Count - 1; i++)
+                RailwayStaion(sectionLengthes.SumFromTo(0, i) * WidthInUnitKm + originX, station[i].stationCapacity, originX, H);
 
-            List<string> StaName = new List<string>();
-            StaName = StationName(station);
+            List<string> stationNames = new List<string>();
+            stationNames = GetStationNames(station);
             //输出车站名称           
-            RailwayStationName(StaName, SectionLength, xorigin, WidthInUnitKm);
+            RailwayStationName(stationNames, sectionLengthes, originX, WidthInUnitKm);
         }
 
         /// <summary>
         /// 画铁路线路
         /// </summary>      
-        private void RailwayBlackWhiteGrid(double xorigin, double yorigin, double L, int Num)
+        private void RailwayBlackWhiteGrid(double originX, double originY, double L, int Num)
         {
-            double UnitW = L / (2 * Num);
+            double unitW = L / (2 * Num);
             for (int i = 0; i < Num; i++)
             {
                 //plot black grid
@@ -581,11 +584,11 @@ namespace TrainScheduling
                 var RailwayGray = new Line();
                 RailwayGray.Stroke = System.Windows.Media.Brushes.LightGray;
                 RailwayGray.StrokeThickness = 3;
-                RailwayBlack.X1 = xorigin + 2 * i * UnitW; RailwayBlack.Y1 = yorigin;
-                RailwayBlack.X2 = xorigin + (2 * i + 1) * UnitW; RailwayBlack.Y2 = yorigin;
+                RailwayBlack.X1 = originX + 2 * i * unitW; RailwayBlack.Y1 = originY;
+                RailwayBlack.X2 = originX + (2 * i + 1) * unitW; RailwayBlack.Y2 = originY;
 
-                RailwayGray.X1 = xorigin + (2 * i + 1) * UnitW; RailwayGray.Y1 = yorigin;
-                RailwayGray.X2 = xorigin + (2 * i + 2) * UnitW; RailwayGray.Y2 = yorigin;
+                RailwayGray.X1 = originX + (2 * i + 1) * unitW; RailwayGray.Y1 = originY;
+                RailwayGray.X2 = originX + (2 * i + 2) * unitW; RailwayGray.Y2 = originY;
                 GridSchWinRailwayMap.Children.Add(RailwayBlack);
                 GridSchWinRailwayMap.Children.Add(RailwayGray);
             }
@@ -597,32 +600,32 @@ namespace TrainScheduling
         private void RailwayTerminal(double xorigin, double yorigin, double H, double W)
         {
 
-            double UnitH = H / 20;
-            double y1 = H / 2 - 3 * UnitH, y2 = H / 2 - 2 * UnitH, y3 = H / 2 + 2 * UnitH, y4 = H / 2 + 3 * UnitH;
+            double unitH = H / 20;
+            double y1 = H / 2 - 3 * unitH, y2 = H / 2 - 2 * unitH, y3 = H / 2 + 2 * unitH, y4 = H / 2 + 3 * unitH;
             double x1 = 0.66 * xorigin, x2 = xorigin, x3 = xorigin + W, x4 = x3 + 0.33 * xorigin;
-            Line[] StationTrack = new Line[8];
+            Line[] stationTracks = new Line[8];
             for (int i = 0; i < 8; i++)
             {
-                StationTrack[i] = new Line();
-                StationTrack[i].Stroke = System.Windows.Media.Brushes.Black;
-                StationTrack[i].StrokeThickness = 3;
+                stationTracks[i] = new Line();
+                stationTracks[i].Stroke = System.Windows.Media.Brushes.Black;
+                stationTracks[i].StrokeThickness = 3;
             }
-            StationTrack[0].X1 = x1; StationTrack[0].Y1 = y1; StationTrack[0].X2 = x2; StationTrack[0].Y2 = y2;
-            StationTrack[1].X1 = x1; StationTrack[1].Y1 = H / 2; StationTrack[1].X2 = x2; StationTrack[1].Y2 = H / 2;
-            StationTrack[2].X1 = x1; StationTrack[2].Y1 = y4; StationTrack[2].X2 = x2; StationTrack[2].Y2 = y3;
-            StationTrack[3].X1 = x2; StationTrack[3].Y1 = y2; StationTrack[3].X2 = x2; StationTrack[3].Y2 = y3;
-            StationTrack[4].X1 = x3; StationTrack[4].Y1 = y2; StationTrack[4].X2 = x4; StationTrack[4].Y2 = y1;
-            StationTrack[5].X1 = x3; StationTrack[5].Y1 = H / 2; StationTrack[5].X2 = x4; StationTrack[5].Y2 = H / 2;
-            StationTrack[6].X1 = x3; StationTrack[6].Y1 = y3; StationTrack[6].X2 = x4; StationTrack[6].Y2 = y4;
-            StationTrack[7].X1 = x3; StationTrack[7].Y1 = y2; StationTrack[7].X2 = x3; StationTrack[7].Y2 = y3;
+            stationTracks[0].X1 = x1; stationTracks[0].Y1 = y1; stationTracks[0].X2 = x2; stationTracks[0].Y2 = y2;
+            stationTracks[1].X1 = x1; stationTracks[1].Y1 = H / 2; stationTracks[1].X2 = x2; stationTracks[1].Y2 = H / 2;
+            stationTracks[2].X1 = x1; stationTracks[2].Y1 = y4; stationTracks[2].X2 = x2; stationTracks[2].Y2 = y3;
+            stationTracks[3].X1 = x2; stationTracks[3].Y1 = y2; stationTracks[3].X2 = x2; stationTracks[3].Y2 = y3;
+            stationTracks[4].X1 = x3; stationTracks[4].Y1 = y2; stationTracks[4].X2 = x4; stationTracks[4].Y2 = y1;
+            stationTracks[5].X1 = x3; stationTracks[5].Y1 = H / 2; stationTracks[5].X2 = x4; stationTracks[5].Y2 = H / 2;
+            stationTracks[6].X1 = x3; stationTracks[6].Y1 = y3; stationTracks[6].X2 = x4; stationTracks[6].Y2 = y4;
+            stationTracks[7].X1 = x3; stationTracks[7].Y1 = y2; stationTracks[7].X2 = x3; stationTracks[7].Y2 = y3;
             for (int i = 0; i < 8; i++)
-                GridSchWinRailwayMap.Children.Add(StationTrack[i]);
+                GridSchWinRailwayMap.Children.Add(stationTracks[i]);
         }
 
         /// <summary>
         /// 画station的布局
         /// </summary>      
-        private void RailwayStaion(double CenterX, double NumTrack, double xorigin, double H)
+        private void RailwayStaion(double CenterX, double NumTrack, double xorigin, double H) //wsx: NumTrack没有使用
         {
             double UnitH = H / 22;
             double y1 = H / 2 - 2 * UnitH, y2 = H / 2, y3 = H / 2 + 2 * UnitH;
@@ -649,31 +652,31 @@ namespace TrainScheduling
         /// <summary>
         /// 输出station name of railway line 
         /// </summary>       
-        private void RailwayStationName(List<string> StaName, List<double> SectionLength, double xorigin, double WidthInUnitKm)
+        private void RailwayStationName(List<string> stationNames, List<double> sectionLengthes, double originX, double widthInUnitKm)
         {
-            for (int i = 0; i < StaName.Count; i++)
+            for (int i = 0; i < stationNames.Count; i++)
             {
                 ColumnDefinition columndef = new ColumnDefinition();//创建列布局对向
                 GridSchWinRailwayMapStationName.ColumnDefinitions.Add(columndef);
                 TextBlock TextBlockStationName = new TextBlock();
                 //get station name
-                TextBlockStationName.Text = StaName[StaName.Count - 1 - i];
+                TextBlockStationName.Text = stationNames[stationNames.Count - 1 - i];
                 //get font size
                 int fontsize = 10;
-                if (WidthInUnitKm > 1 && WidthInUnitKm < 1.2) fontsize = 14;
-                if (WidthInUnitKm > 1.2) fontsize = 15;
+                if (widthInUnitKm > 1 && widthInUnitKm < 1.2) fontsize = 14;
+                if (widthInUnitKm > 1.2) fontsize = 15;
                 TextBlockStationName.FontSize = fontsize;
                 //根据车站数目和区间长度调整textblock的高度
                 if (i == 0)
                 {
                     //这里的1.4参考车站布局的画法，track长度横跨中心点的0.2origin左右
-                    columndef.Width = new GridLength(1.4 * xorigin);
-                    TextBlockStationName.Width = 1.4 * xorigin;
+                    columndef.Width = new GridLength(1.4 * originX);
+                    TextBlockStationName.Width = 1.4 * originX;
                 }
                 else
                 {
-                    columndef.Width = new GridLength(SectionLength[i - 1] * WidthInUnitKm);
-                    TextBlockStationName.Width = SectionLength[i - 1] * WidthInUnitKm;
+                    columndef.Width = new GridLength(sectionLengthes[i - 1] * widthInUnitKm);
+                    TextBlockStationName.Width = sectionLengthes[i - 1] * widthInUnitKm;
                 }
 
                 var color = new System.Windows.Media.Color(); color.R = 55; color.G = 0; color.B = 255; color.A = 255;
@@ -696,7 +699,7 @@ namespace TrainScheduling
         private void MetroWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             var t1 = DateTime.Now;
-            if (g_BoolInitialized)
+            if (hasInitialized)
             {
                 var testRectangle = new System.Windows.Shapes.Rectangle();
                 testRectangle.StrokeThickness = 1.5;
@@ -709,58 +712,25 @@ namespace TrainScheduling
                 BasicTimetable(gstation, gsection);
             }
 
-            if (g_BoolTimetable)
-                DisplayTrainTimeTable(gtrain, g_GivenFengeInUnitTimeSpan, gsection);
+            if (hasDrawTimetable)
+                DisplayTrainTimeTable(gtrain, unitTimeSpan, gsection);
 
-            if (g_BoolRailwaymap)
-                RailwayMap(gstation, gsection);
-
-            var t2 = DateTime.Now;
-            var ts = t2 - t1;
-
-            if (ts.Milliseconds != 0)
-            {
-                float per = 1000 / ts.Milliseconds;
-                //FpsLabel.Content = per.ToString() + "帧/s";
-            }
-
-            #region 双缓冲绘图
-            ////1、在内存中建立一块“虚拟画布”  
-            //Bitmap bmp = new Bitmap(200, 200);
-
-            ////2、获取这块内存画布的Graphics引用  
-            //Graphics bufferGraphics = Graphics.FromImage(bmp);
-
-            ////3、在这块内存画布上绘图  
-            //bufferGraphics.Clear(System.Drawing.Color.White);
-            //bufferGraphics.DrawRectangle(Pens.Black, 0, 0, bmp.Width - 1, bmp.Height - 1);
-            //bufferGraphics.DrawEllipse(Pens.Red, 10, 10, 100, 50);
-            //bufferGraphics.DrawLine(Pens.Green, 10, 100, 100, 200);
-
-            ////4、将内存画布画到窗口中  
-            //using (Graphics g = e.Graphics)
-            //{
-            //    g.DrawImage(bmp, 10, 10);
-            //}
-
-            ////5. 释放资源  
-            //bmp.Dispose();
-            //bufferGraphics.Dispose();
-            #endregion
+            if (hasDrawRailwayMap)
+                DrawRailwayMap(gstation, gsection);
 
         }
 
         /// <summary>
         /// 画运行图
         /// </summary>      
-        private void DisplayTrainTimeTable(List<Ctrain> train, int GivenFengeInUnitTimeSpan, List<Crailway_section> Section)
+        private void DisplayTrainTimeTable(List<CTrain> train, int GivenFengeInUnitTimeSpan, List<CRailwaySection> Section)
         {
             List<double> SectionLength = new List<double>();
             for (int j = 0; j < Section.Count; j++)
                 SectionLength.Add(Section[j].length);
 
             int TimeMaxIndex = 0;
-            foreach (Ctrain obj in train)
+            foreach (CTrain obj in train)
                 TimeMaxIndex = Math.Max(TimeMaxIndex, obj.departure[obj.route[obj.departure.Count() - 1]]);
 
             double[] GTP = new double[8];
@@ -825,7 +795,7 @@ namespace TrainScheduling
         }
 
         //逐事件演示列车运行图
-        private void DynamicDisplayTrainTimetable(List<Ctrain> train, int GivenFengeInUnitTimeSpan, List<Crailway_section> Section, int EnventIndex)
+        private void DynamicDisplayTrainTimetable(List<CTrain> train, int GivenFengeInUnitTimeSpan, List<CRailwaySection> Section, int EnventIndex)
         {
             CParameter parameter = new CParameter();
             List<double> SectionLength = new List<double>();
@@ -833,7 +803,7 @@ namespace TrainScheduling
                 SectionLength.Add(Section[j].length);
 
             int TimeMaxIndex = 0;
-            foreach (Ctrain obj in train)
+            foreach (CTrain obj in train)
                 TimeMaxIndex = Math.Max(TimeMaxIndex, obj.departure[obj.route[obj.departure.Count() - 1]]);
 
             double[] GTP = new double[8];
@@ -896,7 +866,7 @@ namespace TrainScheduling
         /// <summary>
         /// Display results generated by scheduling algorithm
         /// </summary>
-        private void DisplayResults(List<Ctrain> train)
+        private void DisplayResults(List<CTrain> train)
         {
             string[] ResultStr = new string[6];
             List<int> MaxDelayTrainID = new List<int>();
@@ -979,7 +949,7 @@ namespace TrainScheduling
         /// <param name="train"></param>
         /// <param name="station"></param>
         /// <param name="section"></param>
-        private void InputData(List<Ctrain> train, List<Crailway_station> station, List<Crailway_section> section)
+        private void InputData(List<CTrain> train, List<CRailwayStation> station, List<CRailwaySection> section)
         {
             CParameter parameter = new CParameter();
             int _ntrain = parameter.Dstation_data_input_nbtrain;

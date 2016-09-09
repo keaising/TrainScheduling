@@ -18,7 +18,7 @@ namespace TrainScheduling.Algorithm
 {
     public class CTwoOpt
     {
-        public CTwoOpt(List<Ctrain> train, List<Crailway_station> station, List<Crailway_section> section, StreamWriter TwoOpt_output, int _nset)
+        public CTwoOpt(List<CTrain> train, List<CRailwayStation> station, List<CRailwaySection> section, StreamWriter TwoOpt_output, int _nset)
         {
             Crailway_system railway_sys = new Crailway_system();
             foreach (var obj in train)
@@ -380,7 +380,7 @@ namespace TrainScheduling.Algorithm
         }
 
         //train_j's timetable is fixed
-        private int[] computation_1_1(Ctrain train_i, int station_k, int pre_d_i_k)
+        private int[] computation_1_1(CTrain train_i, int station_k, int pre_d_i_k)
         {
             CParameter parameter = new CParameter();
             int[] d_a_k_kk = new int[2];
@@ -391,7 +391,7 @@ namespace TrainScheduling.Algorithm
             return d_a_k_kk;
         }
 
-        private int[] computation_1_2(Ctrain train_i, Ctrain train_j, int station_k, int pre_d_i_k)
+        private int[] computation_1_2(CTrain train_i, CTrain train_j, int station_k, int pre_d_i_k)
         {
             CParameter parameter = new CParameter();
             int[] d_a_k_kk = new int[2];
@@ -411,7 +411,7 @@ namespace TrainScheduling.Algorithm
         }
 
         //similar to compitation 1_1 so call computaion 1_1
-        private int[] computation_2_1(Ctrain train_i, Ctrain train_j, int station_k)
+        private int[] computation_2_1(CTrain train_i, CTrain train_j, int station_k)
         {
             CParameter parameter = new CParameter();
             int[] d_a_k_kk = new int[2];
@@ -420,7 +420,7 @@ namespace TrainScheduling.Algorithm
             return d_a_k_kk;
         }
 
-        private int[] computation_2_2(Ctrain train_i, Ctrain train_j, int station_k, int pre_d_i_k)
+        private int[] computation_2_2(CTrain train_i, CTrain train_j, int station_k, int pre_d_i_k)
         {
             CParameter parameter = new CParameter();
             int[] d_a_k_kk = new int[2];

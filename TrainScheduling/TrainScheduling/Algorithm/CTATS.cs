@@ -11,7 +11,7 @@ namespace TrainScheduling.Algorithm
 {
     public class CTATS
     {
-        public CTATS(List<Ctrain> train, List<Crailway_station> station, List<Crailway_section> section, int _nset)
+        public CTATS(List<CTrain> train, List<CRailwayStation> station, List<CRailwaySection> section, int _nset)
         {
             bool complete = false;
             int _ntrain = train.Count, _nstation = station.Count;// _nsection=section.Count;
@@ -55,7 +55,7 @@ namespace TrainScheduling.Algorithm
             //ITAS_outpu.WriteLine(_nset + "\t" + train.Count + "\t" + ITAS_UB + "\t" + ITAS_cpu_Time);
         }
 
-        public void Capacity_Check(List<Ctrain> train, List<Crailway_station> station, int systime) //systime is the system time, unit is sec
+        public void Capacity_Check(List<CTrain> train, List<CRailwayStation> station, int systime) //systime is the system time, unit is sec
         {
             //能力检测算法   1-通行；0-不通行;2-即将发车，为最高优先权
             //nodestatus 0-out the system, 1-just arrive a station(列车刚到站状态), 2-prepare to leave the staion(列车处于待出发状态)，3-on the section(列车在区间上)
@@ -101,7 +101,7 @@ namespace TrainScheduling.Algorithm
             Debug.Assert(_ndecide == train.Count); //check whether all the trains have been checked 
         }
 
-        internal int check_capacity_LF(List<Ctrain> train, int systime, int i)
+        internal int check_capacity_LF(List<CTrain> train, int systime, int i)
         {
             int N_O = 1, N_I = 0, S_O = 1, S_I = 0;
             bool check_flag1 = true, check_flag2 = true;
@@ -215,7 +215,7 @@ namespace TrainScheduling.Algorithm
         //1. 慢车与快车同时占用一个轨道的情况下，慢车必须先行
         //2. 注意相邻两列列车之间相继出发的headway问题
         //3. Debug图形调整运行图的问题        
-        internal int fast_check_new(List<Ctrain> train, int systime, int i)
+        internal int fast_check_new(List<CTrain> train, int systime, int i)
         {
             //searchs for fast train after the focal train
 
@@ -319,7 +319,7 @@ namespace TrainScheduling.Algorithm
             return train[i].check;
         }
 
-        int headway_dytime(List<Ctrain> train, int systime, int i)
+        int headway_dytime(List<CTrain> train, int systime, int i)
         {
             CParameter parameter = new CParameter();
             int Dy_Time = parameter.Max_int;
@@ -390,7 +390,7 @@ namespace TrainScheduling.Algorithm
         }
 
         //determine discrete event
-        public void Discrete_Definition(List<Ctrain> train, int systime, int[] Dy_Time)
+        public void Discrete_Definition(List<CTrain> train, int systime, int[] Dy_Time)
         {
             CParameter parameter = new CParameter();
             int Dy_decide_num = 0;
@@ -459,7 +459,7 @@ namespace TrainScheduling.Algorithm
         }
 
         //update system information
-        public void Update_Information(List<Ctrain> train, int systime, int[] Dy_Time)
+        public void Update_Information(List<CTrain> train, int systime, int[] Dy_Time)
         {
             CParameter parameter = new CParameter();
             int min_Dy_Time = Find_min_dytime(train, Dy_Time);
@@ -613,7 +613,7 @@ namespace TrainScheduling.Algorithm
             Debug.Assert(update_num == train.Count);
         }
 
-        internal int Find_min_dytime(List<Ctrain> train, int[] Dy_Time)
+        internal int Find_min_dytime(List<CTrain> train, int[] Dy_Time)
         {
             int min_Dy_time = 100000000;
             for (int i = 0; i < train.Count; i++)
@@ -625,7 +625,7 @@ namespace TrainScheduling.Algorithm
 
     public class COutput_ITAS_Result
     {
-        public COutput_ITAS_Result(List<Ctrain> train, List<Crailway_station> station, List<Crailway_section> section, int _nset)
+        public COutput_ITAS_Result(List<CTrain> train, List<CRailwayStation> station, List<CRailwaySection> section, int _nset)
         {
             Console.WriteLine();
             Console.WriteLine("******* ITAS IS COMPLETE **********");
@@ -662,7 +662,7 @@ namespace TrainScheduling.Algorithm
 
     public class CInitialize_Information
     {
-        public CInitialize_Information(List<Ctrain> train, List<Crailway_station> station, List<Crailway_section> section)
+        public CInitialize_Information(List<CTrain> train, List<CRailwayStation> station, List<CRailwaySection> section)
         {
             CParameter parameter = new CParameter();
             int[,] sectionlength = new int[station.Count, station.Count];

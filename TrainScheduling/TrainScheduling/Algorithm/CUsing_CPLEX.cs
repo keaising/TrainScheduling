@@ -13,7 +13,7 @@ namespace TrainScheduling.Algorithm
 {
     class CUSING_CPLEX
     {
-        public CUSING_CPLEX(List<Ctrain> train, List<Crailway_station> station, List<Crailway_section> section,
+        public CUSING_CPLEX(List<CTrain> train, List<CRailwayStation> station, List<CRailwaySection> section,
             StreamWriter CPLEX_output, int _nset)
         {
 
@@ -58,7 +58,7 @@ namespace TrainScheduling.Algorithm
             #endregion
         }
 
-        internal void Initial_solution(List<Ctrain> train, List<Crailway_station> station,
+        internal void Initial_solution(List<CTrain> train, List<CRailwayStation> station,
             double[][] a, double[][] d, double[][][] xiaa, double[][][] xidd, double[][][] xiad, double[][][] xida, double[][][] myu, double[][][][] omega)
         {
             CParameter Parameter = new CParameter();
@@ -131,7 +131,7 @@ namespace TrainScheduling.Algorithm
         }
 
         //main function of Local Branching
-        internal void LB_main(List<Ctrain> train, List<Crailway_station> station, int LB_k, int total_time_limit, int node_time_limit,
+        internal void LB_main(List<CTrain> train, List<CRailwayStation> station, int LB_k, int total_time_limit, int node_time_limit,
             int elapsed_time, double[][] a, double[][] d, double[][][] xiaa, double[][][] xidd, double[][][] xiad, double[][][] xida, double[][][] myu,
             double[][][][] omega, double UB, StreamWriter LB_output, int _nset)
         {
@@ -530,7 +530,7 @@ namespace TrainScheduling.Algorithm
 
         //import constraint; NOTE Thers is NO obj_function
         internal void Import_constraints(Cplex model, INumVar[][] A, INumVar[][] D, INumVar[][][] xiAA, INumVar[][][] xiDD, INumVar[][][] xiAD,
-       INumVar[][][] xiDA, INumVar[][][] Myu, INumVar[][][][] Omega, List<Ctrain> train, List<Crailway_station> station)
+       INumVar[][][] xiDA, INumVar[][][] Myu, INumVar[][][][] Omega, List<CTrain> train, List<CRailwayStation> station)
         {
             CParameter Parameter = new CParameter();
             int Max_int = Parameter.Max_int;
@@ -848,7 +848,7 @@ namespace TrainScheduling.Algorithm
         }
 
         // internal static INumVar[][] populateByRow(IMPModeler model, IRange[] row, List<Ctrain> train, List<Crailway_station> station)
-        internal void Cplex_Pure(List<Ctrain> train, List<Crailway_station> station, List<Crailway_section> section, StreamWriter CPLEX_output, int _nset)
+        internal void Cplex_Pure(List<CTrain> train, List<CRailwayStation> station, List<CRailwaySection> section, StreamWriter CPLEX_output, int _nset)
         {
             Cplex model = new Cplex();
             CParameter Parameter = new CParameter();
