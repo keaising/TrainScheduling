@@ -21,6 +21,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Threading;
 using Microsoft.Win32;
+using System.Collections.ObjectModel;
 
 /// <summary>
 /// 160724：需要解决动画重复播放时，对之前的图像的擦除处理，注意逻辑顺序
@@ -140,7 +141,7 @@ namespace TrainScheduling
                     else if (hasRunTSTA)
                     {
                         //展示算法
-                        AlgorithmNameTextbox.Text = "Alg_TSTA";
+                        // AlgorithmNameTextbox.Text = "Alg_TSTA";
                         //画出运行图
                         DisplayTrainTimeTable(gtrain, unitTimeSpan, gsection);
                         hasDrawTimetable = true;
@@ -511,7 +512,7 @@ namespace TrainScheduling
                 color.R = SDcolor.R;
                 color.G = SDcolor.G;
                 color.B = SDcolor.B;
-                color.A = SDcolor.B;
+                color.A = SDcolor.A;
                 myPath.Fill = new SolidColorBrush(color);
                 myRectangleGeometry.Rect = new Rect(xorigin + position * WidthInUnitKm, H / 2 - (1.4 * UnitH), 8 * WidthInUnitKm, 1.4 * UnitH);
             }
@@ -896,10 +897,53 @@ namespace TrainScheduling
             ResultStr[2] = MTID;
             ResultStr[3] = "列车总能耗";
 
-            TotalDelayTimeTextbox.Text = ResultStr[0];
-            BiggestDelayTimeTextbox.Text = ResultStr[1];
-            ExactTrainTextbox.Text = ResultStr[2];
-            ClearTimeTextbox.Text = (int)(ClearTime / 60) + " 分钟";
+            ObservableCollection<CDisplayData> displaylist = new ObservableCollection<CDisplayData>();
+
+            displaylist.Add(new CDisplayData()
+            {
+                Name = "当前算法",
+                Outputdata = "No"
+            });
+            displaylist.Add(new CDisplayData()
+            {
+                Name = "总延迟",
+                Outputdata = ResultStr[0]
+            });
+            displaylist.Add(new CDisplayData()
+            {
+                Name = "最大延迟",
+                Outputdata = ResultStr[1]
+            });
+            displaylist.Add(new CDisplayData()
+            {
+                Name = "最大延迟列车",
+                Outputdata = MTID
+            });
+            displaylist.Add(new CDisplayData()
+            {
+                Name = "线路清空时间",
+                Outputdata = (int)(ClearTime / 60) + " 分钟"
+            });
+            displaylist.Add(new CDisplayData()
+            {
+                Name = "总能耗",
+                Outputdata = "null"
+            });
+            //this.ResResultStatisticListData.ItemsSource = displaylist;
+            this.ResResultStatisticListData.DataContext = displaylist;
+
+            ObservableCollection<CDisplayTrainData> trainData = new ObservableCollection<CDisplayTrainData>();
+            foreach (var obj in train)
+            {
+                trainData.Add(new CDisplayTrainData()
+                {
+                    ID = obj.trainID.ToString() as string,
+                    speed = obj.speed.ToString() as string,
+                    delayTime = obj.DelayTime.ToString() + "/" + (int)(obj.DelayTime / 60) as string,
+                    energy = "null" as string
+                });
+            }
+            this.ResResultTrainGridData.DataContext = trainData;
         }
 
         /// <summary>
@@ -963,6 +1007,50 @@ namespace TrainScheduling
             ReadData.input_section_data(input_reader[2], section);
             input_reader[0].Close(); input_reader[1].Close(); input_reader[2].Close();
             CInitialize_Information Initial = new CInitialize_Information(train, station, section);
+        }
+
+        private void DisplayOtherData_MouseEnter(object sender, MouseEventArgs e)
+        {
+            DisplayOtherDataTB.Background = CmyColor.RequiredColor("LightBlue");
+        }
+        private void DisplayOtherDataTB_MouseLeave(object sender, MouseEventArgs e)
+        {
+            DisplayOtherDataTB.Background = CmyColor.RequiredColor("White");
+        }
+        private void DispalyScheDataTB_MouseEnter(object sender, MouseEventArgs e)
+        {
+            DispalyScheDataTB.Background = CmyColor.RequiredColor("LightBlue");
+        }
+        private void DispalyScheDataTB_MouseLeave(object sender, MouseEventArgs e)
+        {
+            DispalyScheDataTB.Background = CmyColor.RequiredColor("White");
+        }
+    }
+
+    public class CDisplayData
+    {
+        public string Name { get; set; }
+        public string Outputdata { get; set; }
+    }
+    public class CDisplayTrainData
+    {
+        public string ID { get; set; }
+        public string speed { get; set; }
+        public string delayTime { get; set; }
+        public string energy { get; set; }
+    }
+
+    public class CmyColor
+    {
+        public static SolidColorBrush RequiredColor(string colorname)
+        {
+            var SWcolor = new System.Windows.Media.Color();//               
+            var SDcolor = System.Drawing.Color.FromName(colorname);
+            SWcolor.R = SDcolor.R;
+            SWcolor.G = SDcolor.G;
+            SWcolor.B = SDcolor.B;
+            SWcolor.A = SDcolor.A;
+            return new SolidColorBrush(SWcolor);
         }
     }
 }

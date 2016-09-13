@@ -32,6 +32,13 @@
             <Setter Property="MaxWidth" Value="170px"/>
             <Setter Property="Margin" Value="1px"/>
         </Style>
+
+
+
+        <Style x:Key="myListViewItemStyle">
+            <Setter Property="ListViewItem.Background" Value="Yellow"/>
+        </Style>
+
     </Window.Resources>
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
@@ -176,62 +183,58 @@
         </Grid>
         <Grid  Grid.Row="1" Grid.Column="2" Grid.RowSpan="1" Margin="2,10">
             <TabControl>
-
-                <TabItem Name="师兄这里需要修改名字">
+                <TabItem Name="ReschResultData">
                     <TabItem.Header>
-                        <TextBlock Text="Tab1" FontSize="15px" Margin="0"/>
+                        <TextBlock x:Name="DispalyScheDataTB" Text="运行数据" FontSize="13px" Margin="0" HorizontalAlignment="Right"
+                                MouseEnter="DispalyScheDataTB_MouseEnter" MouseLeave="DispalyScheDataTB_MouseLeave"   />
                     </TabItem.Header>
                     <TabItem.Content>
-                        <Grid>
+                        <Grid Margin="0,-3,0,3">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="89*"/>
+                                <ColumnDefinition Width="44*"/>
+                            </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="auto"/>
-                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
                             </Grid.RowDefinitions>
-                            <Grid x:Name="GridParameterDisplay"  Grid.Row="0" Grid.Column="0">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="auto"/>
-                                    <RowDefinition Height="auto"/>
-                                    <RowDefinition Height="auto"/>
-                                    <RowDefinition Height="auto"/>
-                                    <RowDefinition Height="auto"/>
-                                    <RowDefinition Height="auto"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Grid.Column="0" Text="当前运行算法:" HorizontalAlignment="Left" FontWeight="Bold" Margin="5 0 0 0"/>
-                                <TextBox Grid.Row="1" Grid.Column="0" x:Name="AlgorithmNameTextbox" HorizontalAlignment="Left" FontWeight="Bold" Width="100px" Margin="5 0 0 0"/>
-                            </Grid>
-                            <Grid x:Name="GridResultDisplay"  Grid.Row="1" Grid.Column="0" Margin="2,10">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="auto"/>
-                                    <RowDefinition Height="auto"/>
-                                    <RowDefinition Height="auto"/>
-                                    <RowDefinition Height="auto"/>
-                                    <RowDefinition Height="auto"/>
-                                    <RowDefinition Height="auto"/>
-                                    <RowDefinition Height="auto"/>
-                                    <RowDefinition Height="auto"/>
-                                    <RowDefinition Height="auto"/>
-                                    <RowDefinition Height="auto"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Grid.Column="0" Text="总延迟时间:" HorizontalAlignment="Left" FontWeight="Bold" Margin="5 0 0 0"/>
-                                <TextBox Grid.Row="1" Grid.Column="1" x:Name="TotalDelayTimeTextbox" HorizontalAlignment="Left" Width="120px" Margin="5 0 0 0" IsReadOnly="True" TextWrapping="Wrap"/>
-                                <TextBlock Grid.Row="2" Grid.Column="0" Text="最大延迟时间:" FontWeight="Bold" HorizontalAlignment="Left" FontFamily= "Times New Roman" Margin="5 5 0 0"/>
-                                <TextBox Grid.Row="3" Grid.Column="1" x:Name="BiggestDelayTimeTextbox" HorizontalAlignment="Left" Width="120px" Margin="5 0 0 0" Height="20" VerticalAlignment="Top" TextWrapping="Wrap" IsReadOnly="True"/>
-                                <TextBlock Grid.Row="4" Grid.Column="0" Text="最大延迟对应的列车:" HorizontalAlignment="Left" FontWeight="Bold"  Margin="5 5 0 0"/>
-                                <TextBox Grid.Row="5" Grid.Column="0" x:Name="ExactTrainTextbox" HorizontalAlignment="Left"  Width="120px" Margin="5 0 0 0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" TextWrapping="Wrap" IsReadOnly="True"/>
-                                <TextBlock Grid.Row="6" Grid.Column="0" Text="线路清空时间:" HorizontalAlignment="Left" FontWeight="Bold"  Margin="5 5 0 0"/>
-                                <TextBox Grid.Row="7" Grid.Column="0" x:Name="ClearTimeTextbox" HorizontalAlignment="Left"  Width="120px" Margin="5 0 0 0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" TextWrapping="Wrap" IsReadOnly="True"/>
-                                <TextBlock Grid.Row="8" Grid.Column="0" Text="总能耗:" HorizontalAlignment="Left" FontWeight="Bold"  Margin="5 5 0 0"/>
-                                <TextBox Grid.Row="9" Grid.Column="0" x:Name="TotalEnergyTextbox" HorizontalAlignment="Left"  Width="120px" Margin="5 0 0 0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" TextWrapping="Wrap" IsReadOnly="True"/>
-                            </Grid>
+                            <DataGrid x:Name="ResResultStatisticListData" Grid.Row="0" Grid.Column="0" ItemsSource="{Binding}" 
+                                      IsReadOnly="True" FontSize="11px" AutoGenerateColumns="False" Grid.ColumnSpan="2" >
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="统计信息"   Binding="{Binding Path=Name}" />
+                                    <DataGridTextColumn Header="数据"   Binding="{Binding Path=Outputdata}"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+                            <DataGrid x:Name="ResResultTrainGridData" ItemsSource="{Binding}" Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" 
+                                      IsReadOnly="True" FontSize="11px" AutoGenerateColumns="False" Grid.ColumnSpan="2">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="列车ID"   Binding="{Binding Path=ID}" />
+                                    <DataGridTextColumn Header="速度(m/s)"   Binding="{Binding Path=speed}"/>
+                                    <!-- <DataGridCheckBoxColumn Header="Pass Exam?" Width="100" 
+                                        Binding="{Binding Pass}"/>
+                                    <DataGridHyperlinkColumn Header="Email" Width="150" 
+                                         Binding="{Binding Email}"/>-->
+                                    <DataGridTextColumn Header="延迟(s/min)"  Binding="{Binding Path=delayTime}"/>
+                                    <DataGridTextColumn Header="能耗"  Binding="{Binding Path=energy}"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
                         </Grid>
                     </TabItem.Content>
                 </TabItem>
-                <TabItem Name="这里也需要修改名字">
+                <TabItem Name="ScheResultData">
                     <TabItem.Header>
-                        <TextBlock Text="Tab2" FontSize="15px" Margin="0"/>
+                        <TextBlock x:Name="DisplayOtherDataTB" Text="其他数据" FontSize="13px" Margin="0"  MouseEnter="DisplayOtherData_MouseEnter"
+                                   MouseLeave="DisplayOtherDataTB_MouseLeave" />
                     </TabItem.Header>
                     <TabItem.Content>
-                        <TextBlock TextWrapping="Wrap" TextAlignment="Left" VerticalAlignment="Top" HorizontalAlignment="Left">测试数据，这里什么都可以放</TextBlock>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="94*"/>
+                                <ColumnDefinition Width="39*"/>
+                            </Grid.ColumnDefinitions>
+
+                        </Grid>
                     </TabItem.Content>
                 </TabItem>
             </TabControl>

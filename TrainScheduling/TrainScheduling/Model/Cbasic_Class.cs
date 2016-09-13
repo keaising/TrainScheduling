@@ -35,6 +35,7 @@ namespace TrainScheduling.Model
             this.ListTime = new List<int>();
             this.DelayTime = 0;
             this.CurrentPosition = new double();
+            this.PathType = 0;
             //this.Clone();
         }
         public int trainID;
@@ -67,6 +68,12 @@ namespace TrainScheduling.Model
         public int Loco_prepare_using_ID; // the ID of the locomotive the current train may use, it comes from the oppsoing train
         public int time_receive_loco; // the time that train receive the locomotive
         public int Loco_re_or_new; // illustrate whether the used locomotive is come from opposing (=1) or the new one (=0);
+        public int PathType; //0-outbound; 1-inbound
+        public int LockIndex; //1-locked; 0-no locked
+
+        //rescheduling里面用的的一些，还没有做统一
+        public int[] SubDwellTime;
+        public int[] sectiontime;
 
         public CTrain Clone()
         {
