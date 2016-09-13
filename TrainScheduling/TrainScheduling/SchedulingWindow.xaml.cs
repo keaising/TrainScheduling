@@ -902,7 +902,7 @@ namespace TrainScheduling
             displaylist.Add(new CDisplayData()
             {
                 Name = "当前算法",
-                Outputdata = "No"
+                Outputdata = "TATS"
             });
             displaylist.Add(new CDisplayData()
             {
