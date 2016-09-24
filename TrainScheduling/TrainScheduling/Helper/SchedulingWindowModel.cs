@@ -25,9 +25,9 @@ namespace TrainScheduling.Helper
                     return FalseMsg;
             }
         }
-        public HasInitialized(Boolean done, String trueMsg, String falseMsg)
+        public HasInitialized(String trueMsg, String falseMsg)
         {
-            Done = done;
+            Done = false;
             TrueMsg = trueMsg;
             FalseMsg = falseMsg;
         }

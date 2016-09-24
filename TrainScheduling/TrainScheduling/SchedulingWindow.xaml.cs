@@ -53,11 +53,11 @@ namespace TrainScheduling
         List<CRailwayStation> gstation = new List<CRailwayStation>();
         List<CRailwaySection> gsection = new List<CRailwaySection>();
 
-        HasInitialized hasInitialized = new HasInitialized(false, "已经成功初始化底图", "请先画出底图！");
-        HasInitialized hasInputData = new HasInitialized(false, "基础数据读取成功！", "未输入基础数据，请选择数据！");
-        HasInitialized hasRunTSTA = new HasInitialized(false, "不要调皮，你已经运行过TSTA算法咯！", "未运行任何调度算法，请先运行调度/调整算法！");
-        HasInitialized hasDrawRailwayMap = new HasInitialized(false, "路网图绘制成功！", "路网图为空，请先画出路网结构图！");
-        HasInitialized hasDrawTimetable = new HasInitialized(false, "时刻表绘制成功！", "请先绘制时刻表！");
+        HasInitialized hasInitialized = new HasInitialized("已经成功初始化底图", "请先画出底图！");
+        HasInitialized hasInputData = new HasInitialized("基础数据读取成功！", "未输入基础数据，请选择数据！");
+        HasInitialized hasRunTSTA = new HasInitialized("不要调皮，你已经运行过TSTA算法咯！", "未运行任何调度算法，请先运行调度/调整算法！");
+        HasInitialized hasDrawRailwayMap = new HasInitialized("路网图绘制成功！", "路网图为空，请先画出路网结构图！");
+        HasInitialized hasDrawTimetable = new HasInitialized("时刻表绘制成功！", "请先绘制时刻表！");
 
 
 
