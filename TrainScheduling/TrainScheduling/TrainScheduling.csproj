@@ -81,6 +81,7 @@
     <Compile Include="Algorithm\CTATS.cs" />
     <Compile Include="Algorithm\CTwoOpt.cs" />
     <Compile Include="Algorithm\CUsing_CPLEX.cs" />
+    <Compile Include="Helper\SchedulingWindowModel.cs" />
     <Compile Include="Helper\StaticHelper.cs" />
     <Compile Include="Model\Cbasic_Class.cs" />
     <Compile Include="Model\CParameter.cs" />
