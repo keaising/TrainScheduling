@@ -66,12 +66,12 @@ namespace TrainScheduling
         //button_click input data，这里输入data的方式后面需要改动
         private void ParameterSettingButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!hasInputData.Done)
-            {
-                InputData(gtrain, gstation, gsection);
-                hasInputData.Done = true;
-                MessageBox.Show(hasInputData.Msg);
-            }
+            //if (!hasInputData.Done)
+            //{
+            //    InputData(gtrain, gstation, gsection);
+            //    hasInputData.Done = true;
+            //    MessageBox.Show(hasInputData.Msg);
+            //}
 
             //创建一个打开文件式的对话框  
             OpenFileDialog ofd = new OpenFileDialog();
@@ -83,11 +83,25 @@ namespace TrainScheduling
             if (ofd.ShowDialog() == true)
             {
                 //image1.Source = new BitmapImage(new Uri(ofd.FileName));
+                var p = ofd.FileName;
+                var s = ReadTxt(p);
             }
-            else
+            //else
+            //{
+            //    MessageBox.Show("没有选择图片");
+            //}
+        }
+
+        private string ReadTxt(string filePathAndName)
+        {
+            StreamReader sr = new StreamReader(filePathAndName, Encoding.Default);
+            var result = string.Empty;
+            String line;
+            while ((line = sr.ReadLine()) != null)
             {
-                MessageBox.Show("没有选择图片");
+                result += line.ToString();
             }
+            return result;
         }
 
         /// <summary>
