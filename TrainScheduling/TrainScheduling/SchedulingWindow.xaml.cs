@@ -59,17 +59,34 @@ namespace TrainScheduling
         HasInitialized hasDrawRailwayMap = new HasInitialized("路网图绘制成功！", "路网图为空，请先画出路网结构图！");
         HasInitialized hasDrawTimetable = new HasInitialized("时刻表绘制成功！", "请先绘制时刻表！");
 
-
-
-
-
         //button_click input data，这里输入data的方式后面需要改动
         private void ParameterSettingButton_Click(object sender, RoutedEventArgs e)
         {
             var chooseData = new ChooseDataWindow();
             chooseData.ShowDialog();
 
-            var pathList = BaseDataModel.List;
+            if (!hasInputData.Done)
+            {
+                var pathList = BaseDataModel.List;
+
+                FileInfo[] inputData = new FileInfo[3];
+                FileStream[] fileData = new FileStream[3];
+                StreamReader[] streamReader = new StreamReader[3];
+                for (int i = 0; i < 3; i++)
+                {
+                    inputData[i] = new FileInfo(pathList[i]);
+                    fileData[i] = inputData[i].Open(FileMode.Open);
+                    streamReader[i] = new StreamReader(fileData[i], System.Text.Encoding.Default);
+                    if (i == 0)
+                        CRead_Inputdata.input_train_data(streamReader[i], gtrain);
+                    else if (i == 1)
+                        CRead_Inputdata.input_station_data(streamReader[i], gstation);
+                    else if (i == 2)
+                        CRead_Inputdata.input_section_data(streamReader[i], gsection);
+                }
+                hasInputData.Done = true;
+                MessageBox.Show(hasInputData.Msg);
+            }
 
             //if (!hasInputData.Done)
             //{
@@ -123,7 +140,8 @@ namespace TrainScheduling
         /// <param name="e"></param>
         private void DrawTimetable_Click(object sender, RoutedEventArgs e)
         {
-            if (hasInitialized.Done && hasInputData.Done && hasDrawTimetable.Done && hasRunTSTA.Done)
+            //if (hasInitialized.Done && hasInputData.Done && hasDrawTimetable.Done && hasRunTSTA.Done)
+            if (hasInitialized.Done && hasInputData.Done && hasRunTSTA.Done)
             {
                 //画出运行图
                 DisplayTrainTimeTable(gtrain, unitTimeSpan, gsection);
@@ -156,8 +174,8 @@ namespace TrainScheduling
                         GridSchWinTimetable.Children.RemoveRange(mapIndexStart, mapIndexEnd);
 
                 timer = new DispatcherTimer(DispatcherPriority.Normal);
-                timer.Tick += new EventHandler(TimerTickMethod);
-                timer.Interval = TimeSpan.FromMilliseconds(40);
+                timer.Tick += new EventHandler(TimerTickMethod);               
+                timer.Interval = TimeSpan.FromMilliseconds(15);
                 timer.Start();
             }
             else
@@ -184,7 +202,7 @@ namespace TrainScheduling
         private void TimerTickMethod(object sender, EventArgs e)
         {
             //   throw new NotImplementedException();
-            DynamicDisplayTrainTravel(gtrain, gsection, gstation, 1, 1);
+            DynamicDisplayTrainTravel(gtrain, gsection, gstation, 1);
         }
 
         private List<string> GetStationNames(List<CRailwayStation> inputstation)
@@ -440,7 +458,8 @@ namespace TrainScheduling
         /// <summary>
         /// 动态演示列车的运行过程
         /// </summary>
-        private void DynamicDisplayTrainTravel(List<CTrain> trains, List<CRailwaySection> sections, List<CRailwayStation> stations, int skipEventNum, int refreshTime)
+        private void DynamicDisplayTrainTravel(List<CTrain> trains, List<CRailwaySection> sections, 
+            List<CRailwayStation> stations, int skipEventNum)
         {
             int NumDiscreteEvent = trains[0].ListTime.Count;
             double H = GridSchWinRailwayMap.ActualHeight;
@@ -1005,10 +1024,9 @@ namespace TrainScheduling
             StreamWriter Dtrain_output = out_stream.DTrains_statistic_output("TATS");
             StreamWriter Dstation_output = out_stream.DStation_statistic_output("TATS");
             StreamReader[] input_reader = out_stream.input_data_streamwriter(_ntrain, 0);
-            CRead_Inputdata ReadData = new CRead_Inputdata();
-            ReadData.input_train_data(input_reader[0], train);
-            ReadData.input_station_data(input_reader[1], station);
-            ReadData.input_section_data(input_reader[2], section);
+            CRead_Inputdata.input_train_data(input_reader[0], train);
+            CRead_Inputdata.input_station_data(input_reader[1], station);
+            CRead_Inputdata.input_section_data(input_reader[2], section);
             input_reader[0].Close(); input_reader[1].Close(); input_reader[2].Close();
             CInitialize_Information Initial = new CInitialize_Information(train, station, section);
         }
