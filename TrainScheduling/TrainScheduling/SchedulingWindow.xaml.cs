@@ -78,21 +78,6 @@ namespace TrainScheduling
             //    MessageBox.Show(hasInputData.Msg);
             //}
 
-            //创建一个打开文件式的对话框  
-            OpenFileDialog ofd = new OpenFileDialog();
-            //设置这个对话框的起始打开路径  
-            ofd.InitialDirectory = @"D:\";
-            //设置打开的文件的类型，注意过滤器的语法  
-            ofd.Filter = "txt文本|*.txt";
-            //调用ShowDialog()方法显示该对话框，该方法的返回值代表用户是否点击了确定按钮  
-            if (ofd.ShowDialog() == true)
-            {
-                //image1.Source = new BitmapImage(new Uri(ofd.FileName));
-            }
-            else
-            {
-                MessageBox.Show("没有选择图片");
-            }
         }
 
         /// <summary>
