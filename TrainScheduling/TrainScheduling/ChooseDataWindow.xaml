@@ -1,0 +1,42 @@
+﻿<Window x:Class="TrainScheduling.ChooseDataWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TrainScheduling"
+        mc:Ignorable="d"
+        Title="ChooseDataWindow" Height="456" Width="490"
+        ResizeMode="NoResize">
+    <Grid x:Name="RootGrid">
+        <GroupBox x:Name="StationGroupBox" Header="车站数据" HorizontalAlignment="Left" Margin="24,21,0,0" VerticalAlignment="Top" Width="427" Height="96">
+            <GroupItem >
+                <Grid>
+                    <Label x:Name="SatationLabel" Content="请选择车站数据" HorizontalAlignment="Left" Margin="33,10,0,0" VerticalAlignment="Top"/>
+                    <ComboBox x:Name="StationComboBox" SelectedIndex="0" Margin="174,10,62,10" >
+                    </ComboBox>
+                </Grid>
+            </GroupItem>
+        </GroupBox>
+        <GroupBox x:Name="SectionGroupBox" Header="路段数据" HorizontalAlignment="Left" Margin="24,137,0,0" VerticalAlignment="Top" Height="96" Width="427">
+            <GroupItem>
+                <Grid>
+                    <Label x:Name="SectionLabel" Content="请选择路段数据" HorizontalAlignment="Left" Margin="33,10,0,0" VerticalAlignment="Top"/>
+                    <ComboBox x:Name="SectionComboBox" SelectedIndex="0" Margin="174,10,62,10" >
+                    </ComboBox>
+                </Grid>
+            </GroupItem>
+        </GroupBox>
+        <GroupBox x:Name="TrainGroupBox" Header="列车数据" HorizontalAlignment="Left" Margin="24,253,0,0" VerticalAlignment="Top" Height="96" Width="427">
+            <GroupItem>
+                <Grid>
+                    <Label x:Name="TrainLabel" Content="请选择列车数据" HorizontalAlignment="Left" Margin="33,10,0,0" VerticalAlignment="Top"/>
+                    <ComboBox x:Name="TrainComboBox" SelectedIndex="0" Margin="174,10,62,10" >
+                    </ComboBox>
+                </Grid>
+            </GroupItem>
+        </GroupBox>
+        <Button x:Name="OKBtn" Content="确定" HorizontalAlignment="Left" Margin="93,372,0,0" VerticalAlignment="Top" Width="100" Click="OKBtn_Click"/>
+        <Button x:Name="CancelBtn" Content="取消" HorizontalAlignment="Left" Margin="281,372,0,0" VerticalAlignment="Top" Width="100" Click="CancelBtn_Click"/>
+
+    </Grid>
+</Window>

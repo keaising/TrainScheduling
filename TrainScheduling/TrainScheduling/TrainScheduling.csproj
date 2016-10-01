@@ -81,6 +81,10 @@
     <Compile Include="Algorithm\CTATS.cs" />
     <Compile Include="Algorithm\CTwoOpt.cs" />
     <Compile Include="Algorithm\CUsing_CPLEX.cs" />
+    <Compile Include="ChooseDataWindow.xaml.cs">
+      <DependentUpon>ChooseDataWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Helper\BaseDataModel.cs" />
     <Compile Include="Helper\SchedulingWindowModel.cs" />
     <Compile Include="Helper\StaticHelper.cs" />
     <Compile Include="Model\Cbasic_Class.cs" />
@@ -91,6 +95,10 @@
     <Compile Include="UserControls\SchedulingControl.xaml.cs">
       <DependentUpon>SchedulingControl.xaml</DependentUpon>
     </Compile>
+    <Page Include="ChooseDataWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="LoginWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -147,26 +155,10 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Resource Include="Data\Input_loco_data_10.txt" />
-    <Resource Include="Data\Input_loco_data_12.txt" />
-    <Resource Include="Data\Input_loco_data_14.txt" />
-    <Resource Include="Data\Input_loco_data_16.txt" />
-    <Resource Include="Data\Input_loco_data_18.txt" />
-    <Resource Include="Data\Input_loco_data_20.txt" />
-    <Resource Include="Data\Input_loco_data_22.txt" />
-    <Resource Include="Data\Input_loco_data_24.txt" />
-    <Resource Include="Data\Input_loco_data_26.txt" />
-    <Resource Include="Data\Input_loco_data_28.txt" />
-    <Resource Include="Data\Input_loco_data_30.txt" />
-    <Resource Include="Data\Input_loco_data_32.txt" />
-    <Resource Include="Data\Input_loco_data_34.txt" />
-    <Resource Include="Data\Input_loco_data_36.txt" />
-    <Resource Include="Data\Input_loco_data_38.txt" />
-    <Resource Include="Data\Input_loco_data_40.txt" />
-    <Resource Include="Data\Input_loco_data_6.txt" />
-    <Resource Include="Data\Input_loco_data_8.txt" />
+    <Folder Include="HelperWindow\" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Data\Input_section_data_0.txt" />
     <Resource Include="Data\Input_section_data_1.txt" />
     <Resource Include="Data\Input_section_data_10.txt" />
