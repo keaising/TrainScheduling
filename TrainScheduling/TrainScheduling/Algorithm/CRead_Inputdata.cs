@@ -18,7 +18,7 @@ namespace TrainScheduling.Algorithm
         }
 
         //read train data
-        public void input_train_data(StreamReader LB_input_train_data, List<CTrain> train)
+        public static void input_train_data(StreamReader LB_input_train_data, List<CTrain> train)
         {
             string Input_data; int ROW = 0; string ss = "SPLIT";
             while ((Input_data = LB_input_train_data.ReadLine()) != null)
@@ -58,7 +58,7 @@ namespace TrainScheduling.Algorithm
         }
 
         //read station data
-        public void input_station_data(StreamReader LB_input_station_data, List<CRailwayStation> station)
+        public static void input_station_data(StreamReader LB_input_station_data, List<CRailwayStation> station)
         {
             string Input_data = null; int ROW = 0; string ss = "SPLIT";
             while ((Input_data = LB_input_station_data.ReadLine()) != null)
@@ -96,7 +96,7 @@ namespace TrainScheduling.Algorithm
         }
 
         //read section data 
-        public void input_section_data(StreamReader LB_input_section_data, List<CRailwaySection> section)
+        public static void input_section_data(StreamReader LB_input_section_data, List<CRailwaySection> section)
         {
             string Input_data; int ROW = 0;
             while ((Input_data = LB_input_section_data.ReadLine()) != null)
