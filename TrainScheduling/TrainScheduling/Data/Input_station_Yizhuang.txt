@@ -1,0 +1,16 @@
+13	<- Number of stations;	Yizhuang Line		
+stationID	stationCapacity	ID_front_section	ID_succeeding_section	
+0	2	-1	SPLIT	1
+1	2	0	SPLIT	2
+2	2	1	SPLIT	3
+3	2	2	SPLIT	4
+4	2	3	SPLIT	5
+5	2	4	SPLIT	6
+6	2	5	SPLIT	7
+7	2	6	SPLIT	8
+8	2	7	SPLIT	9
+9	2	8	SPLIT	10
+10	2	9	SPLIT	11
+11	2	10	SPLIT	12
+12	2	11	SPLIT	13
+13	2	12	SPLIT	-1

@@ -30,10 +30,9 @@ namespace TrainScheduling
 
         private List<FileInfo> Files;
 
-
         public List<FileInfo> GetFiles()
         {
-            var path = @"..\..\Data";
+            var path = @"..\..\Data"; 
             DirectoryInfo theFolder = new DirectoryInfo(path);
             return theFolder.GetFiles().ToList();
         }
@@ -81,6 +80,7 @@ namespace TrainScheduling
             var station = Files.FindLast(f => f.Name == StationComboBox.SelectedItem.ToString());
             var section = Files.FindLast(f => f.Name == SectionComboBox.SelectedItem.ToString());
             BaseDataModel.List = new List<string> { train.FullName, station.FullName, section.FullName };
+            
             this.Close();
         }
 

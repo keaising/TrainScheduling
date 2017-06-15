@@ -12,8 +12,9 @@
         <Image x:Name="BackgroundImage" Source="Resources/beijing.png" Stretch="Fill"></Image>
         <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="23" Margin="282,359,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
         <PasswordBox x:Name="passwordBox" HorizontalAlignment="Left" Margin="282,396,0,0" VerticalAlignment="Top" Width="120" Height="23"/>
-        <Button x:Name="RegButton" Content="Regist" Click="RegButton_Click" HorizontalAlignment="Left" Margin="439,359,0,0" VerticalAlignment="Top" Width="75" Height="23"/>
-        <Button x:Name="ForgetButton" Content="Forget" Click="ForgetButton_Click" HorizontalAlignment="Left" Margin="439,396,0,0" VerticalAlignment="Top" Width="75" Height="23"/>
-        <Button x:Name="LoginButton" Content="Login" Click="LoginButton_Click" HorizontalAlignment="Left" Margin="282,438,0,0" VerticalAlignment="Top" Width="232"/>
+        <Button x:Name="RegButton" Content="Regist" Click="RegButton_Click" HorizontalAlignment="Left" Margin="439,359,0,0" VerticalAlignment="Top" Width="75" Height="26"/>
+        <Button x:Name="ForgetButton" Content="Forget" Click="ForgetButton_Click" HorizontalAlignment="Left" Margin="439,396,0,0" VerticalAlignment="Top" Width="75" Height="26"/>
+        <Button x:Name="LoginButton" Content="Login" Click="LoginButton_Click" HorizontalAlignment="Left" Margin="282,436,0,0" VerticalAlignment="Top" Width="120"/>
+        <Button Content="注销" HorizontalAlignment="Left" Margin="439,436,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
     </Grid>
 </Window>

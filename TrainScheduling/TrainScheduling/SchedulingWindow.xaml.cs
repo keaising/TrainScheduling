@@ -43,6 +43,10 @@ namespace TrainScheduling
         DispatcherTimer timer;
         int EventIndex = 0;
         int unitTimeSpan = 120;
+        StreamReader reschedulingData;
+        int gTotalFengge = 0;
+        bool boolRunReScedulingAlg = false;
+        int startAccidentTime, endAccidentTime; // RunReScedulingAlg 需要改进
 
         //用来记录列车位置刷新时候，删除grid.chirldren中的元素<trainID,chirldrenIndex>
         Dictionary<int, int> g_mapGrirdRailwayTrainIDandIndex = new Dictionary<int, int>();
@@ -86,6 +90,9 @@ namespace TrainScheduling
                 }
                 hasInputData.Done = true;
                 MessageBox.Show(hasInputData.Msg);
+                gTotalFengge = 60 * 24; //24个小时的Time Horizon
+                ////画出底图
+                DrawBasicPanel_Click(sender, e);
             }
 
             //if (!hasInputData.Done)
@@ -94,7 +101,50 @@ namespace TrainScheduling
             //    hasInputData.Done = true;
             //    MessageBox.Show(hasInputData.Msg);
             //}
+        }
 
+        //button_click input data，这里输入rescheduling data 后期可以与scheduling部分的代码放在一起，
+        //但是需要从Reschedule里面拿出一部分代码
+        private void ReschedulingParameterSettingButton_Click(object sender, RoutedEventArgs e)
+        {
+            var chooseData = new ChooseDataWindow();
+            chooseData.ShowDialog();
+
+            if (!hasInputData.Done)
+            {
+                var pathList = BaseDataModel.List;
+
+                FileInfo[] inputData = new FileInfo[3];
+                FileStream[] fileData = new FileStream[3];
+                StreamReader[] streamReader = new StreamReader[3];
+                for (int i = 0; i < 3; i++)
+                {
+                    inputData[i] = new FileInfo(pathList[i]);
+                    fileData[i] = inputData[i].Open(FileMode.Open);
+                    streamReader[i] = new StreamReader(fileData[i], System.Text.Encoding.Default);
+                    if (i == 0)
+                        //CRead_Inputdata.input_train_data(streamReader[i], gtrain);
+                        reschedulingData = streamReader[i];
+                    else if (i == 1)
+                        CRead_Inputdata.input_station_data(streamReader[i], gstation);
+                    else if (i == 2)
+                        CRead_Inputdata.input_section_data(streamReader[i], gsection);
+                }
+                hasInputData.Done = true;
+                MessageBox.Show(hasInputData.Msg);
+                gTotalFengge = 60 * 5; //5个小时的Time Horizon
+                unitTimeSpan = 30; //这里都需要改进
+                boolRunReScedulingAlg = true; //这里都需要改进
+                ////画出底图
+                DrawBasicPanel_Click(sender, e);
+            }
+
+            //if (!hasInputData.Done)
+            //{
+            //    InputData(gtrain, gstation, gsection);
+            //    hasInputData.Done = true;
+            //    MessageBox.Show(hasInputData.Msg);
+            //}
         }
 
         /// <summary>
@@ -109,6 +159,38 @@ namespace TrainScheduling
                 DrawBasicTimetable(gstation, gsection);
                 hasInitialized.Done = true;
             }
+        }
+
+        /// <summary>
+        /// button_click 调整算法
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AlgRescheduling_Click(object sender, RoutedEventArgs e)
+        {
+            if (hasInputData.Done && !hasRunTSTA.Done)
+            {
+                int reNumTrain = 40;//reNumTrain 为此处设置的列车数目                
+                CTrain[] TrainNew = new CTrain[reNumTrain];
+                //CRescheduling railwaySys = new CRescheduling(reschedulingData, reNumTrain, out TrainNew, out startAccidentTime, out endAccidentTime);
+                if (gtrain != null)
+                    gtrain.Clear();
+                for (int i = 0; i < TrainNew.Count(); i++)
+                {
+                    gtrain.Add(TrainNew[i]);
+                }
+
+                MessageBox.Show("调整算法运行成功！");
+                hasRunTSTA.Done = true;
+            }
+            else
+            {
+                if (!hasInputData.Done)
+                    MessageBox.Show(hasInputData.Msg);
+                if (hasRunTSTA.Done)
+                    MessageBox.Show(hasRunTSTA.Msg);
+            }
+            DrawTimetable_Click(sender, e);
         }
 
         /// <summary>
@@ -131,6 +213,7 @@ namespace TrainScheduling
                 if (hasRunTSTA.Done)
                     MessageBox.Show(hasRunTSTA.Msg);
             }
+            DrawTimetable_Click(sender, e);
         }
 
         /// <summary>
@@ -149,8 +232,11 @@ namespace TrainScheduling
                 //展示结果
                 DisplayResults(gtrain);
                 //铁路线路图像
-                DrawRailwayMap(gstation, gsection);
-                hasDrawRailwayMap.Done = true;
+                if (!boolRunReScedulingAlg)
+                {
+                    DrawRailwayMap(gstation, gsection);
+                    hasDrawRailwayMap.Done = true;
+                }
             }
             else
             {
@@ -174,7 +260,7 @@ namespace TrainScheduling
                         GridSchWinTimetable.Children.RemoveRange(mapIndexStart, mapIndexEnd);
 
                 timer = new DispatcherTimer(DispatcherPriority.Normal);
-                timer.Tick += new EventHandler(TimerTickMethod);               
+                timer.Tick += new EventHandler(TimerTickMethod);
                 timer.Interval = TimeSpan.FromMilliseconds(15);
                 timer.Start();
             }
@@ -213,7 +299,7 @@ namespace TrainScheduling
                 station.Add(obj.Clone());
             List<string> StaName = new List<string>();
             for (int j = 0; j < station.Count; j++)
-                StaName.Add("Station_" + station[station.Count - 1 - j].stationID.ToString());
+                StaName.Add("车站_" + station[station.Count - 1 - j].stationID.ToString());
             return StaName;
         }
 
@@ -325,8 +411,8 @@ namespace TrainScheduling
 
             //wsx：这个跟上面的stationNames有什么关系？
             List<string> strName = new List<string>();
-            strName.Add("京");
-            strName.Add("沪");
+            strName.Add("测");
+            strName.Add("试");
             strName.Add("线");
             //display railway line name
             for (int i = 0; i < strName.Count; i++)
@@ -334,14 +420,14 @@ namespace TrainScheduling
                 RowDefinition rowdef = new RowDefinition();//创建行布局对向
                 GridSchWinLineName.RowDefinitions.Add(rowdef);
                 TextBlock TextBlockStationName = new TextBlock();
-                //get station name
-                TextBlockStationName.Text = strName[i];
-                TextBlockStationName.FontSize = 14;
+                //get station name               
                 var color = new System.Windows.Media.Color();
                 color.R = 155;
                 color.G = 0;
                 color.B = 255;
                 color.A = 255;
+                TextBlockStationName.Text = strName[i];
+                TextBlockStationName.FontSize = 14;
                 TextBlockStationName.Foreground = new SolidColorBrush(color);
                 TextBlockStationName.FontFamily = new System.Windows.Media.FontFamily("Times New Roman");
                 TextBlockStationName.VerticalAlignment = VerticalAlignment.Center;
@@ -358,7 +444,7 @@ namespace TrainScheduling
                 GridSchWinTimeIndex.ColumnDefinitions.Add(coldef);
                 TextBlock TextBlockaTimeSpanName = new TextBlock();
                 //get timespan span
-                var TimeNumber = 1440.0 / timespanCount;
+                var TimeNumber = gTotalFengge / timespanCount;
 
                 if (i == 0)
                 {
@@ -374,7 +460,7 @@ namespace TrainScheduling
                 {
                     var cur_time = (double)(i - 1) * TimeNumber;
                     TimeSpan ts = TimeSpan.FromMinutes(cur_time);
-                    var hour = cur_time == 1440 ? "24" : string.Format("{0:hh}", ts);
+                    var hour = cur_time == gTotalFengge ? ((int)(gTotalFengge / 60)).ToString() : string.Format("{0:hh}", ts);
                     var minute = string.Format("{0:mm}", ts);
                     TextBlockaTimeSpanName.Text = hour + ":" + minute;
                     //get font size
@@ -428,8 +514,8 @@ namespace TrainScheduling
                     rowdef.Height = new GridLength(sectionLengthes[i - 1] * stationSpanInUnitKm);
                 //get font size
                 int fontsize = 9; //y_origin 大概10多
-                if (originY > 14 && originY <= 18) fontsize = 10;
-                if (originY > 18 && originY <= 22) fontsize = 12;
+                if (originY > 14 && originY <= 18) fontsize = 12;
+                if (originY > 18 && originY <= 22) fontsize = 14;
                 if (originY >= 22) fontsize = 14;
                 TextBlockStationName.FontSize = fontsize;
                 var color = new System.Windows.Media.Color(); color.R = 55; color.G = 0; color.B = 255; color.A = 255;
@@ -458,7 +544,7 @@ namespace TrainScheduling
         /// <summary>
         /// 动态演示列车的运行过程
         /// </summary>
-        private void DynamicDisplayTrainTravel(List<CTrain> trains, List<CRailwaySection> sections, 
+        private void DynamicDisplayTrainTravel(List<CTrain> trains, List<CRailwaySection> sections,
             List<CRailwayStation> stations, int skipEventNum)
         {
             int NumDiscreteEvent = trains[0].ListTime.Count;
@@ -816,6 +902,27 @@ namespace TrainScheduling
                 }
                 g_mapGrirdTimetableTrainIDandIndexList.Add(g_mapGrirdTimetableTrainIDandIndex);
             }
+
+            if (boolRunReScedulingAlg)
+            {
+                var startLine = new Line();
+                startLine.Stroke = System.Windows.Media.Brushes.Red;
+                startLine.StrokeThickness = 2.0;
+                startLine.X1 = TimeSpanInUnitMinute * startAccidentTime / 60 + x_origin;
+                startLine.X2 = TimeSpanInUnitMinute * startAccidentTime / 60 + x_origin;
+                startLine.Y1 = 0;
+                startLine.Y2 = H;
+                GridSchWinTimetable.Children.Add(startLine);
+
+                var endLine = new Line();
+                endLine.Stroke = System.Windows.Media.Brushes.Red;
+                endLine.StrokeThickness = 1.5;
+                endLine.X1 = TimeSpanInUnitMinute * endAccidentTime / 60 + x_origin;
+                endLine.X2 = TimeSpanInUnitMinute * endAccidentTime / 60 + x_origin;
+                endLine.Y1 = 0;
+                endLine.Y2 = H;
+                GridSchWinTimetable.Children.Add(endLine);
+            }
         }
 
         //逐事件演示列车运行图
@@ -922,10 +1029,19 @@ namespace TrainScheduling
 
             ObservableCollection<CDisplayData> displaylist = new ObservableCollection<CDisplayData>();
 
-            displaylist.Add(new CDisplayData()
+            if (boolRunReScedulingAlg)
             {
+                displaylist.Add(new CDisplayData()
+                {
+                    Name = "当前算法",
+                    Outputdata = "运行图调整算法"
+                });
+            }
+            else 
+            displaylist.Add(new CDisplayData()
+            {                
                 Name = "当前算法",
-                Outputdata = "TATS"
+                Outputdata = "运行图辅画算法（TATS）"
             });
             displaylist.Add(new CDisplayData()
             {
@@ -985,14 +1101,14 @@ namespace TrainScheduling
             //get 分格信息 合理划分 W, 1440 分钟          
             int NumSection = SectionLength.Count();
             //number of time lines displayed and the time interval
-            int TotalFenge = 1440;
+            int TotalFenge = gTotalFengge;
             //number of timespan
             int _num_time_span = (int)TotalFenge / FengeInUnitTimeSpan;
             double TimeInterval = (double)(W / (_num_time_span + 0.5)); //空出右边一部分，TimeInterval为timetable中一个timespan在time维度上所占用的长度
             double TimetableWidth = TimeInterval * _num_time_span; //timetable所占用宽度
             double StationInterval = (double)(H / (NumSection + 0.4)); //空出上边一部分
             double TimetableHight = StationInterval * NumSection;
-            double TimeSpanInUnitMinute = (double)TimetableWidth / 1440.0;
+            double TimeSpanInUnitMinute = (double)TimetableWidth / gTotalFengge;
             double StationSpanInUnitKm = (double)TimetableHight / RouteLength;
             //origin position; left corner
             double x_origin = 0;

@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TrainScheduling"
         mc:Ignorable="d"
-        Title="ChooseDataWindow" Height="456" Width="490"
+        Title="ChooseDataWindow" Height="456.001" Width="597.372"
         ResizeMode="NoResize">
     <Grid x:Name="RootGrid">
-        <GroupBox x:Name="StationGroupBox" Header="车站数据" HorizontalAlignment="Left" Margin="24,21,0,0" VerticalAlignment="Top" Width="427" Height="96">
+        <GroupBox x:Name="StationGroupBox" Header="车站数据" HorizontalAlignment="Left" Margin="24,21,0,0" VerticalAlignment="Top" Width="548" Height="96">
             <GroupItem >
                 <Grid>
                     <Label x:Name="SatationLabel" Content="请选择车站数据" HorizontalAlignment="Left" Margin="33,10,0,0" VerticalAlignment="Top"/>
@@ -17,7 +17,7 @@
                 </Grid>
             </GroupItem>
         </GroupBox>
-        <GroupBox x:Name="SectionGroupBox" Header="路段数据" HorizontalAlignment="Left" Margin="24,137,0,0" VerticalAlignment="Top" Height="96" Width="427">
+        <GroupBox x:Name="SectionGroupBox" Header="路段数据" HorizontalAlignment="Left" Margin="24,126,0,0" VerticalAlignment="Top" Height="96" Width="548">
             <GroupItem>
                 <Grid>
                     <Label x:Name="SectionLabel" Content="请选择路段数据" HorizontalAlignment="Left" Margin="33,10,0,0" VerticalAlignment="Top"/>
@@ -26,17 +26,17 @@
                 </Grid>
             </GroupItem>
         </GroupBox>
-        <GroupBox x:Name="TrainGroupBox" Header="列车数据" HorizontalAlignment="Left" Margin="24,253,0,0" VerticalAlignment="Top" Height="96" Width="427">
+        <GroupBox x:Name="TrainGroupBox" Header="调度列车数据" HorizontalAlignment="Left" Margin="24,258,0,0" VerticalAlignment="Top" Height="107" Width="548">
             <GroupItem>
                 <Grid>
-                    <Label x:Name="TrainLabel" Content="请选择列车数据" HorizontalAlignment="Left" Margin="33,10,0,0" VerticalAlignment="Top"/>
-                    <ComboBox x:Name="TrainComboBox" SelectedIndex="0" Margin="174,10,62,10" >
+                    <Label x:Name="TrainLabel" Content="请选择列车数据" HorizontalAlignment="Left" Margin="33,15,0,0" VerticalAlignment="Top"/>
+                    <ComboBox x:Name="TrainComboBox" SelectedIndex="0" Margin="174,15,62,5" >
                     </ComboBox>
                 </Grid>
             </GroupItem>
         </GroupBox>
-        <Button x:Name="OKBtn" Content="确定" HorizontalAlignment="Left" Margin="93,372,0,0" VerticalAlignment="Top" Width="100" Click="OKBtn_Click"/>
-        <Button x:Name="CancelBtn" Content="取消" HorizontalAlignment="Left" Margin="281,372,0,0" VerticalAlignment="Top" Width="100" Click="CancelBtn_Click"/>
+        <Button x:Name="OKBtn" Content="确定" HorizontalAlignment="Left" Margin="98,384,0,0" VerticalAlignment="Top" Width="100" Click="OKBtn_Click"/>
+        <Button x:Name="CancelBtn" Content="取消" HorizontalAlignment="Left" Margin="343,384,0,0" VerticalAlignment="Top" Width="100" Click="CancelBtn_Click"/>
 
     </Grid>
 </Window>
